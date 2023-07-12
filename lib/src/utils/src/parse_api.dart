@@ -1,4 +1,4 @@
-import '../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 List<FeedResponse> parseApiResponse(List response) {
   return response.map((apiNotification) {

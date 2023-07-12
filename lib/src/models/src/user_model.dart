@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:push_api_dart/push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
+
 
 class Wallet {
   String? _address;

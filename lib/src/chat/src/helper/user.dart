@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<ConnectedUser?> getConnectedUserV2({
   required Wallet wallet,

@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';
 
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 String generateHash(dynamic message) {
   final jsonMessage = jsonEncode(message);

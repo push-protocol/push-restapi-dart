@@ -1,6 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 enum ENV {
   prod,

@@ -1,6 +1,4 @@
-import 'package:push_api_dart/src/utils/parse_api.dart';
-
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 Future<List<FeedResponse>?> getFeeds({
   required String address,

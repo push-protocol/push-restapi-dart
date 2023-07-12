@@ -1,5 +1,5 @@
 import 'package:example/user/create_user.dart';
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
 

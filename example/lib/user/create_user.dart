@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ethers/signers/wallet.dart';
-import 'package:push_api_dart/push_api_dart.dart' as push;
+import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 import 'package:eth_sig_util/eth_sig_util.dart' as eth_sig;
 
 void testCreateUser() async {
@@ -44,7 +44,6 @@ class SignerPrivateKey extends push.Signer {
   Future<String> getEip191Signature(String message) async {
     try {
       var m = utf8.encode(message);
-      
 
       String signature = eth_sig.EthSigUtil.signMessage(
           privateKey: wallet.privateKey, message: Uint8List.fromList(m));

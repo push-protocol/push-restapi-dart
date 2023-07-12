@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 class Feeds {
   String? chatId;

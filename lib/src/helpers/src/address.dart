@@ -1,4 +1,4 @@
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 Future<String> getUserDID({required String address}) async {
   if (isValidCAIP10NFTAddress(address)) {

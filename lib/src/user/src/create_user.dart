@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 Future<User?> createUser({
   required Signer signer,

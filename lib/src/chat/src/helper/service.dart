@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<User> createUserService({
   required String user,

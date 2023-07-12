@@ -1,4 +1,4 @@
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 String walletToPCAIP10(String account) {
   if (isValidCAIP10NFTAddress(account) || account.contains('eip155:')) {

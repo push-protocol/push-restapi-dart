@@ -1,5 +1,5 @@
 // the type for the the response of the input data to be parsed
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 class ApiNotificationType {
   late int payloadId;

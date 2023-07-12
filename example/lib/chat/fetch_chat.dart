@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart' as push;
+import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
 void testFetchP2PChat() async {
   final result =

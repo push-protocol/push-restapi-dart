@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 /// Return the latest message from all wallet addresses you have talked to.
 /// This can be used when building the inbox page.
@@ -38,7 +38,6 @@ Future<List<Feeds>?> chats({
     if (result == null || result['chats'] == null) {
       return null;
     }
-
 
     final chatList =
         (result['chats'] as List).map((e) => Feeds.fromJson(e)).toList();

@@ -1,4 +1,4 @@
-import '../push_api_dart.dart';
+import '../push_restapi_dart.dart';
 
 initPush({ENV env = ENV.staging, Wallet? wallet}) async {
   providerContainer.read(envProvider.notifier).setEnv(env);

@@ -1,4 +1,4 @@
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 String getQueryParams(Map<dynamic, dynamic> data) {
   return data.keys

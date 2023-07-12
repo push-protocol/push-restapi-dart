@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 class FetchLimit {
   static const MIN = 1;

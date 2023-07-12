@@ -33,5 +33,5 @@ dependencies:
   cryptography: ^2.5.0
 
 
-  push_api_dart:
+  push_restapi_dart:
     path: '../'

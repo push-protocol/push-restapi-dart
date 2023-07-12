@@ -1,4 +1,4 @@
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 ///The first time an address wants to send a message to another peer, the address sends an intent request. This first message shall not land in this peer Inbox but in its Request box.
 ///This function will return all the chats that landed on the address' Request box. The user can then approve the request or ignore it for now.

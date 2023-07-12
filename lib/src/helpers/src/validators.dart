@@ -1,4 +1,4 @@
-import '../../../push_api_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 void validatePassword(String password) {
   if (password.length < 8) {
