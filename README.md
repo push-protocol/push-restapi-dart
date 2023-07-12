@@ -65,11 +65,8 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ### 🖥 Installation
  Add a line like this to your package's pubspec.yaml (and run an implicit dart pub get):
 ```bash
-dependencies:	
-	push_api_dart:
-		git:
-		url: https://github.com/ethereum-push-notification-service/push-sdk/packages/push_api_dart
-		ref: master
+dependencies:
+  push_restapi_dart: ^0.0.2-alpha
 ```
 Alternatively, your editor might support ```dart pub get``` or ```flutter pub get```. Check the docs for your editor to learn more.
 
