@@ -276,10 +276,8 @@ Future<String> decryptAndVerifySignature({
 
 Uint8List hexToBytesInternal(String hex) {
   var bytes = Uint8List((hex.length ~/ 2));
-  print(bytes.length);
   for (var i = 0; i < hex.length; i += 2) {
     try {
-      print(i ~/ 2 );
       if ((i ~/ 2 < hex.length)) {
         bytes[i ~/ 2] = int.parse(hex.substring(i, i + 2), radix: 16);
       }
@@ -289,7 +287,6 @@ Uint8List hexToBytesInternal(String hex) {
       }
     }
   }
-  print(bytes);
   bytes[0] = 14;
   return bytes;
 }
