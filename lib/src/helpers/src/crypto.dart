@@ -216,10 +216,12 @@ Future<List<int>> decryptV2({
   final key = await hkdf(secret, hexToBytes(encryptedData.salt!));
 
   final algorithm = AesGcm.with256bits(nonceLength: AESGCMNonceSize);
-
+  final cipherBytes = hexToBytes(encryptedData.ciphertext.toString());
+  final cypherBytesSubstring = cipherBytes.sublist(0,cipherBytes.length-16);
+  final mac = cipherBytes.sublist(cipherBytes.length-16);
   // Construct the secret box
-  final secretBox = SecretBox(hexToBytes(encryptedData.ciphertext!),
-      nonce: hexToBytes(encryptedData.nonce!), mac: Mac.empty);
+  final secretBox = SecretBox(cypherBytesSubstring,
+      nonce: hexToBytes(encryptedData.nonce!), mac: Mac(mac));
 
   // Decrypt
   final decryptedText = await algorithm.decrypt(
@@ -270,6 +272,23 @@ Future<String> decryptAndVerifySignature({
   } catch (err) {
     return 'Unable to decrypt message';
   }
+}
+
+Uint8List hexToBytesInternal(String hex) {
+  var bytes = Uint8List((hex.length ~/ 2));
+  for (var i = 0; i < hex.length; i += 2) {
+    try {
+      if ((i ~/ 2 < hex.length)) {
+        bytes[i ~/ 2] = int.parse(hex.substring(i, i + 2), radix: 16);
+      }
+    } catch (error) {
+      if (!(i ~/ 2 < hex.length)) {
+        bytes[i ~/ 2] = 0;
+      }
+    }
+  }
+  bytes[0] = 14;
+  return bytes;
 }
 
 Future<String> decryptPGPKey({
@@ -334,7 +353,7 @@ Future<String> decryptPGPKey({
             enableProfileMessage,
           );
           final secret = signed['verificationProof'];
-          final secretBytes = hexToBytes(secret ?? '');
+          final secretBytes = hexToBytesInternal(secret ?? '');
           // final secretBytes = utf8.encode(secret); //  hexToBytes(secret ?? '');
 
 
