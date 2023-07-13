@@ -45,7 +45,7 @@ class SignerPrivateKey extends push.Signer {
     try {
       var m = utf8.encode(message);
 
-      String signature = eth_sig.EthSigUtil.signMessage(
+      String signature = eth_sig.EthSigUtil.signPersonalMessage(
           privateKey: wallet.privateKey, message: Uint8List.fromList(m));
       return signature;
     } catch (e) {
