@@ -22,11 +22,10 @@ void testFetchChats() async {
   }
 
   print('pvtkey: $pvtkey');
+  final result = await chats(accountAddress: walletMnemonic.address ,toDecrypt: true, pgpPrivateKey: pvtkey);
 
-  // final result = await chats(toDecrypt: true);
-
-  // print(result);
-  // if (result != null && result.isNotEmpty) {
-  //   print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
-  // }
+  print(result);
+  if (result != null && result.isNotEmpty) {
+    print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
+  }
 }
