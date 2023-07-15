@@ -235,7 +235,6 @@ List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
 }
 
-//TODO implement  decryptAndVerifySignature
 Future<String> decryptMessage({
   required String privateKeyArmored,
   required Message message,

@@ -6,7 +6,7 @@ import 'package:ethers/signers/wallet.dart' as ether;
 void testFetchChats() async {
   initPush();
   const mnemonic =
-      'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
+      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
   final walletMnemonic = ether.Wallet.fromMnemonic(mnemonic);
   final signer = SignerPrivateKey(
       wallet: walletMnemonic, address: walletMnemonic.address!);

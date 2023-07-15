@@ -10,25 +10,11 @@ Future<List<Feeds>> decryptFeeds({
   required String pgpPrivateKey,
 }) async {
   final updatedFeeds = <Feeds>[];
-  // late User? otherPeer;
-  // late String
-  //     signatureValidationPubliKey; // To do signature verification it depends on who has sent the message
 
   for (var feed in feeds) {
-    // bool gotOtherPeer = false;
     final msg = feed.msg!;
 
     if (msg.encType == 'pgp') {
-      // if (msg.fromCAIP10 != connectedUser.wallets!.split(',')[0]) {
-      //   if (!gotOtherPeer) {
-      //     otherPeer = await getUser(address: msg.fromCAIP10);
-      //     gotOtherPeer = true;
-      //   }
-      //   signatureValidationPubliKey = otherPeer!.publicKey!;
-      // } else {
-      //   signatureValidationPubliKey = connectedUser.publicKey!;
-      // }
-
       feed.msg?.messageContent = await decryptMessage(
         privateKeyArmored: pgpPrivateKey,
         message: msg,

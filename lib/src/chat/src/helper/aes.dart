@@ -38,19 +38,13 @@ Future<String> aesEncrypt(
 }
 
 String aesDecrypt({required String cipherText, required String secretKey}) {
-  
-  // TODO implement aesDecrypt
-  return decryptAESCryptoJS(cipherText, secretKey);
-}
-
-String decryptAESCryptoJS(String encrypted, String passphrase) {
   try {
-    Uint8List encryptedBytesWithSalt = base64.decode(encrypted);
+    Uint8List encryptedBytesWithSalt = base64.decode(cipherText);
 
     Uint8List encryptedBytes =
         encryptedBytesWithSalt.sublist(16, encryptedBytesWithSalt.length);
     final salt = encryptedBytesWithSalt.sublist(8, 16);
-    var keyndIV = deriveKeyAndIV(passphrase, salt);
+    var keyndIV = deriveKeyAndIV(secretKey, salt);
     final key = encrypt.Key(keyndIV.first);
     final iv = encrypt.IV(keyndIV.last);
 
