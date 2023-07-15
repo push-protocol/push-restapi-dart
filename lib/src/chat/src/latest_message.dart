@@ -10,7 +10,7 @@ Future<List<Message>> latest({
 }) async {
   return history(
     threadhash: threadhash,
-    account: account,
+    accountAddress: account,
     pgpPrivateKey: pgpPrivateKey,
     limit: 1,
     toDecrypt: toDecrypt,

@@ -7,12 +7,26 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
 Future<List<Feeds>?> chats({
-  required String accountAddress,
-  required String pgpPrivateKey,
+  String? accountAddress,
+  String? pgpPrivateKey,
   bool toDecrypt = false,
   int page = 1,
   int limit = 10,
 }) async {
+  accountAddress ??= getCachedWallet()?.address;
+  if (accountAddress == null) {
+    throw Exception('Account address is required.');
+  }
+
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address $accountAddress');
+  }
+
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+  if (pgpPrivateKey == null) {
+    throw Exception('Private Key is required.');
+  }
+
   if (!isValidETHAddress(accountAddress)) {
     throw Exception('Invalid address!');
   }

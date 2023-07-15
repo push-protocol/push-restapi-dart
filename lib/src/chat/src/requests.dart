@@ -13,40 +13,43 @@ Future<List<Feeds>?> requests({
   int page = 1,
   int limit = 10,
 }) async {
-  String? userDID;
+  accountAddress ??= getCachedWallet()?.address;
   if (accountAddress == null) {
-    //copy cached did
-    userDID = getCachedUser()?.did;
-  } else {
-    userDID = await getUserDID(address: accountAddress);
-  }
-
-  if (userDID == null) {
     throw Exception('Account address is required.');
   }
 
-  pgpPrivateKey ??= getCachedUser()?.encryptedPrivateKey;
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address $accountAddress');
+  }
+
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
 
-  final result = await http.get(
-    path: '/v1/chat/users/$userDID/requests?page=$page&limit=$limit',
-  );
+  try {
+    final String userDID = await getUserDID(address: accountAddress);
+    final result = await http.get(
+      path: '/v1/chat/users/$userDID/requests?page=$page&limit=$limit',
+    );
 
-  if (result == null || result['requests'] == null) {
-    return null;
+    if (result == null || result['requests'] == null) {
+      return null;
+    }
+
+    final requestList =
+        (result['requests'] as List).map((e) => Feeds.fromJson(e)).toList();
+    final updatedChats = addDeprecatedInfo(requestList);
+    final feedWithInbox = await getInboxList(
+      feedsList: updatedChats,
+      user: userDID,
+      pgpPrivateKey: pgpPrivateKey,
+      toDecrypt: toDecrypt,
+    );
+
+    return feedWithInbox;
+  } catch (e) {
+    log(e);
+    throw Exception('[Push SDK] - API requests: $e');
   }
-
-  final requestList =
-      (result['requests'] as List).map((e) => Feeds.fromJson(e)).toList();
-  final updatedChats = addDeprecatedInfo(requestList);
-  final feedWithInbox = await getInboxList(
-    feedsList: updatedChats,
-    user: userDID,
-    pgpPrivateKey: pgpPrivateKey,
-    toDecrypt: toDecrypt,
-  );
-
-  return feedWithInbox;
 }

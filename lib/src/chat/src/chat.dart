@@ -10,21 +10,18 @@ Future<Feeds?> chat({
   String? accountAddress,
   String? pgpPrivateKey,
   required String recipient,
-  bool toDecrypt = false,
+  bool toDecrypt = true,
 }) async {
-  String? userDID;
+  accountAddress ??= getCachedWallet()?.address;
   if (accountAddress == null) {
-    //copy cached did
-    userDID = getCachedUser()?.did;
-  } else {
-    userDID = await getUserDID(address: accountAddress);
-  }
-
-  if (userDID == null) {
     throw Exception('Account address is required.');
   }
 
-  pgpPrivateKey ??= getCachedUser()?.encryptedPrivateKey;
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address $accountAddress');
+  }
+
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
@@ -32,6 +29,7 @@ Future<Feeds?> chat({
   final recipientWallet = await getUserDID(address: recipient);
 
   try {
+    final String userDID = await getUserDID(address: accountAddress);
     final result = await http.get(
       path: '/v1/chat/users/$userDID/chat/$recipientWallet',
     );
