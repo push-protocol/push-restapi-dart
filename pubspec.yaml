@@ -29,4 +29,5 @@ dependencies:
   cryptography: ^2.5.0
   web3lib: ^2.3.5
   dart_pg: ^1.1.5
+  encrypt: ^5.0.1
 

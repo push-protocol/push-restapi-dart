@@ -8,7 +8,7 @@ class FetchLimit {
   static const MAX = 30;
 }
 
-Future<List<IMessageIPFS>> history({
+Future<List<Message>> history({
   required String threadhash,
   required String account,
   int limit = FetchLimit.DEFAULT,

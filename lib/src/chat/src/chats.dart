@@ -7,30 +7,18 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
 Future<List<Feeds>?> chats({
-  String? accountAddress,
-  String? pgpPrivateKey,
+  required String accountAddress,
+  required String pgpPrivateKey,
   bool toDecrypt = false,
   int page = 1,
   int limit = 10,
 }) async {
-  String? userDID;
-  if (accountAddress == null) {
-    //copy cached did
-    userDID = getCachedUser()?.did;
-  } else {
-    userDID = await getUserDID(address: accountAddress);
-  }
-
-  if (userDID == null) {
-    throw Exception('Account address is required.');
-  }
-
-  pgpPrivateKey ??= getCachedUser()?.encryptedPrivateKey;
-  if (pgpPrivateKey == null) {
-    throw Exception('Private Key is required.');
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address!');
   }
 
   try {
+    final userDID = await getUserDID(address: accountAddress);
     final result = await http.get(
       path: '/v1/chat/users/$userDID/chats?page=$page&limit=$limit',
     );

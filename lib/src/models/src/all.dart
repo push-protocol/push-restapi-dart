@@ -231,7 +231,7 @@ class Subscribers {
   late List<String> subscribers;
 }
 
-class MessageIPFSWithCID extends IMessageIPFS {
+class MessageIPFSWithCID extends Message {
   late String cid;
 
   MessageIPFSWithCID(
@@ -361,8 +361,6 @@ class ProgressHookType {
 
 typedef ProgressHookTypeFunction = ProgressHookType Function(
     List<dynamic> args);
-
-
 
 class MediaStream {
   MediaStream? stream;
