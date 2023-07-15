@@ -15,9 +15,7 @@ Future<SendMessagePayload> sendMessagePayload({
   GroupDTO? group;
 
   if (isGroup) {
-    group = await getGroup(
-      chatId: receiverAddress,
-    );
+    group = await getGroup(chatId: receiverAddress);
 
     if (group == null) {
       throw Exception('Group not found!');

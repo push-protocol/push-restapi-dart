@@ -1,7 +1,7 @@
 import 'package:ethers/signers/wallet.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
-import '../models/signer.dart';
+import '../../models/signer.dart';
 
 void testCreateUser() async {
   const mnemonic =

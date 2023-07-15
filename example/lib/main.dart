@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
 
-import 'chat/test_send.dart';
-import 'models/signer.dart';
+import '__lib.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,4 +45,15 @@ void main() async {
   );
 
   testSend();
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Push',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+      ),
+      home: HomeScreen(),
+    ),
+  );
 }
