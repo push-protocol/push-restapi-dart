@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
-import 'package:cryptography/cryptography.dart';
 
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:push_restapi_dart/push_restapi_dart.dart';
@@ -22,19 +22,31 @@ String generateRandomSecret(int length) {
 // AES 256 bits encryption with pkcs7 padding
 Future<String> aesEncrypt(
     {required String plainText, required String secretKey}) async {
-  // specifing the AES mode and key bit length
-  final algorithm = AesCbc.with256bits(
-    macAlgorithm: MacAlgorithm.empty,
-  );
+  try {
+    final salt = genRandomWithNonZero(8);
+    var keyndIV = deriveKeyAndIV(secretKey, salt);
+    final key = encrypt.Key(keyndIV.first);
+    final iv = encrypt.IV(keyndIV.last);
 
-  // encrypt
-  final secretBox = await algorithm.encryptString(
-    plainText,
-    secretKey: await algorithm.newSecretKeyFromBytes(utf8.encode(secretKey)),
-  );
+    final encrypter = encrypt.Encrypter(
+        encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    Uint8List encryptedBytesWithSalt = Uint8List.fromList(
+        createUint8ListFromString("Salted__") + salt + encrypted.bytes);
+    return base64.encode(encryptedBytesWithSalt);
+  } catch (error) {
+    rethrow;
+  }
+}
 
-  // return the cipher text in string form
-  return utf8.decode(secretBox.cipherText);
+Uint8List genRandomWithNonZero(int seedLength) {
+  final random = Random.secure();
+  const int randomMax = 245;
+  final Uint8List uint8list = Uint8List(seedLength);
+  for (int i = 0; i < seedLength; i++) {
+    uint8list[i] = random.nextInt(randomMax) + 1;
+  }
+  return uint8list;
 }
 
 String aesDecrypt({required String cipherText, required String secretKey}) {
