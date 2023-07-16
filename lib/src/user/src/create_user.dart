@@ -4,21 +4,18 @@ import '../../../push_restapi_dart.dart';
 
 Future<User?> createUser({
   required Signer signer,
-  String version = Constants.ENC_TYPE_V3,
-  Map<dynamic, Map<String, dynamic>>? additionalMeta,
+  String version = ENCRYPTION_TYPE.PGP_V3,
   required Function(ProgressHookType) progressHook,
 }) async {
-  const passPrefix = r'$0Pc';
-  additionalMeta ??= {
-    ENCRYPTION_TYPE.NFTPGP_V1: {
-      'password': passPrefix + generateRandomSecret(10),
-    },
-  };
   final wallet = getWallet(signer: signer);
   final String address = signer.getAddress();
 
   if (!isValidETHAddress(address)) {
     throw Exception('Invalid address!');
+  }
+
+  if (ENCRYPTION_TYPE.isValidEncryptionType(version)) {
+    throw Exception('Invalid version!');
   }
 
   final caip10 = walletToPCAIP10(address);
