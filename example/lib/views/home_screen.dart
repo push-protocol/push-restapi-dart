@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const mnemonic =
         'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
     final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-    final signer = SignerPrivateKey(
+    final signer = EthersSigner(
       ethersWallet: ethersWallet,
       address: ethersWallet.address!,
     );
