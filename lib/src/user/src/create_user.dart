@@ -14,7 +14,7 @@ Future<User?> createUser({
     throw Exception('Invalid address!');
   }
 
-  if (ENCRYPTION_TYPE.isValidEncryptionType(version)) {
+  if (!ENCRYPTION_TYPE.isValidEncryptionType(version)) {
     throw Exception('Invalid version!');
   }
 
@@ -42,8 +42,31 @@ Future<User?> createUser({
     "did": caip10,
     "publicKey": publicKey,
     "encryptedPrivateKey": jsonEncode(encryptedPrivateKey.toJson()),
-    "signature": "xyz",
-    "sigType": "a"
+    "signature": "pgp",
+    "sigType": "pgp"
+  };
+
+  final result = await http.post(path: '/v2/users', data: data);
+
+  if (result == null) {
+    return null;
+  } else if (result is String) {
+    throw Exception(result);
+  } else {
+    return User.fromJson(result);
+  }
+}
+
+Future<User?> createUserEmpty({required String accountAddress}) async {
+  final caip10 = walletToPCAIP10(accountAddress);
+
+  final data = {
+    "caip10": caip10,
+    "did": caip10,
+    "publicKey": '',
+    "encryptedPrivateKey": '',
+    "signature": "pgp",
+    "sigType": "pgp"
   };
 
   final result = await http.post(path: '/v2/users', data: data);
