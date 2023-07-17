@@ -14,7 +14,7 @@ class Feeds {
   String? combinedDID;
   String? name;
   dynamic groupInformation;
-  IMessageIPFS? msg;
+  Message? msg;
   bool? deprecated;
   String? deprecatedCode;
 

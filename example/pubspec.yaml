@@ -35,3 +35,11 @@ dependencies:
 
   push_restapi_dart:
     path: '../'
+  flutter_svg: ^2.0.7
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+      - assets/

@@ -1,4 +1,5 @@
 import 'package:openpgp/openpgp.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<KeyPair> generateKeyPair() async {
   final keyOptions = KeyOptions()
@@ -34,10 +35,15 @@ Future<String> pgpEncrypt({
   return encrypted;
 }
 
-pgpDecrypt({
+Future<String> pgpDecrypt({
   required String cipherText,
   required String privateKeyArmored,
-  required String signatureArmored,
 }) async {
 //TODO implement pgpDecrypt
+  try {
+    return OpenPGP.decrypt(cipherText, privateKeyArmored, '');
+  } catch (e) {
+    log('pgpDecrypt Error $e');
+    rethrow;
+  }
 }

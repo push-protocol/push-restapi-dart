@@ -1,7 +1,7 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 ///Get the latest chat message
-Future<List<IMessageIPFS>> latest({
+Future<List<Message>> latest({
   required String threadhash,
   required String account,
   int limit = FetchLimit.DEFAULT,
@@ -10,7 +10,7 @@ Future<List<IMessageIPFS>> latest({
 }) async {
   return history(
     threadhash: threadhash,
-    account: account,
+    accountAddress: account,
     pgpPrivateKey: pgpPrivateKey,
     limit: 1,
     toDecrypt: toDecrypt,

@@ -1,4 +1,4 @@
-class IMessageIPFS {
+class Message {
   String fromCAIP10;
   String toCAIP10;
   String fromDID;
@@ -14,7 +14,7 @@ class IMessageIPFS {
   bool? deprecated;
   String? deprecatedCode;
 
-  IMessageIPFS({
+  Message({
     required this.fromCAIP10,
     required this.toCAIP10,
     required this.fromDID,
@@ -31,8 +31,8 @@ class IMessageIPFS {
     this.deprecatedCode,
   });
 
-  factory IMessageIPFS.fromJson(Map<String, dynamic> json) {
-    return IMessageIPFS(
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
       fromCAIP10: json['fromCAIP10'],
       toCAIP10: json['toCAIP10'],
       fromDID: json['fromDID'],

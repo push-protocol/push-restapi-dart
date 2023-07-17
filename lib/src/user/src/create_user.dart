@@ -4,21 +4,18 @@ import '../../../push_restapi_dart.dart';
 
 Future<User?> createUser({
   required Signer signer,
-  String version = Constants.ENC_TYPE_V3,
-  Map<dynamic, Map<String, dynamic>>? additionalMeta,
+  String version = ENCRYPTION_TYPE.PGP_V3,
   required Function(ProgressHookType) progressHook,
 }) async {
-  const passPrefix = r'$0Pc';
-  additionalMeta ??= {
-    ENCRYPTION_TYPE.NFTPGP_V1: {
-      'password': passPrefix + generateRandomSecret(10),
-    },
-  };
   final wallet = getWallet(signer: signer);
   final String address = signer.getAddress();
 
   if (!isValidETHAddress(address)) {
     throw Exception('Invalid address!');
+  }
+
+  if (!ENCRYPTION_TYPE.isValidEncryptionType(version)) {
+    throw Exception('Invalid version!');
   }
 
   final caip10 = walletToPCAIP10(address);
@@ -45,8 +42,31 @@ Future<User?> createUser({
     "did": caip10,
     "publicKey": publicKey,
     "encryptedPrivateKey": jsonEncode(encryptedPrivateKey.toJson()),
-    "signature": "xyz",
-    "sigType": "a"
+    "signature": "pgp",
+    "sigType": "pgp"
+  };
+
+  final result = await http.post(path: '/v2/users', data: data);
+
+  if (result == null) {
+    return null;
+  } else if (result is String) {
+    throw Exception(result);
+  } else {
+    return User.fromJson(result);
+  }
+}
+
+Future<User?> createUserEmpty({required String accountAddress}) async {
+  final caip10 = walletToPCAIP10(accountAddress);
+
+  final data = {
+    "caip10": caip10,
+    "did": caip10,
+    "publicKey": '',
+    "encryptedPrivateKey": '',
+    "signature": "pgp",
+    "sigType": "pgp"
   };
 
   final result = await http.post(path: '/v2/users', data: data);

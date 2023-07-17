@@ -8,9 +8,9 @@ class FetchLimit {
   static const MAX = 30;
 }
 
-Future<List<IMessageIPFS>> history({
+Future<List<Message>> history({
   required String threadhash,
-  required String account,
+  required String accountAddress,
   int limit = FetchLimit.DEFAULT,
   required String pgpPrivateKey,
   bool toDecrypt = false,
@@ -28,7 +28,8 @@ Future<List<IMessageIPFS>> history({
         await getMessagesService(threadhash: threadhash, limit: limit) ?? [];
 
     final updatedMessages = addDeprecatedInfoToMessages(messages);
-    final connectedUser = await getUser(address: pCAIP10ToWallet(account));
+    final connectedUser =
+        await getUser(address: pCAIP10ToWallet(accountAddress));
 
     if (toDecrypt) {
       return await decryptConversation(

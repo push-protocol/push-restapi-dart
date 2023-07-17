@@ -1,8 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
-import '../push_restapi_dart.dart';
-
 // for methods not needing the entire config
+
+import '../../../push_restapi_dart.dart';
 
 const BLOCKCHAIN_NETWORK = {
   'ETH_MAINNET': 'eip155:1',
