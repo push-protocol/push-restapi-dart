@@ -49,8 +49,10 @@ Future<User?> createUser({
     "sigType": "a"
   };
 
-  final result = await http.post(path: '/v2/users', data: data);
+  print(data);
 
+  final result = await http.post(path: '/v2/users', data: data);
+  print(result);
   if (result == null) {
     return null;
   } else if (result is String) {

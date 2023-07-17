@@ -21,11 +21,11 @@ void testFetchChats() async {
     );
   }
 
-  print('pvtkey: $pvtkey');
-  final result = await chats(accountAddress: walletMnemonic.address ,toDecrypt: true, pgpPrivateKey: pvtkey);
+  // print('pvtkey: $pvtkey');
+  // final result = await chats(accountAddress: walletMnemonic.address ,toDecrypt: true, pgpPrivateKey: pvtkey);
 
-  print(result);
-  if (result != null && result.isNotEmpty) {
-    print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
-  }
+  // print(result);
+  // if (result != null && result.isNotEmpty) {
+  //   print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
+  // }
 }

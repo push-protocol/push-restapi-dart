@@ -136,7 +136,7 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
 
       encryptedPrivateKey = await encryptV2(
         data: encodedPrivateKey,
-        secret: utf8.encode(secret),
+        secret: hexToBytesInternal(secret),
       );
 
       encryptedPrivateKey.version = encryptionType;
@@ -201,9 +201,11 @@ Future<EncryptedPrivateKeyModel> encryptV2(
     secretKey: key,
     nonce: nonce,
   );
-
+  List<int> combinedCipherBytes = [];
+  combinedCipherBytes.addAll(secretBox.cipherText);
+  combinedCipherBytes.addAll(secretBox.mac.bytes);
   return EncryptedPrivateKeyModel(
-      ciphertext: bytesToHex(secretBox.cipherText),
+      ciphertext: bytesToHex(combinedCipherBytes),
       salt: bytesToHex(salt),
       nonce: bytesToHex(nonce));
 }
@@ -217,8 +219,8 @@ Future<List<int>> decryptV2({
 
   final algorithm = AesGcm.with256bits(nonceLength: AESGCMNonceSize);
   final cipherBytes = hexToBytes(encryptedData.ciphertext.toString());
-  final cypherBytesSubstring = cipherBytes.sublist(0,cipherBytes.length-16);
-  final mac = cipherBytes.sublist(cipherBytes.length-16);
+  final cypherBytesSubstring = cipherBytes.sublist(0, cipherBytes.length - 16);
+  final mac = cipherBytes.sublist(cipherBytes.length - 16);
   // Construct the secret box
   final secretBox = SecretBox(cypherBytesSubstring,
       nonce: hexToBytes(encryptedData.nonce!), mac: Mac(mac));
@@ -346,7 +348,6 @@ Future<String> decryptPGPKey({
         {
           final input = jsonDecode(encryptedPGPPrivateKey)['preKey'];
 
-
           final enableProfileMessage = 'Enable Push Profile \n$input';
           final signed = await getEip191Signature(
             wallet,
@@ -354,13 +355,15 @@ Future<String> decryptPGPKey({
           );
           final secret = signed['verificationProof'];
           final secretBytes = hexToBytesInternal(secret ?? '');
+          final secretBytes2 = hexToBytesInternal(secret);
           // final secretBytes = utf8.encode(secret); //  hexToBytes(secret ?? '');
-
-
+          print(secret);
+          print(secretBytes);
+          print(secretBytes2);
           final encodedPrivateKey = await decryptV2(
             encryptedData: EncryptedPrivateKeyModel.fromJson(
                 jsonDecode(encryptedPGPPrivateKey)),
-            secret: secretBytes,
+            secret: secretBytes2,
           );
           final dec = utf8.decoder;
           privateKey = dec.convert(encodedPrivateKey);
