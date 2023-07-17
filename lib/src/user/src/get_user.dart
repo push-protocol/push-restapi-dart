@@ -14,7 +14,5 @@ Future<User?> getUser({
     return null;
   }
 
-  // TODO: Add call to verifyPGPPublicKey
-
   return User.fromJson(result);
 }
