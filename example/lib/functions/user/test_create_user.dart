@@ -49,3 +49,19 @@ void testCreateRandomUser() async {
     print(e);
   }
 }
+
+void testCreateEmptyRandomUser() async {
+  var random = Random.secure();
+  final web3.Credentials randomCredentials =
+      web3.EthPrivateKey.createRandom(random);
+
+  final w = Web3Signer(randomCredentials);
+
+  try {
+    final result = await push.createUserEmpty(accountAddress: w.getAddress());
+
+    print(result?.did);
+  } catch (e) {
+    print(e);
+  }
+}
