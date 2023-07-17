@@ -9,37 +9,23 @@ Future<List<Feeds>> decryptFeeds({
   required User connectedUser,
   required String pgpPrivateKey,
 }) async {
-  late User? otherPeer;
-  late String
-      signatureValidationPubliKey; // To do signature verification it depends on who has sent the message
+  final updatedFeeds = <Feeds>[];
 
   for (var feed in feeds) {
-    bool gotOtherPeer = false;
     final msg = feed.msg!;
 
-    if (msg.encType != 'PlainText') {
-      if (msg.fromCAIP10 != connectedUser.wallets!.split(',')[0]) {
-        if (!gotOtherPeer) {
-          otherPeer = await getUser(address: msg.fromCAIP10);
-          gotOtherPeer = true;
-        }
-        signatureValidationPubliKey = otherPeer!.publicKey!;
-      } else {
-        signatureValidationPubliKey = connectedUser.publicKey!;
-      }
-
-      feed.msg?.messageContent = await decryptAndVerifySignature(
-        cipherText: msg.messageContent,
-        encryptedSecretKey: msg.encryptedSecret,
-        publicKeyArmored: signatureValidationPubliKey,
-        signatureArmored: msg.signature,
+    if (msg.encType == 'pgp') {
+      feed.msg?.messageContent = await decryptMessage(
         privateKeyArmored: pgpPrivateKey,
         message: msg,
       );
+      updatedFeeds.add(feed);
+    } else {
+      updatedFeeds.add(feed);
     }
   }
 
-  return feeds;
+  return updatedFeeds;
 }
 
 Future<String> signMessageWithPGP(
@@ -51,19 +37,24 @@ Future<String> signMessageWithPGP(
   return signature;
 }
 
-Future<Map<String, String>> encryptAndSign(
-    {required String plainText,
-    required List<String> keys,
-    required String privateKeyArmored,
-    required String publicKey}) async {
-  final secretKey = generateRandomSecret(15);
+Future<Map<String, String>> encryptAndSign({
+  required String plainText,
+  required List<String> keys,
+  required String senderPgpPrivateKey,
+  required String publicKey,
+}) async {
+  final secretKey = generateRandomSecret(32);
+
   final cipherText =
       await aesEncrypt(plainText: plainText, secretKey: secretKey);
 
+//TODO fix issue in pgpEncrypt function
   final encryptedSecret = await pgpEncrypt(plainText: secretKey, keys: keys);
 
   final signature = await sign(
-      message: cipherText, privateKey: privateKeyArmored, publicKey: publicKey);
+      message: cipherText,
+      privateKey: senderPgpPrivateKey,
+      publicKey: publicKey);
 
   return {
     'cipherText': cipherText,
@@ -130,7 +121,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
               receiverCreatedUser.publicKey!,
               senderCreatedUser.publicKey!
             ],
-            privateKeyArmored: senderCreatedUser.privateKey!,
+            senderPgpPrivateKey: senderCreatedUser.privateKey!,
             publicKey: senderCreatedUser.publicKey!);
 
         return IEncryptedRequest(
@@ -160,7 +151,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
       final response = await encryptAndSign(
           plainText: message,
           keys: publicKeys,
-          privateKeyArmored: senderCreatedUser.privateKey!,
+          senderPgpPrivateKey: senderCreatedUser.privateKey!,
           publicKey: senderCreatedUser.publicKey!);
 
       return IEncryptedRequest(

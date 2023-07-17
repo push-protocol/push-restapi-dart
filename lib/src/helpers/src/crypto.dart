@@ -62,27 +62,6 @@ Future<String> preparePGPPublicKey({
   return chatPublicKey;
 }
 
-// Future<Map<String, dynamic>> getEip191Signature(
-//   EthWallet? wallet,
-//   String message, {
-//   String version = 'v1',
-// }) async {
-//   if (wallet == null || wallet.privateKey == null) {
-//     print('This method is deprecated. Provide signer in the function');
-//     // Sending a random signature for backward compatibility
-//     return {'signature': 'xyz', 'sigType': 'a'};
-//   }
-
-//   web3.Credentials credentials = web3.EthPrivateKey.fromHex(wallet.privateKey!);
-//   List<int> codeUnits = utf8.encode(message);
-
-//   // EIP191 signature
-//   final signed = await credentials.sign(Uint8List.fromList(codeUnits));
-
-//   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-//   return {'verificationProof': '$sigType:0x${bytesToHex(signed)}'};
-// }
-
 String bytesToHex(List<int> bytes) {
   final hexPairs = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0'));
   return hexPairs.join('');
@@ -258,21 +237,48 @@ List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
 }
 
-Future<String> decryptAndVerifySignature({
-  required String cipherText,
-  required String encryptedSecretKey,
-  required String publicKeyArmored,
-  required String signatureArmored,
+Future<String> decryptMessage({
   required String privateKeyArmored,
-  required IMessageIPFS message,
+  required Message message,
 }) async {
-  //TODO implement  decryptAndVerifySignature
+  if (message.encType != "pgp") {
+    return message.messageContent;
+  }
 
   try {
-    aesDecrypt(cipherText: cipherText, secretKey: privateKeyArmored);
-    return cipherText;
+    return decryptMessageContent(
+      message: message.messageContent,
+      encryptedSecret: message.encryptedSecret,
+      privateKeyArmored: privateKeyArmored,
+    );
   } catch (err) {
+    if (isGroupChatId(message.toCAIP10)) {
+      return "message encrypted before you join";
+    }
     return 'Unable to decrypt message';
+  }
+}
+
+bool isGroupChatId(String id) {
+  return id.length == 64;
+}
+
+Future<String> decryptMessageContent({
+  required String message,
+  required String encryptedSecret,
+  required String privateKeyArmored,
+}) async {
+  try {
+    final secretKey = await pgpDecrypt(
+      cipherText: encryptedSecret,
+      privateKeyArmored: privateKeyArmored,
+    );
+
+    final userMessage = aesDecrypt(cipherText: message, secretKey: secretKey);
+    return userMessage;
+  } catch (e) {
+    log('decryptMessageContent Error: $e');
+    rethrow;
   }
 }
 
@@ -355,15 +361,11 @@ Future<String> decryptPGPKey({
           );
           final secret = signed['verificationProof'];
           final secretBytes = hexToBytesInternal(secret ?? '');
-          final secretBytes2 = hexToBytesInternal(secret);
           // final secretBytes = utf8.encode(secret); //  hexToBytes(secret ?? '');
-          print(secret);
-          print(secretBytes);
-          print(secretBytes2);
           final encodedPrivateKey = await decryptV2(
             encryptedData: EncryptedPrivateKeyModel.fromJson(
                 jsonDecode(encryptedPGPPrivateKey)),
-            secret: secretBytes2,
+            secret: secretBytes,
           );
           final dec = utf8.decoder;
           privateKey = dec.convert(encodedPrivateKey);

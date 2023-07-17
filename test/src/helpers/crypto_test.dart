@@ -13,7 +13,7 @@ void main() {
 
     // test('First Test', () {});
 
-    test('encryptV2', () async {
+    test('encryption decryption testing', () async {
       final testPgpKey = r''' 
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: openpgp-mobile
@@ -83,17 +83,8 @@ Ow0PNfWBEIXKzpU+pdxSjyFbgg9NGOczMtYUTkheIQeBerPjFWsoCEtHMcE=
           "eip191:0x79725b6918f31cf01da680c8c11c8c6a208130c35459d64032444b7ba6b3b2cc447671d6c3be264fdfa08d5114cead9ca383f683809ec69f3c70c7101fc253221c";
       final secretBytes = hexToBytesInternal(secret);
       final saltBytes = hexToBytes(salt);
-      final nonceBytes = hexToBytes(nonce);
-      final convertedNonceToHex = bytesToHex(nonceBytes);
-      print(convertedNonceToHex);
-      // final convertedSaltToHex = bytesToHex(saltBytes);
-      // print(convertedSaltToHex);
-      // final convertedSecretFromBytes = bytesToHex(secretBytes);
-      // print(convertedSecretFromBytes);
       final algorithm = AesGcm.with256bits(nonceLength: 32);
       final key = await hkdf(secretBytes, saltBytes);
-      print(key);
-
       final data = utf8.encode(testPgpKey);
       final secretBox = await algorithm.encrypt(
         data,
@@ -104,8 +95,6 @@ Ow0PNfWBEIXKzpU+pdxSjyFbgg9NGOczMtYUTkheIQeBerPjFWsoCEtHMcE=
       combined.addAll(secretBox.cipherText);
       combined.addAll(secretBox.mac.bytes);
       bytesToHex(combined);
-      print(bytesToHex(combined));
-
       final cipherBytes = combined;
       final cypherBytesSubstring =
           cipherBytes.sublist(0, cipherBytes.length - 16);

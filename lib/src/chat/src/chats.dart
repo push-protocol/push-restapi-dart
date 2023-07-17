@@ -13,24 +13,26 @@ Future<List<Feeds>?> chats({
   int page = 1,
   int limit = 10,
 }) async {
-  String? userDID;
+  accountAddress ??= getCachedWallet()?.address;
   if (accountAddress == null) {
-    //copy cached did
-    userDID = getCachedUser()?.did;
-  } else {
-    userDID = await getUserDID(address: accountAddress);
-  }
-
-  if (userDID == null) {
     throw Exception('Account address is required.');
   }
 
-  pgpPrivateKey ??= getCachedUser()?.encryptedPrivateKey;
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address $accountAddress');
+  }
+
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
 
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address!');
+  }
+
   try {
+    final userDID = await getUserDID(address: accountAddress);
     final result = await http.get(
       path: '/v1/chat/users/$userDID/chats?page=$page&limit=$limit',
     );

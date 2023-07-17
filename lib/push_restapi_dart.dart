@@ -7,8 +7,7 @@ export 'src/services/services.dart';
 export 'src/models/models.dart';
 export 'src/chat/chat.dart';
 export 'src/providers/providers.dart';
+export 'src/values/values.dart';
 
-export 'src/constants.dart';
-export 'src/config.dart';
+
 export 'src/main.dart';
-export 'src/progress_hook.dart';

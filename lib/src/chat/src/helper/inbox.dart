@@ -8,12 +8,12 @@ Future<List<Feeds>> getInboxList({
 }) async {
   final List<Feeds> feedsOutputlist = [];
   for (var feed in feedsList) {
-    late IMessageIPFS? message;
+    late Message? message;
     if (feed.threadhash != null) {
       message = await getCID(cid: feed.threadhash!);
     }
     // This is for groups that are created without any message
-    message ??= IMessageIPFS(
+    message ??= Message(
       encType: 'PlainText',
       encryptedSecret: '',
       fromCAIP10: '',
@@ -33,8 +33,7 @@ Future<List<Feeds>> getInboxList({
   }
 
   if (toDecrypt) {
-    final connectedUser =
-        getCachedUser() ?? await getUser(address: pCAIP10ToWallet(user));
+    final connectedUser = await getUser(address: pCAIP10ToWallet(user));
     if (connectedUser == null) {
       throw Exception('Cannot find user');
     }
@@ -81,7 +80,7 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
   return chats;
 }
 
-List<IMessageIPFS> addDeprecatedInfoToMessages(List<IMessageIPFS> chats) {
+List<Message> addDeprecatedInfoToMessages(List<Message> chats) {
   Map<String, String> latestDIDs = {};
 
   for (var chat in chats) {
@@ -115,7 +114,7 @@ List<IMessageIPFS> addDeprecatedInfoToMessages(List<IMessageIPFS> chats) {
 }
 
 decryptConversation({
-  required List<IMessageIPFS> messages,
+  required List<Message> messages,
   required User? connectedUser,
   required String pgpPrivateKey,
 }) {}

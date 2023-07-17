@@ -1,17 +1,14 @@
 // ignore_for_file: constant_identifier_names, camel_case_types, non_constant_identifier_names
 
-// enum ENCRYPTION_TYPE {
-//   PGP_V1,
-//   PGP_V2,
-//   PGP_V3,
-//   NFTPGP_V1,
-// }
-
 class ENCRYPTION_TYPE {
   static const PGP_V1 = 'x25519-xsalsa20-poly1305';
   static const PGP_V2 = 'aes256GcmHkdfSha256';
   static const PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256';
   static const NFTPGP_V1 = 'pgpv1:nft';
+
+  static isValidEncryptionType(String type) {
+    return [PGP_V1, PGP_V2, PGP_V3, NFTPGP_V1].contains(type);
+  }
 }
 
 class Pagination {
@@ -45,4 +42,19 @@ class Constants {
   static const String ENC_TYPE_V2 = 'aes256GcmHkdfSha256';
   static const String ENC_TYPE_V3 = 'eip191-aes256-gcm-hkdf-sha256';
   static const String ENC_TYPE_V4 = 'pgpv1:nft';
+}
+
+class MessageType {
+  static const TEXT = 'Text';
+  static const IMAGE = 'Image';
+  static const FILE = 'File';
+  static const MEDIA_EMBED = 'MediaEmbed';
+  static const META = 'Meta';
+
+  /// @deprecated - Use MediaEmbed Instead
+  static const GIF = 'GIF';
+
+  static isValidMessageType(String type) {
+    return [TEXT, IMAGE, FILE, MEDIA_EMBED, META].contains(type);
+  }
 }

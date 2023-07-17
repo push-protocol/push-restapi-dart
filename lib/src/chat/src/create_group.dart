@@ -1,5 +1,5 @@
 import '../../../push_restapi_dart.dart';
-
+import 'dart:convert';
 createGroup({
   String? account,
   Signer? signer,
@@ -38,7 +38,6 @@ createGroup({
       wallet: wallet,
       privateKey: pgpPrivateKey,
     );
-
     final bodyToBeHashed = {
       'groupName': groupName,
       'groupDescription': groupDescription,
@@ -54,11 +53,11 @@ createGroup({
     };
 
     final hash = generateHash(bodyToBeHashed);
-
+    final publicKeyJSON = jsonDecode(connectedUser!.user.publicKey!);
     final signature = await sign(
       message: hash,
-      privateKey: connectedUser!.user.encryptedPrivateKey!,
-      publicKey: connectedUser.user.publicKey!,
+      privateKey: connectedUser!.privateKey!,
+      publicKey: publicKeyJSON["key"],
     );
 
     const sigType = 'pgp';
@@ -73,12 +72,12 @@ createGroup({
       'admins': admins,
       'isPublic': isPublic,
       'contractAddressNFT': contractAddressNFT,
-      'numberOfNFTs': numberOfNFTs,
+      'numberOfNFTs': numberOfNFTs?? 0,
       'contractAddressERC20': contractAddressERC20,
-      'numberOfERC20': numberOfERC20,
-      'groupCreator': address,
+      'numberOfERC20': numberOfERC20?? 0,
+      'groupCreator': "eip155:$address",
       'verificationProof': verificationProof,
-      'meta': meta,
+      'meta': meta?? "abcd" ,
     };
 
     final result = await http.post(

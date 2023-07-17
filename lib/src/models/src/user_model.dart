@@ -2,12 +2,16 @@ import 'dart:convert';
 
 import '../../../push_restapi_dart.dart';
 
-
 class Wallet {
   String? _address;
   Signer? signer;
+  String? pgpPrivateKey;
 
-  Wallet({String? address, this.signer}) {
+  Wallet({
+    String? address,
+    this.signer,
+    this.pgpPrivateKey,
+  }) {
     _address = address;
   }
 

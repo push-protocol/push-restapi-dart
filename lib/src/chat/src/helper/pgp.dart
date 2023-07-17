@@ -1,4 +1,5 @@
 import 'package:openpgp/openpgp.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 String removeVersionFromPublicKey(String key) {
   List<String> lines = key.split('\n');
@@ -37,7 +38,8 @@ Future<String> sign(
     {required String message,
     required String publicKey,
     required String privateKey}) async {
-  return await OpenPGP.sign(message, publicKey, privateKey, "");
+  final signatureWithVersion =  await OpenPGP.sign(message, publicKey, privateKey, "");
+  return removeVersionFromPublicKey(signatureWithVersion);
 }
 
 Future<String> pgpEncrypt({
@@ -50,14 +52,18 @@ Future<String> pgpEncrypt({
     plainText,
     combinedPGPKey,
   );
-
   return encrypted;
 }
 
-pgpDecrypt({
+Future<String> pgpDecrypt({
   required String cipherText,
   required String privateKeyArmored,
-  required String signatureArmored,
 }) async {
 //TODO implement pgpDecrypt
+  try {
+    return OpenPGP.decrypt(cipherText, privateKeyArmored, '');
+  } catch (e) {
+    log('pgpDecrypt Error $e');
+    rethrow;
+  }
 }

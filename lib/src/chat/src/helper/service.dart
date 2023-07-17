@@ -66,7 +66,7 @@ getConversationHashService({
   );
 }
 
-Future<List<IMessageIPFS>?> getMessagesService({
+Future<List<Message>?> getMessagesService({
   required String threadhash,
   required int limit,
 }) async {
@@ -79,7 +79,7 @@ Future<List<IMessageIPFS>?> getMessagesService({
   }
 
   if (result is List) {
-    return result.map((e) => IMessageIPFS.fromJson(e)).toList();
+    return result.map((e) => Message.fromJson(e)).toList();
   }
 
   return null;
