@@ -1,15 +1,12 @@
+import 'package:example/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'package:ethers/signers/wallet.dart' as ether;
+import 'package:ethers/signers/wallet.dart' as ethers;
 
-import '__lib.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
+void testSend() async {
   const mnemonic =
       'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
-  final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
+  final ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
@@ -33,27 +30,16 @@ void main() async {
 
   print('pgpPrivateKey: $pgpPrivateKey');
 
-  final pushWallet = Wallet(
-    address: ethersWallet.address,
-    signer: signer,
+
+  final options = SendOptions(
+    accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
+    messageContent: 'this is a message',
+    receiverAddress: '0x9960D6B63B113303B9910A03ca5341B83CC52723',
+    receiverPgpPubicKey: '',
   );
 
-  await initPush(
-    wallet: pushWallet,
-    env: ENV.staging,
-  );
+  final result = await send(options);
 
-  testSend();
-
-  // runApp(
-  //   MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //     title: 'Push',
-  //     theme: ThemeData(
-  //       primarySwatch: Colors.purple,
-  //     ),
-  //     home: HomeScreen(),
-  //   ),
-  // );
+  print('testSend result = $result');
 }

@@ -37,19 +37,24 @@ Future<String> signMessageWithPGP(
   return signature;
 }
 
-Future<Map<String, String>> encryptAndSign(
-    {required String plainText,
-    required List<String> keys,
-    required String privateKeyArmored,
-    required String publicKey}) async {
-  final secretKey = generateRandomSecret(15);
+Future<Map<String, String>> encryptAndSign({
+  required String plainText,
+  required List<String> keys,
+  required String senderPgpPrivateKey,
+  required String publicKey,
+}) async {
+  final secretKey = generateRandomSecret(32);
+
   final cipherText =
       await aesEncrypt(plainText: plainText, secretKey: secretKey);
 
+//TODO fix issue in pgpEncrypt function
   final encryptedSecret = await pgpEncrypt(plainText: secretKey, keys: keys);
 
   final signature = await sign(
-      message: cipherText, privateKey: privateKeyArmored, publicKey: publicKey);
+      message: cipherText,
+      privateKey: senderPgpPrivateKey,
+      publicKey: publicKey);
 
   return {
     'cipherText': cipherText,
@@ -116,7 +121,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
               receiverCreatedUser.publicKey!,
               senderCreatedUser.publicKey!
             ],
-            privateKeyArmored: senderCreatedUser.privateKey!,
+            senderPgpPrivateKey: senderCreatedUser.privateKey!,
             publicKey: senderCreatedUser.publicKey!);
 
         return IEncryptedRequest(
@@ -146,7 +151,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
       final response = await encryptAndSign(
           plainText: message,
           keys: publicKeys,
-          privateKeyArmored: senderCreatedUser.privateKey!,
+          senderPgpPrivateKey: senderCreatedUser.privateKey!,
           publicKey: senderCreatedUser.publicKey!);
 
       return IEncryptedRequest(
