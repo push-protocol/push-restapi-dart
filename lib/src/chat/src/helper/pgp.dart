@@ -11,23 +11,15 @@ String removeVersionFromPublicKey(String key) {
 
 Future<KeyPair> generateKeyPair() async {
   try {
-    print("here");
-    try{
     final keyOptions = KeyOptions()
       ..algorithm = Algorithm.RSA
       ..rsaBits = 2048;
-      
 
-    final keyPair = await OpenPGP.generate(
-        options: Options()
-          ..keyOptions = keyOptions);
+    final keyPair =
+        await OpenPGP.generate(options: Options()..keyOptions = keyOptions);
     keyPair.privateKey = removeVersionFromPublicKey(keyPair.privateKey);
     keyPair.publicKey = removeVersionFromPublicKey(keyPair.publicKey);
     return keyPair;
-    } catch(error){
-      print("error");
-      throw Exception(error);
-    }
   } catch (error) {
     print(error);
     throw Exception(error);
@@ -38,7 +30,8 @@ Future<String> sign(
     {required String message,
     required String publicKey,
     required String privateKey}) async {
-  final signatureWithVersion =  await OpenPGP.sign(message, publicKey, privateKey, "");
+  final signatureWithVersion =
+      await OpenPGP.sign(message, publicKey, privateKey, "");
   return removeVersionFromPublicKey(signatureWithVersion);
 }
 

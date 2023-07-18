@@ -69,10 +69,8 @@ Future<User?> createUserEmpty({required String accountAddress}) async {
     "sigType": "pgp"
   };
 
-  print(data);
-
   final result = await http.post(path: '/v2/users', data: data);
-  print(result);
+
   if (result == null) {
     return null;
   } else if (result is String) {
