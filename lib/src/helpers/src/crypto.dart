@@ -115,7 +115,7 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
 
       encryptedPrivateKey = await encryptV2(
         data: encodedPrivateKey,
-        secret: utf8.encode(secret),
+        secret: hexToBytesInternal(secret),
       );
 
       encryptedPrivateKey.version = encryptionType;
@@ -180,9 +180,11 @@ Future<EncryptedPrivateKeyModel> encryptV2(
     secretKey: key,
     nonce: nonce,
   );
-
+  List<int> combinedCipherBytes = [];
+  combinedCipherBytes.addAll(secretBox.cipherText);
+  combinedCipherBytes.addAll(secretBox.mac.bytes);
   return EncryptedPrivateKeyModel(
-      ciphertext: bytesToHex(secretBox.cipherText),
+      ciphertext: bytesToHex(combinedCipherBytes),
       salt: bytesToHex(salt),
       nonce: bytesToHex(nonce));
 }
@@ -360,7 +362,6 @@ Future<String> decryptPGPKey({
           final secret = signed['verificationProof'];
           final secretBytes = hexToBytesInternal(secret ?? '');
           // final secretBytes = utf8.encode(secret); //  hexToBytes(secret ?? '');
-
           final encodedPrivateKey = await decryptV2(
             encryptedData: EncryptedPrivateKeyModel.fromJson(
                 jsonDecode(encryptedPGPPrivateKey)),

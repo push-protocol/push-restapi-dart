@@ -1,50 +1,57 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
-
+import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
 
-import '__lib.dart';
+import 'functions/chat/create_group.dart';
+import 'functions/chat/create_profile.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // // testFetchP2PChat();
+  // // testFetchChats();
+  // // testCreatPushProfile();
+  testCreateGroup();
 
-  const mnemonic =
-      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
-  final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-  final signer = EthersSigner(
-    ethersWallet: ethersWallet,
-    address: ethersWallet.address!,
-  );
+  // WidgetsFlutterBinding.ensureInitialized();
 
-  print('walletMnemonic.address: ${ethersWallet.address}');
-  final user = await getUser(address: ethersWallet.address!);
+  // const mnemonic =
+  //     'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
+  // final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
+  // final signer = EthersSigner(
+  //   ethersWallet: ethersWallet,
+  //   address: ethersWallet.address!,
+  // );
 
-  if (user == null) {
-    print('Cannot get user');
-    return;
-  }
+  // print('walletMnemonic.address: ${ethersWallet.address}');
+  // final user = await getUser(address: ethersWallet.address!);
 
-  String? pgpPrivateKey = null;
-  if (user.encryptedPrivateKey != null) {
-    pgpPrivateKey = await decryptPGPKey(
-      encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-      wallet: getWallet(signer: signer),
-    );
-  }
+  // if (user == null) {
+  //   print('Cannot get user');
+  //   return;
+  // }
 
-  print('pgpPrivateKey: $pgpPrivateKey');
+  // String? pgpPrivateKey = null;
+  // if (user.encryptedPrivateKey != null) {
+  //   pgpPrivateKey = await decryptPGPKey(
+  //     encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+  //     wallet: getWallet(signer: signer),
+  //   );
+  // }
 
-  final pushWallet = Wallet(
-    address: ethersWallet.address,
-    signer: signer,
-    pgpPrivateKey: pgpPrivateKey,
-  );
+  // print('pgpPrivateKey: $pgpPrivateKey');
 
-  await initPush(
-    wallet: pushWallet,
-    env: ENV.staging,
-  );
+  // final pushWallet = Wallet(
+  //   address: ethersWallet.address,
+  //   signer: signer,
+  //   pgpPrivateKey: pgpPrivateKey,
+  // );
 
-  testSend();
+  // await initPush(
+  //   wallet: pushWallet,
+  //   env: ENV.staging,
+  // );
+
+  // testSend();
 
   // runApp(
   //   MaterialApp(

@@ -203,7 +203,7 @@ Future<Map<String, dynamic>> getEip191Signature(
   final signature = await wallet.signer?.getEip191Signature(message) ?? "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-
+  print(signature);
   return {'verificationProof': '$sigType:$signature'};
 }
 

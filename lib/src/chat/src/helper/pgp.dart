@@ -1,24 +1,38 @@
 import 'package:openpgp/openpgp.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-Future<KeyPair> generateKeyPair() async {
-  final keyOptions = KeyOptions()
-    ..algorithm = Algorithm.RSA
-    ..rsaBits = 2048;
+String removeVersionFromPublicKey(String key) {
+  List<String> lines = key.split('\n');
 
-  final keyPair = await OpenPGP.generate(
-      options: Options()
-        ..name = ''
-        ..email = ''
-        ..keyOptions = keyOptions);
-  return keyPair;
+  lines.removeWhere((line) => line.trim().startsWith('Version:'));
+
+  return lines.join('\n');
+}
+
+Future<KeyPair> generateKeyPair() async {
+  try {
+    final keyOptions = KeyOptions()
+      ..algorithm = Algorithm.RSA
+      ..rsaBits = 2048;
+
+    final keyPair =
+        await OpenPGP.generate(options: Options()..keyOptions = keyOptions);
+    keyPair.privateKey = removeVersionFromPublicKey(keyPair.privateKey);
+    keyPair.publicKey = removeVersionFromPublicKey(keyPair.publicKey);
+    return keyPair;
+  } catch (error) {
+    print(error);
+    throw Exception(error);
+  }
 }
 
 Future<String> sign(
     {required String message,
     required String publicKey,
     required String privateKey}) async {
-  return await OpenPGP.sign(message, publicKey, privateKey, "");
+  final signatureWithVersion =
+      await OpenPGP.sign(message, publicKey, privateKey, "");
+  return removeVersionFromPublicKey(signatureWithVersion);
 }
 
 Future<String> pgpEncrypt({
@@ -31,7 +45,6 @@ Future<String> pgpEncrypt({
     plainText,
     combinedPGPKey,
   );
-
   return encrypted;
 }
 
