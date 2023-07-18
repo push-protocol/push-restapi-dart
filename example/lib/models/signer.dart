@@ -49,19 +49,6 @@ class EthersSigner extends push.Signer {
       return message;
     }
   }
-
-  @override
-  getChainId() {
-    if (ethersWallet.hdNode?.chainCode == null) {
-      throw Exception('SignerPrivateKey getChainId(): Invaid Chain Code');
-    }
-    return ethersWallet.hdNode?.chainCode ?? '';
-  }
-
-  @override
-  Future<String> signTypedData({domain, types, value}) {
-    throw UnimplementedError();
-  }
 }
 
 class Web3Signer extends push.Signer {
@@ -72,12 +59,6 @@ class Web3Signer extends push.Signer {
   @override
   String getAddress() {
     return this.credentials.address.hex;
-  }
-
-  @override
-  getChainId() {
-    // TODO: implement getChainId
-    throw UnimplementedError();
   }
 
   @override
@@ -100,11 +81,5 @@ class Web3Signer extends push.Signer {
     final sig =
         credentials.signPersonalMessageToUint8List(Uint8List.fromList(m));
     return utf8.decode(sig);
-  }
-
-  @override
-  Future<String> signTypedData({domain, types, value}) {
-    // TODO: implement signTypedData
-    throw UnimplementedError();
   }
 }
