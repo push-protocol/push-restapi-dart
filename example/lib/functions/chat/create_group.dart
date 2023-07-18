@@ -15,8 +15,8 @@ void testCreateGroup() async {
 
   final result = await push.createGroup(
       signer: signer,
-      groupName: "1212121212dasdasdad",
-      groupDescription: "1212121212dasdasdad",
+      groupName: "Testing dart",
+      groupDescription: "Testing dart",
       groupImage: "asdads",
       members: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
       admins: ["eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"],

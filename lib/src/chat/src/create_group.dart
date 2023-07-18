@@ -49,15 +49,15 @@ createGroup({
       'numberOfNFTs': numberOfNFTs ?? 0,
       'contractAddressERC20': contractAddressERC20,
       'numberOfERC20': numberOfERC20 ?? 0,
-      'groupCreator': address,
+      'groupCreator': "eip155:$address",
     };
 
     final hash = generateHash(bodyToBeHashed);
     final publicKeyJSON = jsonDecode(connectedUser!.user.publicKey!);
     final signature = await sign(
       message: hash,
-      privateKey: connectedUser!.privateKey!,
-      publicKey: publicKeyJSON["key"],
+      privateKey: connectedUser.privateKey!,
+      publicKey: publicKeyJSON["key"]?? connectedUser.user.publicKey!,
     );
 
     const sigType = 'pgp';
@@ -88,7 +88,6 @@ createGroup({
     if (result == null) {
       throw Exception(result);
     }
-
     return GroupDTO.fromJson(result);
   } catch (e) {
     log("[Push SDK] - API  - Error - API createGroup -: $e ");
