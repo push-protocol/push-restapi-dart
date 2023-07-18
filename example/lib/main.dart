@@ -1,9 +1,5 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart';
-import '__lib.dart';
-import 'package:ethers/signers/wallet.dart' as ether;
 
 import 'functions/chat/create_group.dart';
-import 'functions/chat/create_profile.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();

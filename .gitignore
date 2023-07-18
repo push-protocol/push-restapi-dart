@@ -13,3 +13,5 @@ pubspec.lock
 /example/.flutter-plugins-dependencies
 
 .flutter-plugins-dependencies
+
+build/

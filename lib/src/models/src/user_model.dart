@@ -26,9 +26,6 @@ abstract class Signer {
 
   /// Returns the signed-message.
   Future<String> signMessage(String message);
-
-  getChainId();
-  Future<String> signTypedData({dynamic domain, dynamic types, dynamic value});
 }
 
 class ConnectedUser extends User {
