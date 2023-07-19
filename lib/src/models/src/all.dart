@@ -1,4 +1,6 @@
 // the type for the the response of the input data to be parsed
+// ignore_for_file: constant_identifier_names, empty_constructor_bodies
+
 import '../../../push_restapi_dart.dart';
 
 class ApiNotificationType {
@@ -128,6 +130,7 @@ class GroupDTO {
   DateTime? scheduleAt;
   DateTime? scheduleEnd;
   String groupType;
+  ChatStatus? status;
 
   GroupDTO({
     required this.members,
@@ -146,6 +149,7 @@ class GroupDTO {
     this.scheduleAt,
     this.scheduleEnd,
     required this.groupType,
+    this.status,
   });
 
   Map<String, dynamic> toJson() {
@@ -167,6 +171,7 @@ class GroupDTO {
     data['scheduleAt'] = scheduleAt?.toIso8601String();
     data['scheduleEnd'] = scheduleEnd?.toIso8601String();
     data['groupType'] = groupType;
+    data['status'] = chatStringFromChatStatus(status);
     return data;
   }
 
@@ -194,7 +199,127 @@ class GroupDTO {
         scheduleEnd = json['scheduleEnd'] != null
             ? DateTime.parse(json['scheduleEnd'])
             : null,
-        groupType = json['groupType'];
+        groupType = json['groupType'],
+        status = json['status'] != null
+            ? chatStatusFromString(json['status'])
+            : null;
+}
+
+class SpaceDTO {
+  List<SpaceMemberDTO> members;
+  List<SpaceMemberDTO> pendingMembers;
+  String? contractAddressERC20;
+  int numberOfERC20;
+  String? contractAddressNFT;
+  int numberOfNFTTokens;
+  String verificationProof;
+  String? spaceImage;
+  String spaceName;
+  bool isPublic;
+  String? spaceDescription;
+  String spaceCreator;
+  String spaceId;
+  DateTime? scheduleAt;
+  DateTime? scheduleEnd;
+  ChatStatus? status;
+
+  SpaceDTO({
+    required this.members,
+    required this.pendingMembers,
+    this.contractAddressERC20,
+    required this.numberOfERC20,
+    this.contractAddressNFT,
+    required this.numberOfNFTTokens,
+    required this.verificationProof,
+    this.spaceImage,
+    required this.spaceName,
+    required this.isPublic,
+    this.spaceDescription,
+    required this.spaceCreator,
+    required this.spaceId,
+    this.scheduleAt,
+    this.scheduleEnd,
+    this.status,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['members'] = members.map((member) => member.toJson()).toList();
+    data['pendingMembers'] =
+        pendingMembers.map((member) => member.toJson()).toList();
+    data['contractAddressERC20'] = contractAddressERC20;
+    data['numberOfERC20'] = numberOfERC20;
+    data['contractAddressNFT'] = contractAddressNFT;
+    data['numberOfNFTTokens'] = numberOfNFTTokens;
+    data['verificationProof'] = verificationProof;
+    data['spaceImage'] = spaceImage;
+    data['spaceName'] = spaceName;
+    data['isPublic'] = isPublic;
+    data['spaceDescription'] = spaceDescription;
+    data['spaceCreator'] = spaceCreator;
+    data['spaceId'] = spaceId;
+    data['scheduleAt'] = scheduleAt?.toIso8601String();
+    data['scheduleEnd'] = scheduleEnd?.toIso8601String();
+    data['status'] = status;
+    return data;
+  }
+
+  SpaceDTO.fromJson(Map<String, dynamic> json)
+      : members = (json['members'] as List)
+            .map((member) => SpaceMemberDTO.fromJson(member))
+            .toList(),
+        pendingMembers = (json['pendingMembers'] as List)
+            .map((member) => SpaceMemberDTO.fromJson(member))
+            .toList(),
+        contractAddressERC20 = json['contractAddressERC20'],
+        numberOfERC20 = json['numberOfERC20'],
+        contractAddressNFT = json['contractAddressNFT'],
+        numberOfNFTTokens = json['numberOfNFTTokens'],
+        verificationProof = json['verificationProof'],
+        spaceImage = json['spaceImage'],
+        spaceName = json['spaceName'],
+        isPublic = json['isPublic'],
+        spaceDescription = json['spaceDescription'],
+        spaceCreator = json['spaceCreator'],
+        spaceId = json['spaceId'],
+        scheduleAt = json['scheduleAt'] != null
+            ? DateTime.parse(json['scheduleAt'])
+            : null,
+        scheduleEnd = json['scheduleEnd'] != null
+            ? DateTime.parse(json['scheduleEnd'])
+            : null,
+        status = json['status'] != null
+            ? chatStatusFromString(json['status'])
+            : null;
+}
+
+class SpaceMemberDTO {
+  String wallet;
+  String publicKey;
+  bool isSpeaker;
+  String image;
+
+  SpaceMemberDTO({
+    required this.wallet,
+    required this.publicKey,
+    required this.isSpeaker,
+    required this.image,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['wallet'] = wallet;
+    data['publicKey'] = publicKey;
+    data['isSpeaker'] = isSpeaker;
+    data['image'] = image;
+    return data;
+  }
+
+  SpaceMemberDTO.fromJson(Map<String, dynamic> json)
+      : wallet = json['wallet'],
+        publicKey = json['publicKey'],
+        isSpeaker = json['isSpeaker'],
+        image = json['image'];
 }
 
 class MemberDTO {
@@ -224,6 +349,41 @@ class MemberDTO {
         publicKey = json['publicKey'],
         isAdmin = json['isAdmin'],
         image = json['image'];
+}
+
+enum ChatStatus {
+  ACTIVE,
+  PENDING,
+  ENDED,
+}
+
+ChatStatus chatStatusFromString(String status) {
+  switch (status) {
+    case 'ACTIVE':
+      return ChatStatus.ACTIVE;
+    case 'PENDING':
+      return ChatStatus.PENDING;
+    case 'ENDED':
+      return ChatStatus.ENDED;
+    default:
+      throw ArgumentError('Invalid string for ChatStatus');
+  }
+}
+
+String? chatStringFromChatStatus(ChatStatus? status) {
+  if (status == null) {
+    return null;
+  }
+  switch (status) {
+    case ChatStatus.ACTIVE:
+      return 'ACTIVE';
+    case ChatStatus.PENDING:
+      return 'PENDING';
+    case ChatStatus.ENDED:
+      return 'ENDED';
+    default:
+      throw ArgumentError('Invalid ChatStatus');
+  }
 }
 
 class Subscribers {

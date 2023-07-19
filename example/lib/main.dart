@@ -1,12 +1,13 @@
+import 'package:example/functions/space/create_space.dart';
 
-import 'functions/chat/create_group.dart';
+import 'functions/space/update_space.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // // testFetchP2PChat();
   // // testFetchChats();
   // // testCreatPushProfile();
-  testCreateGroup();
+  testUpdateSpace();
 
   // WidgetsFlutterBinding.ensureInitialized();
 
