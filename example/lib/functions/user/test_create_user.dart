@@ -10,14 +10,14 @@ void testCreateUserFromMnemonics() async {
   const mnemonic =
       'wink cancel juice stem alert gesture rally pupil evidence top night fury';
   final ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
-  final w = EthersSigner(
+  final walletSigner = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
   );
 
   try {
     final result = await push.createUser(
-      signer: w,
+      signer: walletSigner,
       progressHook: (push.ProgressHookType progress) {
         print(progress.progressInfo);
       },
