@@ -8,9 +8,11 @@ import 'functions/chat/create_profile.dart';
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // // testFetchP2PChat();
-  // // testFetchChats();
+  // testFetchChats();
   // // testCreatPushProfile();
-  testCreateGroup();
+  // testCreateGroup();
+  testSend();
+  // testApproveIntent();
 
   // WidgetsFlutterBinding.ensureInitialized();
 

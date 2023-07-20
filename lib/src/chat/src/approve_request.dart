@@ -57,6 +57,5 @@ Future<String?> approve({
     path: '/v1/chat/request/accept',
     data: body,
   );
-
   return result?['data'];
 }
