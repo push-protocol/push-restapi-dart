@@ -24,7 +24,7 @@ class Api {
 
   static final Map<ENV, String> _apiBaseUrlMap = {
     ENV.prod: 'https://backend.epns.io/apis',
-    ENV.staging: 'http://localhost:4000/apis',
+    ENV.staging: 'https://backend-staging.epns.io/apis',
     ENV.dev: 'https://backend-dev.epns.io/apis',
     /**
    * **This is for local development only**

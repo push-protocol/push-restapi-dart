@@ -56,6 +56,7 @@ Future<String?> approve({
   final result = await http.put(
     path: '/v1/chat/request/accept',
     data: body,
+    skipJsonDecode: true
   );
   return result?['data'];
 }
