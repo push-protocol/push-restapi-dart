@@ -125,8 +125,9 @@ Future<IEncryptedRequest?> getEncryptedRequest({
     } else {
       // It's possible for a user to be created but the PGP keys still not created
 
-      if (receiverCreatedUser !=null &&  !receiverCreatedUser!.publicKey!
-          .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
+      if (receiverCreatedUser != null &&
+          !receiverCreatedUser.publicKey!
+              .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
         final signature = await signMessageWithPGP(
           message: message,
           publicKey: senderCreatedUser.publicKey!,

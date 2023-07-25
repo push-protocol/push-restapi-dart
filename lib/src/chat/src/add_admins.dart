@@ -1,4 +1,4 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
+import '../../../push_restapi_dart.dart' as push;
 
 import '../../../push_restapi_dart.dart';
 
