@@ -125,7 +125,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
     } else {
       // It's possible for a user to be created but the PGP keys still not created
 
-      if (!receiverCreatedUser!.publicKey!
+      if (receiverCreatedUser !=null &&  !receiverCreatedUser!.publicKey!
           .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
         final signature = await signMessageWithPGP(
           message: message,
@@ -142,7 +142,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
         final response = await encryptAndSign(
             plainText: message,
             keys: [
-              receiverCreatedUser.publicKey!,
+              receiverCreatedUser!.publicKey!,
               senderCreatedUser.publicKey!
             ],
             senderPgpPrivateKey: senderCreatedUser.privateKey!,
@@ -227,7 +227,6 @@ Future<Map<String, dynamic>> getEip191Signature(
   final signature = await wallet.signer?.getEip191Signature(message) ?? "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-  print(signature);
   return {'verificationProof': '$sigType:$signature'};
 }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../../push_restapi_dart.dart';
 
 String walletToPCAIP10(String account) {
@@ -44,7 +45,7 @@ SpaceDTO groupDtoToSpaceDto(GroupDTO groupDto) {
     spaceDescription: groupData['groupDescription'],
     spaceCreator: groupData['groupCreator'],
     spaceId: groupData['chatId'],
-    scheduleAt:  groupData['scheduleAt'] != null
+    scheduleAt: groupData['scheduleAt'] != null
         ? DateTime.parse(groupData['scheduleAt'])
         : null,
     scheduleEnd: groupData['scheduleEnd'] != null
@@ -106,4 +107,18 @@ List<String> getSpaceAdminsList(
 
   final adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
   return adminList;
+}
+
+String getPublicKeyFromString(String pgpPublicKeyString) {
+  if (pgpPublicKeyString.isEmpty) {
+    return pgpPublicKeyString;
+  }
+  dynamic pgpPublicKeyJson;
+  try {
+    pgpPublicKeyJson = jsonDecode(pgpPublicKeyString);
+    pgpPublicKeyJson = pgpPublicKeyJson["key"] ?? pgpPublicKeyString;
+    return pgpPublicKeyJson;
+  } catch (error) {
+    return pgpPublicKeyString;
+  }
 }

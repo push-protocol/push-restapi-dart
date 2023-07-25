@@ -5,6 +5,11 @@ import 'functions/space/update_space.dart';
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // // testFetchP2PChat();
+  // testFetchChats();
+  // // testCreatPushProfile();
+  // testCreateGroup();
+  testSend();
+  // testApproveIntent();
   // // testFetchChats();
   // // testCreatPushProfile();
   testUpdateSpace();

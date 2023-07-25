@@ -81,6 +81,7 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
+      log('isFailure : ${isFailure(response.statusCode)}');
 
       if (skipJsonDecode || isFailure(response.statusCode)) {
         return response.body;
@@ -100,6 +101,7 @@ class HttpService {
     String? baseUrl,
     String? authorization,
     required String path,
+    bool skipJsonDecode = false,
   }) async {
     http_package.Response? response;
     try {
@@ -113,7 +115,8 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
-      if (response.body.isNotEmpty && response.statusCode != 400) {
+      log('isFailure : ${isFailure(response.statusCode)}');
+      if (skipJsonDecode || isFailure(response.statusCode)) {
         return response.body;
       }
       return json.decode(response.body);
@@ -124,11 +127,12 @@ class HttpService {
     }
   }
 
-  Future<Map<String, dynamic>?> put({
+  Future<dynamic> put({
     String? baseUrl,
     String? authorization,
     required String path,
     var data,
+    bool skipJsonDecode = false,
   }) async {
     http_package.Response? response;
     try {
@@ -144,6 +148,10 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
+      log('isFailure : ${isFailure(response.statusCode)}');
+      if (skipJsonDecode || isFailure(response.statusCode)) {
+        return response.body;
+      }
       if (response.body.isEmpty) {
         return <String, dynamic>{};
       }
@@ -154,12 +162,12 @@ class HttpService {
     }
   }
 
-  Future<Map<String, dynamic>?> delete({
+  Future<dynamic> delete({
     String? baseUrl,
     String? authorization,
     required String path,
     String? id,
-    bool check401 = true,
+    bool skipJsonDecode = false,
   }) async {
     http_package.Response? response;
     try {
@@ -173,6 +181,9 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
+      if (skipJsonDecode || isFailure(response.statusCode)) {
+        return response.body;
+      }
       if (response.body.isEmpty) {
         return <String, dynamic>{};
       }

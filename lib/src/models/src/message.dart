@@ -72,8 +72,8 @@ class Message {
 
 class MessageWithCID {
   String cid;
-  String chatId;
-  String link;
+  String? chatId;
+  String? link;
   String fromCAIP10;
   String toCAIP10;
   String fromDID;
@@ -89,8 +89,8 @@ class MessageWithCID {
 
   MessageWithCID({
     required this.cid,
-    required this.chatId,
-    required this.link,
+    this.chatId,
+    this.link,
     required this.fromCAIP10,
     required this.toCAIP10,
     required this.fromDID,
