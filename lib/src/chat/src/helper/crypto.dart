@@ -28,6 +28,30 @@ Future<List<Feeds>> decryptFeeds({
   return updatedFeeds;
 }
 
+Future<List<SpaceFeeds>> decryptSpaceFeeds({
+  required List<SpaceFeeds> feeds,
+  required User connectedUser,
+  required String pgpPrivateKey,
+}) async {
+  final updatedFeeds = <SpaceFeeds>[];
+
+  for (var feed in feeds) {
+    final msg = feed.msg!;
+
+    if (msg.encType == 'pgp') {
+      feed.msg?.messageContent = await decryptMessage(
+        privateKeyArmored: pgpPrivateKey,
+        message: msg,
+      );
+      updatedFeeds.add(feed);
+    } else {
+      updatedFeeds.add(feed);
+    }
+  }
+
+  return updatedFeeds;
+}
+
 Future<String> signMessageWithPGP(
     {required String message,
     required String publicKey,
