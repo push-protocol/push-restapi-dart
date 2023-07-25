@@ -4,7 +4,7 @@ import 'package:ethers/signers/wallet.dart' as ether;
 
 import '../../models/signer.dart';
 
-void testCreateGroup() async {
+void testCreateSpace() async {
   final ethersWallet = ether.Wallet.fromPrivateKey(
       "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
 
@@ -13,20 +13,18 @@ void testCreateGroup() async {
     address: ethersWallet.address!,
   );
 
-  final result = await push.createGroup(
+  final result = await push.create(
       signer: signer,
-      groupName: "Testing dart - 123",
-      groupDescription: "Testing dart",
-      groupImage: "asdads",
-      members: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
-      admins: ["eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"],
-      isPublic: true);
-
-
-
+      spaceName: "Testing dart - 123567810123",
+      spaceDescription: "Testing dart",
+      spaceImage: "asdads",
+      listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
+      speakers: ["eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"],
+      isPublic: true,
+      scheduleAt: DateTime(2024, 01, 91));
 
   print(result);
   if (result != null) {
-    print('testCreateGroup response: ${result}');
+    print('testCreateSpace response: ${result}');
   }
 }

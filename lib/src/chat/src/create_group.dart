@@ -1,6 +1,7 @@
 import '../../../push_restapi_dart.dart';
 import 'dart:convert';
-createGroup({
+
+Future<GroupDTO?> createGroup({
   String? account,
   Signer? signer,
   required String groupName,
@@ -15,6 +16,9 @@ createGroup({
   int? numberOfERC20,
   String? pgpPrivateKey,
   String? meta,
+  String? groupType,
+  DateTime? scheduleAt,
+  DateTime? scheduleEnd,
 }) async {
   try {
     if (account == null && signer == null) {
@@ -57,12 +61,14 @@ createGroup({
     final signature = await sign(
       message: hash,
       privateKey: connectedUser.privateKey!,
-      publicKey: publicKeyJSON["key"]?? connectedUser.user.publicKey!,
+      publicKey: publicKeyJSON["key"] ?? connectedUser.user.publicKey!,
     );
 
     const sigType = 'pgp';
 
     final String verificationProof = '$sigType:$signature';
+
+    groupType ??= "default";
 
     final body = {
       'groupName': groupName,
@@ -72,12 +78,15 @@ createGroup({
       'admins': admins,
       'isPublic': isPublic,
       'contractAddressNFT': contractAddressNFT,
-      'numberOfNFTs': numberOfNFTs?? 0,
+      'numberOfNFTs': numberOfNFTs ?? 0,
       'contractAddressERC20': contractAddressERC20,
-      'numberOfERC20': numberOfERC20?? 0,
+      'numberOfERC20': numberOfERC20 ?? 0,
       'groupCreator': "eip155:$address",
       'verificationProof': verificationProof,
-      'meta': meta?? "abcd" ,
+      'meta': meta ?? "abcd", // TODO: This should be fixed
+      'groupType': groupType,
+      'scheduleAt': scheduleAt?.toIso8601String(),
+      'scheduleEnd': scheduleEnd?.toIso8601String(),
     };
 
     final result = await http.post(
