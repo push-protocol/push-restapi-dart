@@ -153,13 +153,13 @@ Future<SendMessagePayload> getSendMessagePayload({
           : walletToPCAIP10(options.accountAddress!),
       toDID: validateCAIP(options.receiverAddress)
           ? options.receiverAddress
-          : walletToPCAIP10(options.receiverAddress!),
+          : walletToPCAIP10(options.receiverAddress),
       fromCAIP10: validateCAIP(options.accountAddress!)
           ? options.accountAddress!
           : walletToPCAIP10(options.accountAddress!),
       toCAIP10: validateCAIP(options.receiverAddress)
           ? options.receiverAddress
-          : walletToPCAIP10(options.receiverAddress!),
+          : walletToPCAIP10(options.receiverAddress),
       messageContent: messageConent,
       messageType: options.messageType,
       signature: signature,
