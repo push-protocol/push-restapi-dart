@@ -8,6 +8,6 @@ export 'src/models/models.dart';
 export 'src/chat/chat.dart';
 export 'src/providers/providers.dart';
 export 'src/values/values.dart';
-
+export 'src/payloads/payloads.dart';
 
 export 'src/main.dart';
