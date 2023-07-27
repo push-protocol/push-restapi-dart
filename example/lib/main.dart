@@ -1,3 +1,4 @@
+import 'package:example/__lib.dart';
 
 import 'functions/chat/create_group.dart';
 
@@ -6,7 +7,8 @@ void main() async {
   // // testFetchP2PChat();
   // // testFetchChats();
   // // testCreatPushProfile();
-  testCreateGroup();
+  // testCreateGroup();
+  testSendVideoCallNotification();
 
   // WidgetsFlutterBinding.ensureInitialized();
 
