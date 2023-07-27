@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../push_restapi_dart.dart';
 
 class SendOptions {
@@ -28,7 +30,14 @@ Future<MessageWithCID?> send(SendOptions options) async {
   if (options.accountAddress == null) {
     throw Exception('Account address is required.');
   }
-
+  final isGroup =
+      isValidETHAddress(options.receiverAddress.split(":")[1]) ? false : true;
+  final group =
+      isGroup ? await getGroup(chatId: options.receiverAddress) : null;
+  final conversationResponse = jsonDecode((await conversationHash(
+    conversationId: options.receiverAddress,
+    account: options.accountAddress!,
+  ))!);
   if (!isValidETHAddress(options.accountAddress!)) {
     throw Exception('Invalid address ${options.accountAddress}');
   }
@@ -37,7 +46,7 @@ Future<MessageWithCID?> send(SendOptions options) async {
   if (options.pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
-
+  bool isIntent = !isGroup && conversationResponse["threadHash"] == null;
   await validateSendOptions(options);
   try {
     final senderAcount = await getUser(address: options.accountAddress!);
@@ -53,22 +62,30 @@ Future<MessageWithCID?> send(SendOptions options) async {
         await createUserEmpty(accountAddress: options.receiverAddress);
 
     final sendMessagePayload = await getSendMessagePayload(
-      senderPublicKey: senderAcount.publicKey!,
+      senderPublicKey: getPublicKeyFromString(senderAcount.publicKey!),
       options: options,
-      publicKeys: [senderAcount.publicKey!, receiverAccount!.publicKey!],
+      publicKeys: [
+        getPublicKeyFromString(senderAcount.publicKey!),
+        getPublicKeyFromString(receiverAccount!.publicKey!)
+      ],
     );
-
-    return sendMessageService(sendMessagePayload);
+    return sendMessageService(sendMessagePayload, isIntent);
   } catch (e) {
     log('[Push SDK] - API  - Error - API $e');
     rethrow;
   }
 }
 
-Future<MessageWithCID?> sendMessageService(SendMessagePayload payload) async {
+Future<MessageWithCID?> sendMessageService(
+    SendMessagePayload payload, bool isIntent) async {
   try {
-    final result =
-        await http.post(path: '/v1/chat/message', data: payload.toJson());
+    String apiRoute;
+    if (isIntent) {
+      apiRoute = '/v1/chat/request';
+    } else {
+      apiRoute = '/v1/chat/message';
+    }
+    final result = await http.post(path: apiRoute, data: payload.toJson());
 
     if (result == null) {
       return null;
@@ -127,18 +144,27 @@ Future<SendMessagePayload> getSendMessagePayload({
 
     messageConent = encryptedData['cipherText'] as String;
     encryptedSecret = encryptedData['encryptedSecret'] as String;
-    signature = encryptedData['signature'] as String;
+    signature = removeVersionFromPublicKey(encryptedData['signature']!);
   }
 
   return SendMessagePayload(
-      fromDID: options.accountAddress!,
-      toDID: options.receiverAddress,
-      fromCAIP10: options.accountAddress!,
-      toCAIP10: options.receiverAddress,
+      fromDID: validateCAIP(options.accountAddress!)
+          ? options.accountAddress!
+          : walletToPCAIP10(options.accountAddress!),
+      toDID: validateCAIP(options.receiverAddress)
+          ? options.receiverAddress
+          : walletToPCAIP10(options.receiverAddress),
+      fromCAIP10: validateCAIP(options.accountAddress!)
+          ? options.accountAddress!
+          : walletToPCAIP10(options.accountAddress!),
+      toCAIP10: validateCAIP(options.receiverAddress)
+          ? options.receiverAddress
+          : walletToPCAIP10(options.receiverAddress),
       messageContent: messageConent,
       messageType: options.messageType,
       signature: signature,
+      verificationProof: "pgp:$signature",
       encType: encType,
-      encryptedSecret: encryptedSecret,
+      encryptedSecret: removeVersionFromPublicKey(encryptedSecret),
       sigType: "pgp");
 }

@@ -5,7 +5,7 @@ import 'package:ethers/signers/wallet.dart' as ethers;
 
 void testSend() async {
   const mnemonic =
-      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
+      'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
   final ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
@@ -34,8 +34,8 @@ void testSend() async {
   final options = SendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    messageContent: 'this is a message',
-    receiverAddress: '0x9960D6B63B113303B9910A03ca5341B83CC52723',
+    messageContent: 'Hey again!!!!!7',
+    receiverAddress: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
     receiverPgpPubicKey: '',
   );
 
