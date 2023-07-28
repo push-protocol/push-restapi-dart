@@ -13,7 +13,7 @@ class ApiNotificationType {
 
 class Payload {
   late Apns apns;
-  late Data data;
+  late PayloadData data;
   late Android android;
   late Notification notification;
 }
@@ -37,22 +37,6 @@ class FcmOptions {
   late String image;
 }
 
-class Data {
-  late String app;
-  late String sid;
-  late String url;
-  late String acta;
-  late String aimg;
-  late String amsg;
-  late String asub;
-  late String icon;
-  late String type;
-  late String epoch;
-  late String appbot;
-  late String hidden;
-  late String secret;
-}
-
 class Android {
   late AndroidNotification notification;
 }
@@ -66,46 +50,168 @@ class AndroidNotification {
 
 class SendNotificationInputOptions {
   int? senderType;
-  late dynamic signer;
-  late String type;
-  late String identityType;
+  dynamic signer;
+  NOTIFICATION_TYPE type;
+  IDENTITY_TYPE identityType;
   NotificationOptions? notification;
   PayloadOptions? payload;
-  late dynamic recipients;
-  late String channel;
-  int? expiry;
-  bool? hidden;
+  dynamic recipients;
+  String channel;
   Graph? graph;
   String? ipfsHash;
-  late String env;
   String? chatId;
   String? pgpPrivateKey;
+  String? pgpPublicKey;
+
+  // Constructor with default values
+  SendNotificationInputOptions({
+    this.senderType = 0,
+    this.signer,
+    required this.type,
+    required this.identityType,
+    this.notification,
+    this.payload,
+    this.recipients,
+    required this.channel,
+    this.graph,
+    this.ipfsHash,
+    this.chatId,
+    this.pgpPrivateKey,
+    this.pgpPublicKey,
+  });
 }
 
 class NotificationOptions {
-  late String title;
-  late String body;
+  String title;
+  String body;
+
+  NotificationOptions({required this.title, required this.body});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'body': body,
+    };
+  }
 }
 
 class PayloadOptions {
-  String? sectype;
-  late String title;
-  late String body;
-  late String cta;
-  late String img;
-  dynamic metadata;
-  dynamic additionalMeta;
+  String? sectype; // Used for Secret Notification
+  String title; // Payload title
+  String body; // Payload body
+  String cta; // Click To Action Link
+  String img; // Img associated with notif payload
+  bool? hidden; // Hidden Notif ( not shown in inbox )
+  int? etime; // expiry time
+  bool? silent; // silent ( No push back to delivery nodes )
+  AdditionalMeta? additionalMeta;
+
+  PayloadOptions(
+      {this.sectype,
+      required this.title,
+      required this.body,
+      required this.cta,
+      required this.img,
+      this.hidden,
+      this.etime,
+      this.silent,
+      this.additionalMeta});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sectype': sectype,
+      'title': title,
+      'body': body,
+      'cta': cta,
+      'img': img,
+      'hidden': hidden,
+      'etime': etime,
+      'silent': silent,
+      'additionalMeta': additionalMeta?.toJson(),
+    };
+  }
+}
+
+class AdditionalMeta {
+  String type; // type = `ADDITIONAL_META_TYPE+VERSION` & VERSION > 0
+  String data;
+  String? domain;
+
+  AdditionalMeta(
+      {required this.type, required this.data, this.domain = DEFAULT_DOMAIN});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'data': data,
+      'domain': domain,
+    };
+  }
+}
+
+class NotificationPayload {
+  NotificationOptions notification;
+  PayloadData data;
+  dynamic recipients;
+
+  NotificationPayload({
+    required this.notification,
+    required this.data,
+    required this.recipients,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'notification': notification.toJson(),
+      'data': data.toJson(),
+      'recipients': recipients,
+    };
+  }
+}
+
+class PayloadData {
+  late String acta;
+  late String aimg;
+  late String amsg;
+  late String asub;
+  late String type;
+  late int? etime;
+  late bool? hidden;
+  late bool? silent;
+  late String? sectype;
+  AdditionalMeta? additionalMeta;
+
+  PayloadData(
+      {required this.acta,
+      required this.aimg,
+      required this.amsg,
+      required this.asub,
+      required this.type,
+      this.etime,
+      this.hidden,
+      this.silent,
+      this.sectype,
+      this.additionalMeta});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'acta': acta,
+      'aimg': aimg,
+      'amsg': amsg,
+      'asub': asub,
+      'type': type,
+      'etime': etime,
+      'hidden': hidden,
+      'silent': silent,
+      'sectype': sectype,
+      'additionalMeta': additionalMeta?.toJson(),
+    };
+  }
 }
 
 class Graph {
   late String id;
   late int counter;
-}
-
-class NotificationPayload {
-  late NotificationOptions notification;
-  late Data data;
-  late dynamic recipients;
 }
 
 class Member {
@@ -324,9 +430,9 @@ class SpaceMemberDTO {
 
 class MemberDTO {
   String wallet;
-  String publicKey;
+  String? publicKey;
   bool isAdmin;
-  String image;
+  String? image;
 
   MemberDTO({
     required this.wallet,
