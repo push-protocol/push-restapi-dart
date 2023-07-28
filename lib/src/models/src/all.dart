@@ -225,17 +225,17 @@ class GroupDTO {
   String? contractAddressERC20;
   int numberOfERC20;
   String? contractAddressNFT;
-  int numberOfNFTTokens;
-  String verificationProof;
+  int? numberOfNFTTokens;
+  String? verificationProof;
   String? groupImage;
-  String groupName;
+  String? groupName;
   bool isPublic;
   String? groupDescription;
-  String groupCreator;
-  String chatId;
+  String? groupCreator;
+  String? chatId;
   DateTime? scheduleAt;
   DateTime? scheduleEnd;
-  String groupType;
+  String? groupType;
   ChatStatus? status;
 
   GroupDTO({
