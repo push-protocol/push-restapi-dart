@@ -1,17 +1,20 @@
 import '__lib.dart';
+import 'functions/chat/fetch_paginated_chat.dart';
 import 'functions/space/update_space.dart';
 
 void main() async {
+  testFetchPaginatedChats();
   // WidgetsFlutterBinding.ensureInitialized();
   // // testFetchP2PChat();
   // testFetchChats();
   // // testCreatPushProfile();
   // testCreateGroup();
-  testSend();
+  // testSend();
   // testApproveIntent();
   // // testFetchChats();
   // // testCreatPushProfile();
-  testUpdateSpace();
+  // testUpdateSpace();
+  // testFetchChats();
 
   // WidgetsFlutterBinding.ensureInitialized();
 

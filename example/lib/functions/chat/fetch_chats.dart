@@ -1,36 +1,35 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
+import 'package:ethers/signers/wallet.dart' as ether;
 
-void testFetchChats() async {
-  final result = await chats(
-    toDecrypt: true,
+import '../../models/signer.dart';
+
+void handleProgress(progressType) {
+  print(progressType);
+}
+
+testFetchPaginatedChats() async {
+  const mnemonic =
+      'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
+  final walletMnemonic = ether.Wallet.fromMnemonic(mnemonic);
+  final signer = EthersSigner(
+    ethersWallet: walletMnemonic,
+    address: walletMnemonic.address!,
   );
+  print('walletMnemonic.address: ${walletMnemonic.address}');
+  final user = await getUser(address: walletMnemonic.address!);
 
-  print(result);
-  if (result != null && result.isNotEmpty) {
-    print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
+  String? pvtkey = null;
+  if (user?.encryptedPrivateKey != null) {
+    pvtkey = await decryptPGPKey(
+      encryptedPGPPrivateKey: user!.encryptedPrivateKey!,
+      wallet: getWallet(signer: signer),
+    );
   }
+  print("pgp-pvt-key");
+  print(pvtkey);
+  final userChats = await chats(
+      accountAddress: walletMnemonic.address,
+      pgpPrivateKey: pvtkey,
+      toDecrypt: true);
+  print(userChats);
 }
-
-testAES() {
-  final ciphertextOriginal = "U2FsdGVkX18/SWOonW/UfODCpIrRFuOUKITIvRob3iE=";
-  final key = "XxJNyUTlCFrrbTG";
-
-  final decryptedMessage = "pong";
-
-  final result = aesDecrypt(cipherText: ciphertextOriginal, secretKey: key);
-  print('testAES: result $result, isCorrect: ${result == decryptedMessage}');
-}
-
-testSign() async {
-  try {
-    final result = await signMessageWithPGP(
-        message: 'message',
-        publicKey: '',
-        privateKeyArmored: 'privateKeyArmored');
-
-    print('testSign: result $result');
-  } catch (e) {
-    print('testSign: error ${e}');
-  }
-}
-
