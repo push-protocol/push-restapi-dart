@@ -73,9 +73,9 @@ Future<GroupDTO?> createGroup({
     final body = {
       'groupName': groupName,
       'groupDescription': groupDescription,
-      'members': members,
+      'members': convertedMembersDIDList,
       'groupImage': groupImage,
-      'admins': admins,
+      'admins': convertedAdminsDIDList,
       'isPublic': isPublic,
       'contractAddressNFT': contractAddressNFT,
       'numberOfNFTs': numberOfNFTs ?? 0,
@@ -83,11 +83,13 @@ Future<GroupDTO?> createGroup({
       'numberOfERC20': numberOfERC20 ?? 0,
       'groupCreator': "eip155:$address",
       'verificationProof': verificationProof,
-      'meta': meta ?? "abcd", // TODO: This should be fixed
       'groupType': groupType,
       'scheduleAt': scheduleAt?.toIso8601String(),
       'scheduleEnd': scheduleEnd?.toIso8601String(),
     };
+    if (meta != null) {
+      body['meta'] = meta;
+    }
 
     final result = await http.post(
       path: '/v1/chat/groups',

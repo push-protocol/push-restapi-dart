@@ -175,7 +175,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
 
       final response = await encryptAndSign(
           plainText: message,
-          keys: publicKeys,
+          keys: publicKeys as List<String>,
           senderPgpPrivateKey: senderCreatedUser.privateKey!,
           publicKey: senderCreatedUser.publicKey!);
 

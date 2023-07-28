@@ -61,6 +61,7 @@ class SendNotificationInputOptions {
   String? ipfsHash;
   String? chatId;
   String? pgpPrivateKey;
+  String? pgpPublicKey;
 
   // Constructor with default values
   SendNotificationInputOptions({
@@ -76,6 +77,7 @@ class SendNotificationInputOptions {
     this.ipfsHash,
     this.chatId,
     this.pgpPrivateKey,
+    this.pgpPublicKey,
   });
 }
 
@@ -84,6 +86,13 @@ class NotificationOptions {
   String body;
 
   NotificationOptions({required this.title, required this.body});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'body': body,
+    };
+  }
 }
 
 class PayloadOptions {
@@ -107,6 +116,20 @@ class PayloadOptions {
       this.etime,
       this.silent,
       this.additionalMeta});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sectype': sectype,
+      'title': title,
+      'body': body,
+      'cta': cta,
+      'img': img,
+      'hidden': hidden,
+      'etime': etime,
+      'silent': silent,
+      'additionalMeta': additionalMeta?.toJson(),
+    };
+  }
 }
 
 class AdditionalMeta {
@@ -116,6 +139,14 @@ class AdditionalMeta {
 
   AdditionalMeta(
       {required this.type, required this.data, this.domain = DEFAULT_DOMAIN});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'data': data,
+      'domain': domain,
+    };
+  }
 }
 
 class NotificationPayload {
@@ -123,10 +154,19 @@ class NotificationPayload {
   PayloadData data;
   dynamic recipients;
 
-  NotificationPayload(
-      {required this.notification,
-      required this.data,
-      required this.recipients});
+  NotificationPayload({
+    required this.notification,
+    required this.data,
+    required this.recipients,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'notification': notification.toJson(),
+      'data': data.toJson(),
+      'recipients': recipients,
+    };
+  }
 }
 
 class PayloadData {
@@ -152,6 +192,21 @@ class PayloadData {
       this.silent,
       this.sectype,
       this.additionalMeta});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'acta': acta,
+      'aimg': aimg,
+      'amsg': amsg,
+      'asub': asub,
+      'type': type,
+      'etime': etime,
+      'hidden': hidden,
+      'silent': silent,
+      'sectype': sectype,
+      'additionalMeta': additionalMeta?.toJson(),
+    };
+  }
 }
 
 class Graph {
@@ -375,9 +430,9 @@ class SpaceMemberDTO {
 
 class MemberDTO {
   String wallet;
-  String publicKey;
+  String? publicKey;
   bool isAdmin;
-  String image;
+  String? image;
 
   MemberDTO({
     required this.wallet,

@@ -117,39 +117,41 @@ Future<String> getVerificationProof({
   required NOTIFICATION_TYPE notificationType,
   required IDENTITY_TYPE identityType,
   required String verifyingContract,
-  required dynamic payload,
+  required NotificationPayload? payload,
   String? ipfsHash,
   Map<String, dynamic> graph = const {},
   required String uuid,
   String? chatId,
   dynamic wallet,
   String? pgpPrivateKey,
-  dynamic env,
+  String? pgpPublicKey,
 }) async {
-  String? message;
+  Map<String, String>? message;
   String? verificationProof;
 
   switch (identityType) {
     case IDENTITY_TYPE.MINIMAL:
       {
-        message =
-            '$identityType+$notificationType+${payload['notification']['title']}+${payload['notification']['body']}';
+        message = {
+          'data':
+              '$identityType+$notificationType+${payload?.notification.title}+${payload?.notification.body}'
+        };
         break;
       }
     case IDENTITY_TYPE.IPFS:
       {
-        message = '1+$ipfsHash';
+        message = {'data': '1+$ipfsHash'};
         break;
       }
     case IDENTITY_TYPE.DIRECT_PAYLOAD:
       {
-        final payloadJSON = jsonEncode(payload);
-        message = '2+$payloadJSON';
+        final payloadJSON = jsonEncode(payload?.toJson());
+        message = {'data': '2+$payloadJSON'};
         break;
       }
     case IDENTITY_TYPE.SUBGRAPH:
       {
-        message = '3+graph:${graph['id']}+${graph['counter']}';
+        message = {'data': '3+graph:${graph['id']}+${graph['counter']}'};
         break;
       }
     default:
@@ -171,18 +173,17 @@ Future<String> getVerificationProof({
           'chainId': chainId,
           'verifyingContract': verifyingContract,
         };
-        final signature =
-            await signer._signTypedData(domain, type, {'data': message});
+        final signature = await signer._signTypedData(domain, type, message);
         verificationProof = 'eip712v2:$signature::uid::$uuid';
         break;
       }
     case 1:
       {
-        final hash = sha256.convert(utf8.encode(message)).toString();
+        final hash = generateHash(message);
         final signature = await sign(
           message: hash,
           privateKey: pgpPrivateKey as String,
-          publicKey: "",
+          publicKey: jsonDecode(pgpPublicKey as String)['key'],
         );
         verificationProof = 'pgpv2:$signature:meta:$chatId::uid::$uuid';
         break;

@@ -65,7 +65,8 @@ Future<dynamic> sendNotification(SendNotificationInputOptions options) async {
         payload: notificationPayload,
         uuid: uuid,
         chatId: options.chatId,
-        pgpPrivateKey: options.pgpPrivateKey);
+        pgpPrivateKey: options.pgpPrivateKey,
+        pgpPublicKey: options.pgpPublicKey);
 
     // build identity string
     final String identity = getPayloadIdentity(

@@ -39,9 +39,18 @@ enum IDENTITY_TYPE {
 }
 
 class NOTIFICATION_TYPE {
-  static const int BROADCAST = 1;
-  static const int TARGETTED = 3;
-  static const int SUBSET = 4;
+  static const NOTIFICATION_TYPE BROADCAST = NOTIFICATION_TYPE._(1);
+  static const NOTIFICATION_TYPE TARGETTED = NOTIFICATION_TYPE._(3);
+  static const NOTIFICATION_TYPE SUBSET = NOTIFICATION_TYPE._(4);
+
+  final int value;
+
+  const NOTIFICATION_TYPE._(this.value);
+
+  @override
+  String toString() {
+    return '$value';
+  }
 }
 
 enum ADDITIONAL_META_TYPE {

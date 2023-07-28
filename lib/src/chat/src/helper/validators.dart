@@ -32,10 +32,6 @@ void createGroupRequestValidator({
     }
   }
 
-  if (admins.isEmpty) {
-    throw Exception('admins cannot be null');
-  }
-
   for (int i = 0; i < admins.length; i++) {
     if (!isValidETHAddress(admins[i])) {
       throw Exception('Invalid admin address!');
@@ -62,7 +58,6 @@ void createGroupRequestValidator({
     throw Exception('numberOfERC20 cannot be negative number');
   }
 }
-
 
 void updateGroupRequestValidator(
   String chatId,
