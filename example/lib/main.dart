@@ -7,11 +7,12 @@ void main() async {
   // testFetchChats();
   // // testCreatPushProfile();
   // testCreateGroup();
-  testSend();
+  // testSend();
   // testApproveIntent();
   // // testFetchChats();
   // // testCreatPushProfile();
-  testUpdateSpace();
+  // testUpdateSpace();
+  testSendVideoCallNotification();
 
   // WidgetsFlutterBinding.ensureInitialized();
 
