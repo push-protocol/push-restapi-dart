@@ -2,7 +2,8 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 void testFetchChats() async {
   final result = await chats(
-    toDecrypt: true,
+    accountAddress: 'eip155:0x35B84d6848D16415177c64D64504663b998A6ab4',
+    toDecrypt: false,
   );
 
   print(result);
@@ -33,4 +34,3 @@ testSign() async {
     print('testSign: error ${e}');
   }
 }
-

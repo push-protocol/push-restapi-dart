@@ -23,7 +23,7 @@ Future<List<Feeds>?> requests({
   }
 
   pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
-  if (pgpPrivateKey == null) {
+  if (toDecrypt && pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
 
