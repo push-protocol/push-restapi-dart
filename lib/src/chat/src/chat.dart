@@ -22,7 +22,7 @@ Future<Feeds?> chat({
   }
 
   pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
-  if (pgpPrivateKey == null) {
+  if (toDecrypt && pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
 
