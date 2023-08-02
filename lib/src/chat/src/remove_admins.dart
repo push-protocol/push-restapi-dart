@@ -2,25 +2,25 @@ import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
 import '../../../push_restapi_dart.dart';
 
-Future<GroupDTO?> removeMembers({
+Future<GroupDTO?> removeAdmins({
   required String chatId,
   String? account,
   Signer? signer,
   String? pgpPrivateKey,
-  required List<String> members,
+  required List<String> admins,
 }) async {
   try {
     if (account == null && signer == null) {
       throw Exception('At least one from account or signer is necessary!');
     }
 
-    if (members.isEmpty) {
-      throw Exception("Member address array cannot be empty!");
+    if (admins.isEmpty) {
+      throw Exception("Admin address array cannot be empty!");
     }
 
-    for (var member in members) {
-      if (!isValidETHAddress(member)) {
-        throw Exception('Invalid member address: $member');
+    for (var admin in admins) {
+      if (!isValidETHAddress(admin)) {
+        throw Exception('Invalid admin address: $admin');
       }
     }
 
@@ -33,25 +33,31 @@ Future<GroupDTO?> removeMembers({
     List<String> convertedMembers =
         getMembersList(group.members, group.pendingMembers);
 
-    List<String> membersToBeRemoved =
-        members.map((member) => walletToPCAIP10(member)).toList();
+    List<String> adminsToBeRemoved =
+        admins.map((admin) => walletToPCAIP10(admin)).toList();
 
-    for (var member in membersToBeRemoved) {
-      if (!convertedMembers.contains(member)) {
-        throw Exception('Member $member not present in the list');
+    for (var admin in adminsToBeRemoved) {
+      if (!convertedMembers.contains(admin)) {
+        throw Exception('Member $admin not present in the list');
       }
     }
-
-    convertedMembers = convertedMembers
-        .where((member) => !membersToBeRemoved.contains(member))
-        .toList();
 
     List<String> convertedAdmins =
         getAdminsList(group.members, group.pendingMembers);
 
+    for (var admin in adminsToBeRemoved) {
+      if (!convertedAdmins.contains(admin)) {
+        throw Exception('Admin $admin not present in the list');
+      }
+    }
+
+    convertedMembers
+        .removeWhere((member) => adminsToBeRemoved.contains(member));
+    convertedAdmins.removeWhere((member) => adminsToBeRemoved.contains(member));
+
     final updatedGroup = await push.updateGroup(
         chatId: chatId,
-        groupName: group.groupName,
+        groupName: group.groupName!,
         groupImage: group.groupImage!,
         groupDescription: group.groupDescription!,
         members: convertedMembers,
@@ -64,7 +70,7 @@ Future<GroupDTO?> removeMembers({
 
     return updatedGroup;
   } catch (e) {
-    log("[Push SDK] - API  - Error - API removeMembers -: $e ");
+    log("[Push SDK] - API  - Error - API removeAdmins -: $e ");
     rethrow;
   }
 }

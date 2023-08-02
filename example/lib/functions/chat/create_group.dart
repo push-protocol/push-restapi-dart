@@ -22,9 +22,6 @@ void testCreateGroup() async {
       admins: ["eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"],
       isPublic: true);
 
-
-
-
   print(result);
   if (result != null) {
     print('testCreateGroup response: ${result}');

@@ -29,6 +29,6 @@ class Api {
     /**
    * **This is for local development only**
    */
-    ENV.local: 'http://localhost:4200/apis',
+    ENV.local: 'http://localhost:4000/apis',
   };
 }

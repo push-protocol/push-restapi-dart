@@ -1,68 +1,51 @@
-import 'package:example/functions/space/create_space.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'functions/space/update_space.dart';
+import '__lib.dart';
+import 'package:ethers/signers/wallet.dart' as ether;
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // // testFetchP2PChat();
-  // testFetchChats();
-  // // testCreatPushProfile();
-  // testCreateGroup();
-  testSend();
-  // testApproveIntent();
-  // // testFetchChats();
-  // // testCreatPushProfile();
-  testUpdateSpace();
+  //testSendVideoCallNotification();
 
-  // WidgetsFlutterBinding.ensureInitialized();
+  testFetchChats();
+}
 
-  // const mnemonic =
-  //     'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
-  // final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-  // final signer = EthersSigner(
-  //   ethersWallet: ethersWallet,
-  //   address: ethersWallet.address!,
-  // );
+exampleInit() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // print('walletMnemonic.address: ${ethersWallet.address}');
-  // final user = await getUser(address: ethersWallet.address!);
+  const mnemonic =
+      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
+  final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
+  final signer = EthersSigner(
+    ethersWallet: ethersWallet,
+    address: ethersWallet.address!,
+  );
 
-  // if (user == null) {
-  //   print('Cannot get user');
-  //   return;
-  // }
+  print('walletMnemonic.address: ${ethersWallet.address}');
+  final user = await getUser(address: ethersWallet.address!);
 
-  // String? pgpPrivateKey = null;
-  // if (user.encryptedPrivateKey != null) {
-  //   pgpPrivateKey = await decryptPGPKey(
-  //     encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-  //     wallet: getWallet(signer: signer),
-  //   );
-  // }
+  if (user == null) {
+    print('Cannot get user');
+    return;
+  }
 
-  // print('pgpPrivateKey: $pgpPrivateKey');
+  String? pgpPrivateKey = null;
+  if (user.encryptedPrivateKey != null) {
+    pgpPrivateKey = await decryptPGPKey(
+      encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+      wallet: getWallet(signer: signer),
+    );
+  }
 
-  // final pushWallet = Wallet(
-  //   address: ethersWallet.address,
-  //   signer: signer,
-  //   pgpPrivateKey: pgpPrivateKey,
-  // );
+  print('pgpPrivateKey: $pgpPrivateKey');
 
-  // await initPush(
-  //   wallet: pushWallet,
-  //   env: ENV.staging,
-  // );
+  final pushWallet = Wallet(
+    address: ethersWallet.address,
+    signer: signer,
+    pgpPrivateKey: pgpPrivateKey,
+  );
 
-  // testSend();
-
-  // runApp(
-  //   MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //     title: 'Push',
-  //     theme: ThemeData(
-  //       primarySwatch: Colors.purple,
-  //     ),
-  //     home: HomeScreen(),
-  //   ),
-  // );
+  await initPush(
+    wallet: pushWallet,
+    env: ENV.staging,
+  );
 }

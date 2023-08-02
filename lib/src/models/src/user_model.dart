@@ -19,7 +19,6 @@ class Wallet {
 }
 
 abstract class Signer {
-  String? privateKey;
   Future<String> getEip191Signature(String message);
   Future<String> getEip712Signature(String message);
   String getAddress();

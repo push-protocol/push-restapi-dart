@@ -1,13 +1,12 @@
 name: push_restapi_dart
-description: "Push SDK provides an abstraction layer to integrate Push protocol features with your Frontend as well as Backend."
-version: 0.1.0-alpha
+description: 'Push SDK provides an abstraction layer to integrate Push protocol features with your Frontend as well as Backend.'
+version: 0.1.2-alpha
 homepage: https://docs.push.org/developers
 repository: https://github.com/ethereum-push-notification-service/push-restapi-dart
 
-
 environment:
   sdk: '>=2.19.1 <4.0.0'
-  flutter: ">=3.7.0"
+  flutter: '>=3.7.0'
 
 # dependencies:
 #   path: ^1.8.0
@@ -15,7 +14,6 @@ environment:
 dev_dependencies:
   lints: ^2.0.0
   test: ^1.21.0
-
 
 dependencies:
   flutter:
@@ -32,6 +30,7 @@ dependencies:
   encrypt: ^5.0.1
   stream_video_flutter: ^0.0.1+1
 
+  uuid: ^3.0.4
 
 flutter:
   assets:
