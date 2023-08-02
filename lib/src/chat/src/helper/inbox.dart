@@ -8,10 +8,11 @@ Future<List<Feeds>> getInboxList({
 }) async {
   final List<Feeds> feedsOutputlist = [];
   for (var feed in feedsList) {
-    late Message? message;
+    Message? message;
     if (feed.threadhash != null) {
       message = await getCID(cid: feed.threadhash!);
     }
+
     // This is for groups that are created without any message
     message ??= Message(
       encType: 'PlainText',
@@ -137,7 +138,7 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
   Map<String, String> latestDIDs = {};
 
   for (var chat in chats) {
-    if (isValidCAIP10NFTAddress(chat.did!)) {
+    if (isValidCAIP10NFTAddress(chat.did)) {
       List<String> didParts = chat.did!.split(':');
       String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
       String timestamp = didParts[5];
@@ -152,7 +153,7 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
   }
 
   for (var chat in chats) {
-    if (isValidCAIP10NFTAddress(chat.did!)) {
+    if (isValidCAIP10NFTAddress(chat.did)) {
       List<String> didParts = chat.did!.split(':');
       String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
 
@@ -162,7 +163,6 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
       }
     }
   }
-
   return chats;
 }
 
@@ -170,7 +170,7 @@ List<SpaceFeeds> addDeprecatedInfoSpaceFeeds(List<SpaceFeeds> chats) {
   Map<String, String> latestDIDs = {};
 
   for (var chat in chats) {
-    if (isValidCAIP10NFTAddress(chat.did!)) {
+    if (isValidCAIP10NFTAddress(chat.did)) {
       List<String> didParts = chat.did!.split(':');
       String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
       String timestamp = didParts[5];
@@ -185,7 +185,7 @@ List<SpaceFeeds> addDeprecatedInfoSpaceFeeds(List<SpaceFeeds> chats) {
   }
 
   for (var chat in chats) {
-    if (isValidCAIP10NFTAddress(chat.did!)) {
+    if (isValidCAIP10NFTAddress(chat.did)) {
       List<String> didParts = chat.did!.split(':');
       String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
 
