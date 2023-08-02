@@ -28,6 +28,8 @@ dependencies:
   web3lib: ^2.3.5
   dart_pg: ^1.1.5
   encrypt: ^5.0.1
+  stream_video_flutter: ^0.0.1+1
+
   uuid: ^3.0.4
 
 flutter:
