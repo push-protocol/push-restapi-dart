@@ -9,6 +9,7 @@ void testFetchChats() async {
   print(result);
   if (result != null && result.isNotEmpty) {
     print('testFetchChats messageContent: ${result.first.msg?.messageContent}');
+    print('testFetchChats messageContent: ${result.first.msg?.link}');
   }
 }
 

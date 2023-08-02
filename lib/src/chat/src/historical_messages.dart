@@ -8,13 +8,27 @@ class FetchLimit {
   static const MAX = 30;
 }
 
-Future<List<Message>> history({
+Future<List<Message>?> history({
   required String threadhash,
-  required String accountAddress,
+  String? accountAddress,
   int limit = FetchLimit.DEFAULT,
-  required String pgpPrivateKey,
+  String? pgpPrivateKey,
   bool toDecrypt = false,
 }) async {
+  accountAddress ??= getCachedWallet()?.address;
+  if (accountAddress == null) {
+    throw Exception('Account address is required.');
+  }
+
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address $accountAddress');
+  }
+
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+  if (pgpPrivateKey == null) {
+    throw Exception('Private Key is required.');
+  }
+
   try {
     if (limit < FetchLimit.MIN || limit > FetchLimit.MAX) {
       if (limit < FetchLimit.MIN) {
@@ -24,8 +38,12 @@ Future<List<Message>> history({
       }
     }
 
-    final messages =
-        await getMessagesService(threadhash: threadhash, limit: limit) ?? [];
+    final List<Message>? messages =
+        await getMessagesService(threadhash: threadhash, limit: limit);
+
+    if (messages == null) {
+      return null;
+    }
 
     final updatedMessages = addDeprecatedInfoToMessages(messages);
     final connectedUser =

@@ -1,18 +1,18 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 ///Get the latest chat message
-Future<List<Message>> latest({
+Future<Message?> latest({
   required String threadhash,
-  required String account,
-  int limit = FetchLimit.DEFAULT,
-  required String pgpPrivateKey,
+  String? accountAddress,
+  String? pgpPrivateKey,
   bool toDecrypt = false,
 }) async {
-  return history(
+  return (await history(
     threadhash: threadhash,
-    accountAddress: account,
+    accountAddress: accountAddress,
     pgpPrivateKey: pgpPrivateKey,
     limit: 1,
     toDecrypt: toDecrypt,
-  );
+  ))
+      ?.first;
 }
