@@ -28,6 +28,30 @@ Future<List<Feeds>> decryptFeeds({
   return updatedFeeds;
 }
 
+Future<List<SpaceFeeds>> decryptSpaceFeeds({
+  required List<SpaceFeeds> feeds,
+  required User connectedUser,
+  required String pgpPrivateKey,
+}) async {
+  final updatedFeeds = <SpaceFeeds>[];
+
+  for (var feed in feeds) {
+    final msg = feed.msg!;
+
+    if (msg.encType == 'pgp') {
+      feed.msg?.messageContent = await decryptMessage(
+        privateKeyArmored: pgpPrivateKey,
+        message: msg,
+      );
+      updatedFeeds.add(feed);
+    } else {
+      updatedFeeds.add(feed);
+    }
+  }
+
+  return updatedFeeds;
+}
+
 Future<String> signMessageWithPGP(
     {required String message,
     required String publicKey,
@@ -101,8 +125,9 @@ Future<IEncryptedRequest?> getEncryptedRequest({
     } else {
       // It's possible for a user to be created but the PGP keys still not created
 
-      if (!receiverCreatedUser!.publicKey!
-          .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
+      if (receiverCreatedUser != null &&
+          !receiverCreatedUser.publicKey!
+              .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
         final signature = await signMessageWithPGP(
           message: message,
           publicKey: senderCreatedUser.publicKey!,
@@ -118,7 +143,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
         final response = await encryptAndSign(
             plainText: message,
             keys: [
-              receiverCreatedUser.publicKey!,
+              receiverCreatedUser!.publicKey!,
               senderCreatedUser.publicKey!
             ],
             senderPgpPrivateKey: senderCreatedUser.privateKey!,
@@ -150,7 +175,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
 
       final response = await encryptAndSign(
           plainText: message,
-          keys: publicKeys,
+          keys: publicKeys as List<String>,
           senderPgpPrivateKey: senderCreatedUser.privateKey!,
           publicKey: senderCreatedUser.publicKey!);
 
@@ -203,7 +228,6 @@ Future<Map<String, dynamic>> getEip191Signature(
   final signature = await wallet.signer?.getEip191Signature(message) ?? "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-  print(signature);
   return {'verificationProof': '$sigType:$signature'};
 }
 

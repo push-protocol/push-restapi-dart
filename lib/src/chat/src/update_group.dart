@@ -1,22 +1,26 @@
+import 'dart:convert';
+
 import '../../../push_restapi_dart.dart';
 
-Future<GroupDTO?> updateGroup({
-  String? account,
-  Signer? signer,
-  required String groupName,
-  required String groupDescription,
-  required String groupImage,
-  required List<String> members,
-  required List<String> admins,
-  required bool isPublic,
-  String? contractAddressNFT,
-  int? numberOfNFTs,
-  String? contractAddressERC20,
-  int? numberOfERC20,
-  String? pgpPrivateKey,
-  String? meta,
-  required String chatId,
-}) async {
+Future<GroupDTO?> updateGroup(
+    {required String chatId,
+    String? account,
+    Signer? signer,
+    required String groupName,
+    required String groupDescription,
+    required String groupImage,
+    required List<String> members,
+    required List<String> admins,
+    required bool isPublic,
+    String? contractAddressNFT,
+    int? numberOfNFTs,
+    String? contractAddressERC20,
+    int? numberOfERC20,
+    String? pgpPrivateKey,
+    String? meta,
+    DateTime? scheduleAt,
+    DateTime? scheduleEnd,
+    ChatStatus? status}) async {
   try {
     if (account == null && signer == null) {
       throw Exception('At least one from account or signer is necessary!');
@@ -56,10 +60,11 @@ Future<GroupDTO?> updateGroup({
 
     final hash = generateHash(bodyToBeHashed);
 
+    final publicKeyJSON = jsonDecode(connectedUser!.user.publicKey!);
     final signature = await sign(
       message: hash,
-      privateKey: connectedUser!.user.encryptedPrivateKey!,
-      publicKey: connectedUser.user.publicKey!,
+      privateKey: connectedUser.privateKey!,
+      publicKey: publicKeyJSON["key"] ?? connectedUser.user.publicKey!,
     );
 
     final sigType = 'pgp';
@@ -71,8 +76,10 @@ Future<GroupDTO?> updateGroup({
       'groupDescription': groupDescription,
       'members': convertedMembersDIDList,
       'admins': convertedAdminsDIDList,
-      'address': userDID,
+      'address': 'eip155:$userDID',
       'verificationProof': verificationProof,
+      'scheduleAt': scheduleAt?.toIso8601String(),
+      'scheduleEnd': scheduleEnd?.toIso8601String(),
     };
 
     final result = await http.put(

@@ -22,3 +22,7 @@ export 'src/latest_message.dart';
 export 'src/send.dart';
 export 'src/update_group.dart';
 export 'src/conversation_hash.dart';
+export 'src/add_admins.dart';
+export 'src/add_members.dart';
+export 'src/remove_admins.dart';
+export 'src/remove_members.dart';

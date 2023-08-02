@@ -40,7 +40,10 @@ bool isValidNFTCAIP10Address(String realCAIP10) {
       isAddress(walletComponent[2]);
 }
 
-bool isValidCAIP10NFTAddress(String wallet) {
+bool isValidCAIP10NFTAddress(String? wallet) {
+  if (wallet == null) {
+    return false;
+  }
   try {
     final walletComponent = wallet.split(':');
     return (walletComponent.length == 5 || walletComponent.length == 6) &&
