@@ -4,9 +4,9 @@ import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
 
 void main() async {
-  // testSendVideoCallNotification();
-  await exampleInit();
-  testFetchLatestChat();
+  //testSendVideoCallNotification();
+
+  testFetchChats();
 }
 
 exampleInit() async {

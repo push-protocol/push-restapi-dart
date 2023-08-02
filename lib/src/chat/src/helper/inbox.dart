@@ -3,7 +3,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 Future<List<Feeds>> getInboxList({
   required List<Feeds> feedsList,
   required String user,
-  required String pgpPrivateKey,
+  required String? pgpPrivateKey,
   required bool toDecrypt,
 }) async {
   final List<Feeds> feedsOutputlist = [];
@@ -37,6 +37,10 @@ Future<List<Feeds>> getInboxList({
     if (connectedUser == null) {
       throw Exception('Cannot find user');
     }
+
+    if (pgpPrivateKey == null) {
+      throw Exception('Private cannot be null');
+    }
     return decryptFeeds(
       feeds: feedsOutputlist,
       connectedUser: connectedUser,
@@ -50,7 +54,7 @@ Future<List<Feeds>> getInboxList({
 Future<List<SpaceFeeds>> getSpaceInboxList({
   required List<SpaceFeeds> feedsList,
   required String user,
-  required String pgpPrivateKey,
+  required String? pgpPrivateKey,
   required bool toDecrypt,
 }) async {
   final List<SpaceFeeds> feedsOutputlist = [];
@@ -83,6 +87,10 @@ Future<List<SpaceFeeds>> getSpaceInboxList({
     final connectedUser = await getUser(address: pCAIP10ToWallet(user));
     if (connectedUser == null) {
       throw Exception('Cannot find user');
+    }
+
+    if (pgpPrivateKey == null) {
+      throw Exception('Cannot find pgpPrivateKey');
     }
     return decryptSpaceFeeds(
       feeds: feedsOutputlist,
