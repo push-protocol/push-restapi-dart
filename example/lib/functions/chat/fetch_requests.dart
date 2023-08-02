@@ -9,3 +9,9 @@ void testFetchRequests() async {
         'testFetchRequests messageContent: ${result.first.msg?.messageContent}');
   }
 }
+
+void testApproveRequests() async {
+  final result = await approve(senderAddress: 'senderAddress');
+
+  print(result);
+}

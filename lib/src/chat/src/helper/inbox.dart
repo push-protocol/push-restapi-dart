@@ -224,8 +224,26 @@ List<Message> addDeprecatedInfoToMessages(List<Message> chats) {
   return chats;
 }
 
-decryptConversation({
+Future<List<Message>> decryptConversation({
   required List<Message> messages,
   required User? connectedUser,
   required String pgpPrivateKey,
-}) {}
+}) async {
+  final updatedMessages = <Message>[];
+
+  for (var item in messages) {
+    final msg = item;
+
+    if (msg.encType == 'pgp') {
+      msg.messageContent = await decryptMessage(
+        privateKeyArmored: pgpPrivateKey,
+        message: msg,
+      );
+      updatedMessages.add(msg);
+    } else {
+      updatedMessages.add(msg);
+    }
+  }
+
+  return updatedMessages;
+}
