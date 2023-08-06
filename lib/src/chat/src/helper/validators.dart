@@ -22,10 +22,6 @@ void createGroupRequestValidator({
     throw Exception('groupDescription cannot be more than 150 characters');
   }
 
-  if (members.isEmpty) {
-    throw Exception('members cannot be null');
-  }
-
   for (int i = 0; i < members.length; i++) {
     if (!isValidETHAddress(members[i])) {
       throw Exception('Invalid member address!');
