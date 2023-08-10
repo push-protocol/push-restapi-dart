@@ -2,7 +2,9 @@ import 'dart:convert';
 import '../../../push_restapi_dart.dart';
 
 String walletToPCAIP10(String account) {
-  if (isValidCAIP10NFTAddress(account) || account.contains('eip155:')) {
+  if (account.contains("eip155:") && account.split(':').length == 2)
+    return account;
+  if (isValidCAIP10NFTAddress(account) || validateCAIP(account)) {
     return account;
   }
   return 'eip155:$account';

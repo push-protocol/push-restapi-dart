@@ -40,6 +40,10 @@ bool isValidNFTCAIP10Address(String realCAIP10) {
       isAddress(walletComponent[2]);
 }
 
+bool isGroup(String address) {
+  return !(isValidCAIP10NFTAddress(address) || isValidETHAddress(address) || validateCAIP(address));
+}
+
 bool isValidCAIP10NFTAddress(String? wallet) {
   if (wallet == null) {
     return false;

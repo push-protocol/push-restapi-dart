@@ -9,19 +9,16 @@ class SendOptions {
   String? accountAddress;
   String? pgpPrivateKey;
   String? senderPgpPubicKey;
-  String receiverPgpPubicKey;
 
   SendOptions({
     required this.messageContent,
     this.messageType = MessageType.TEXT,
     required this.receiverAddress,
-    required this.receiverPgpPubicKey,
     this.accountAddress,
     this.pgpPrivateKey,
     this.senderPgpPubicKey,
   }) {
     assert(MessageType.isValidMessageType(messageType));
-    receiverAddress = walletToPCAIP10(receiverAddress);
   }
 }
 
@@ -30,10 +27,9 @@ Future<MessageWithCID?> send(SendOptions options) async {
   if (options.accountAddress == null) {
     throw Exception('Account address is required.');
   }
-  final isGroup =
-      isValidETHAddress(options.receiverAddress.split(":")[1]) ? false : true;
+  final isValidGroup = isGroup(options.receiverAddress);
   final group =
-      isGroup ? await getGroup(chatId: options.receiverAddress) : null;
+      isValidGroup ? await getGroup(chatId: options.receiverAddress) : null;
   final conversationResponse = jsonDecode((await conversationHash(
     conversationId: options.receiverAddress,
     account: options.accountAddress!,
@@ -46,7 +42,7 @@ Future<MessageWithCID?> send(SendOptions options) async {
   if (options.pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
-  bool isIntent = !isGroup && conversationResponse["threadHash"] == null;
+  bool isIntent = !isValidGroup && conversationResponse["threadHash"] == null;
   await validateSendOptions(options);
   try {
     final senderAcount = await getUser(address: options.accountAddress!);
@@ -55,20 +51,31 @@ Future<MessageWithCID?> send(SendOptions options) async {
       throw Exception('Cannot get sender account address .');
     }
     // check if user exists
-    User? receiverAccount = await getUser(address: options.receiverAddress);
-
-    // else create the user frist and send unencrypted intent message
-    receiverAccount ??=
-        await createUserEmpty(accountAddress: options.receiverAddress);
+    User? receiverAccount;
+    List<String> groupReciverAccounts = [];
+    if (!isValidGroup) {
+      receiverAccount = await getUser(address: options.receiverAddress);
+      // else create the user frist and send unencrypted intent message
+      receiverAccount ??=
+          await createUserEmpty(accountAddress: options.receiverAddress);
+    } else {
+      for (int i = 0; i < (group?.members?.length ?? 0); i++) {
+        groupReciverAccounts.add(group!.members[i].publicKey!);
+      }
+      groupReciverAccounts.add(getPublicKeyFromString(senderAcount.publicKey!));
+    }
 
     final sendMessagePayload = await getSendMessagePayload(
-      senderPublicKey: getPublicKeyFromString(senderAcount.publicKey!),
-      options: options,
-      publicKeys: [
-        getPublicKeyFromString(senderAcount.publicKey!),
-        getPublicKeyFromString(receiverAccount!.publicKey!)
-      ],
-    );
+        senderPublicKey: getPublicKeyFromString(senderAcount.publicKey!),
+        options: options,
+        publicKeys: isValidGroup
+            ? groupReciverAccounts
+            : [
+                getPublicKeyFromString(senderAcount.publicKey!),
+                getPublicKeyFromString(receiverAccount!.publicKey!)
+              ],
+        group: group,
+        isValidGroup: isValidGroup);
     return sendMessageService(sendMessagePayload, isIntent);
   } catch (e) {
     log('[Push SDK] - API  - Error - API $e');
@@ -86,7 +93,7 @@ Future<MessageWithCID?> sendMessageService(
       apiRoute = '/v1/chat/message';
     }
     final result = await http.post(path: apiRoute, data: payload.toJson());
-
+    print(result);
     if (result == null) {
       return null;
     }
@@ -121,12 +128,13 @@ validateSendOptions(SendOptions options) async {
   }
 }
 
-Future<SendMessagePayload> getSendMessagePayload({
-  required SendOptions options,
-  required String senderPublicKey,
-  List<String> publicKeys = const [],
-  bool shouldEncrypt = true,
-}) async {
+Future<SendMessagePayload> getSendMessagePayload(
+    {required SendOptions options,
+    required String senderPublicKey,
+    List<String> publicKeys = const [],
+    bool shouldEncrypt = true,
+    GroupDTO? group,
+    bool isValidGroup = false}) async {
   String encType = "PlainText";
   String signature = '';
   String encryptedSecret = '';
@@ -146,20 +154,23 @@ Future<SendMessagePayload> getSendMessagePayload({
     encryptedSecret = encryptedData['encryptedSecret'] as String;
     signature = removeVersionFromPublicKey(encryptedData['signature']!);
   }
-
   return SendMessagePayload(
       fromDID: validateCAIP(options.accountAddress!)
           ? options.accountAddress!
           : walletToPCAIP10(options.accountAddress!),
-      toDID: validateCAIP(options.receiverAddress)
-          ? options.receiverAddress
-          : walletToPCAIP10(options.receiverAddress),
+      toDID: !isValidGroup
+          ? validateCAIP(options.receiverAddress)
+              ? options.receiverAddress
+              : walletToPCAIP10(options.receiverAddress)
+          : group?.chatId ?? '',
       fromCAIP10: validateCAIP(options.accountAddress!)
           ? options.accountAddress!
           : walletToPCAIP10(options.accountAddress!),
-      toCAIP10: validateCAIP(options.receiverAddress)
-          ? options.receiverAddress
-          : walletToPCAIP10(options.receiverAddress),
+      toCAIP10: !isValidGroup
+          ? validateCAIP(options.receiverAddress)
+              ? options.receiverAddress
+              : walletToPCAIP10(options.receiverAddress)
+          : group?.chatId ?? '',
       messageContent: messageConent,
       messageType: options.messageType,
       signature: signature,
