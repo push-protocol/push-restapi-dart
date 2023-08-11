@@ -1,23 +1,13 @@
+import 'package:example/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import '__lib.dart';
+import 'package:ethers/signers/wallet.dart' as ethers;
 import 'package:ethers/signers/wallet.dart' as ether;
 
-void main() async {
-  //testSendVideoCallNotification();
+void testSendToGroup() async {
+  final ethersWallet = ether.Wallet.fromPrivateKey(
+      "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
 
-  // testFetchRequests();
-  // testCreateGroup();
-  // testSendToGroup();
-  testSend();
-}
-
-exampleInit() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  const mnemonic =
-      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
-  final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
@@ -41,14 +31,16 @@ exampleInit() async {
 
   print('pgpPrivateKey: $pgpPrivateKey');
 
-  final pushWallet = Wallet(
-    address: ethersWallet.address,
-    signer: signer,
+
+  final options = SendOptions(
+    accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
+    messageContent: 'Hey again!!!!!7',
+    receiverAddress: '00a886257fd96028f3131c77a2fb11b702bd05465fd19479b9024643167e99e6',
+    // receiverPgpPubicKey: '',
   );
 
-  await initPush(
-    wallet: pushWallet,
-    env: ENV.staging,
-  );
+  final result = await send(options);
+
+  print('testSend result = $result');
 }

@@ -8,3 +8,4 @@ export 'ipfs.dart';
 export 'send.dart';
 export 'approve_intent.dart';
 export 'create_group.dart';
+export 'send_group.dart';
