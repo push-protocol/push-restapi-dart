@@ -71,7 +71,6 @@ class Web3Signer extends push.Signer {
 
   @override
   Future<String> getEip712Signature(String message) {
-    // TODO: implement getEip712Signature
     throw UnimplementedError();
   }
 
