@@ -1,17 +1,19 @@
 import '../../../push_restapi_dart.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
-Future<SpaceDTO?> start({
-  String? account,
+Future<SpaceDTO?> stopSpace({
+  String? accountAddress,
   Signer? signer,
   required String spaceId,
 }) async {
   try {
-    final space = await get(spaceId: spaceId);
+    accountAddress ??= getCachedWallet()?.address;
+    signer ??= getCachedWallet()?.signer;
 
-    if (space.status != ChatStatus.PENDING) {
-      throw Exception(
-          'Unable to start the space as it is not in the pending state');
+    final space = await getSpace(spaceId: spaceId);
+
+    if (space.status != ChatStatus.ENDED) {
+      throw Exception('Space already ended');
     }
 
     final convertedMembers =
@@ -29,7 +31,7 @@ Future<SpaceDTO?> start({
         signer: signer,
         scheduleAt: space.scheduleAt,
         scheduleEnd: space.scheduleEnd,
-        status: ChatStatus.ACTIVE,
+        status: ChatStatus.ENDED,
         isPublic: space.isPublic);
 
     if (group != null) {

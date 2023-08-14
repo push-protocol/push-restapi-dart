@@ -1,4 +1,11 @@
+export 'src/add_listeners.dart';
+export 'src/add_speakers.dart';
 export 'src/create.dart';
-export 'src/update.dart';
 export 'src/get.dart';
+export 'src/remove_listeners.dart';
+export 'src/remove_speakers.dart';
+export 'src/stop_space.dart';
+export 'src/spaces_chats.dart';
+export 'src/start_space.dart';
+export 'src/update.dart';
 export 'src/trending.dart';

@@ -17,7 +17,7 @@ Future<SpaceDTO?> update({
   required ChatStatus status,
 }) async {
   try {
-    final space = await get(spaceId: spaceId);
+    final space = await getSpace(spaceId: spaceId);
 
     if (space.status == ChatStatus.ACTIVE) {
       throw Exception('Unable change the start date/time of an active space');
