@@ -1,12 +1,12 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-///The first time an address wants to send a message to another peer, the address sends an intent request. This first message shall not land in this peer Inbox but in its Request box.
-///This function will return all the chats that landed on the address' Request box. The user can then approve the request or ignore it for now.
+/// Return the latest message from all wallet addresses you have talked to.
+/// This can be used when building the inbox page.
 ///
 ///toDecrypt: If true, the method will return decrypted message content in response
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
-Future<List<SpaceFeeds>?> spaceRequests({
+Future<List<SpaceFeeds>?> spaceFeeds({
   String? accountAddress,
   String? pgpPrivateKey,
   bool toDecrypt = false,
@@ -27,20 +27,24 @@ Future<List<SpaceFeeds>?> spaceRequests({
     throw Exception('Private Key is required.');
   }
 
+  if (!isValidETHAddress(accountAddress)) {
+    throw Exception('Invalid address!');
+  }
+
   try {
-    final String userDID = await getUserDID(address: accountAddress);
+    final userDID = await getUserDID(address: accountAddress);
     final result = await http.get(
-      path: '/v1/spaces/users/$userDID/requests?page=$page&limit=$limit',
+      path: '/v1/spaces/users/$userDID/spaces?page=$page&limit=$limit',
     );
 
-    if (result == null || result['requests'] == null) {
+    if (result == null || result['spaces'] == null) {
       return null;
     }
 
-    final requestList = (result['requests'] as List)
-        .map((e) => SpaceFeeds.fromJson(e))
-        .toList();
-    final updatedChats = addDeprecatedInfoSpaceFeeds(requestList);
+    final chatList =
+        (result['spaces'] as List).map((e) => SpaceFeeds.fromJson(e)).toList();
+    final updatedChats = chatList;
+    addDeprecatedInfoSpaceFeeds(chatList);
     final feedWithInbox = await getSpaceInboxList(
       feedsList: updatedChats,
       user: userDID,
@@ -51,6 +55,6 @@ Future<List<SpaceFeeds>?> spaceRequests({
     return feedWithInbox;
   } catch (e) {
     log(e);
-    throw Exception('[Push SDK] - API requests: $e');
+    throw Exception('[Push SDK] - API chats: $e');
   }
 }

@@ -2,20 +2,18 @@ import 'dart:convert';
 
 import '../../../push_restapi_dart.dart';
 
-class SendOptions {
+class ChatSendOptions {
   String messageContent;
   String messageType;
   String receiverAddress;
   String? accountAddress;
   String? pgpPrivateKey;
   String? senderPgpPubicKey;
-  String receiverPgpPubicKey;
 
-  SendOptions({
+  ChatSendOptions({
     required this.messageContent,
     this.messageType = MessageType.TEXT,
     required this.receiverAddress,
-    required this.receiverPgpPubicKey,
     this.accountAddress,
     this.pgpPrivateKey,
     this.senderPgpPubicKey,
@@ -25,15 +23,15 @@ class SendOptions {
   }
 }
 
-Future<MessageWithCID?> send(SendOptions options) async {
+Future<MessageWithCID?> send(ChatSendOptions options) async {
   options.accountAddress ??= getCachedWallet()?.address;
   if (options.accountAddress == null) {
     throw Exception('Account address is required.');
   }
   final isGroup =
       isValidETHAddress(options.receiverAddress.split(":")[1]) ? false : true;
-  final group =
-      isGroup ? await getGroup(chatId: options.receiverAddress) : null;
+  // final group =
+  //     isGroup ? await getGroup(chatId: options.receiverAddress) : null;
   final conversationResponse = jsonDecode((await conversationHash(
     conversationId: options.receiverAddress,
     account: options.accountAddress!,
@@ -97,7 +95,7 @@ Future<MessageWithCID?> sendMessageService(
   }
 }
 
-validateSendOptions(SendOptions options) async {
+validateSendOptions(ChatSendOptions options) async {
   if (options.accountAddress == null) {
     throw Exception('Account address is required.');
   }
@@ -122,7 +120,7 @@ validateSendOptions(SendOptions options) async {
 }
 
 Future<SendMessagePayload> getSendMessagePayload({
-  required SendOptions options,
+  required ChatSendOptions options,
   required String senderPublicKey,
   List<String> publicKeys = const [],
   bool shouldEncrypt = true,

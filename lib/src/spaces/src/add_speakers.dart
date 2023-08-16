@@ -7,15 +7,17 @@ Future<SpaceDTO> addSpeakers({
   String? pgpPrivateKey,
   required List<String> speakers,
 }) async {
+  account ??= getCachedWallet()?.address;
+  signer ??= getCachedWallet()?.signer;
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+  if (account == null && signer == null) {
+    throw Exception('At least one from account or signer is necessary!');
+  }
+  if (speakers.isEmpty) {
+    throw Exception("Speaker address array cannot be empty!");
+  }
+  
   try {
-    if (account == null && signer == null) {
-      throw Exception('At least one from account or signer is necessary!');
-    }
-
-    if (speakers.isEmpty) {
-      throw Exception("Speaker address array cannot be empty!");
-    }
-
     for (var speaker in speakers) {
       if (!isValidETHAddress(speaker)) {
         throw Exception('Invalid speaker address: $speaker');

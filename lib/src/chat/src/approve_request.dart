@@ -5,14 +5,18 @@ Future<String?> approve({
   String? account,
   Signer? signer,
   String? pgpPrivateKey,
-  status = 'Approved',
+  String status = 'Approved',
 }) async {
+  account ??= getCachedWallet()?.address;
+  signer ??= getCachedWallet()?.signer;
   if (account == null && signer == null) {
     throw Exception('At least one from account or signer is necessary!');
   }
+
   final wallet = getWallet(address: account, signer: signer);
   final address = getAccountAddress(wallet);
 
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
@@ -54,9 +58,6 @@ Future<String?> approve({
   };
 
   final result = await http.put(
-    path: '/v1/chat/request/accept',
-    data: body,
-    skipJsonDecode: true
-  );
+      path: '/v1/chat/request/accept', data: body, skipJsonDecode: true);
   return result?['data'];
 }

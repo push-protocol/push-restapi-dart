@@ -20,16 +20,17 @@ dependencies:
     sdk: flutter
   crypto: ^3.0.3
   hex: ^0.2.0
-  http: ^0.13.6
+  # http: ^0.13.6
+  http: ^1.1.0 
   pointycastle: ^3.7.3
   riverpod: ^2.3.6
   openpgp: ^3.5.4
   cryptography: ^2.5.0
-  web3lib: ^2.3.5
   dart_pg: ^1.1.5
   encrypt: ^5.0.1
-  stream_video_flutter: ^0.0.1+1
   flutter_webrtc: ^0.9.36
+
+  livekit_client: ^1.4.1
 
   uuid: ^3.0.4
 

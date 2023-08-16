@@ -31,6 +31,7 @@ class HttpService {
     required String path,
     required data,
     bool skipJsonDecode = false,
+    Map<String, String>? headers,
   }) async {
     http_package.Response? response;
     try {
@@ -42,7 +43,7 @@ class HttpService {
       response = await http_package.post(
         url,
         body: jsonEncode(data),
-        headers: header(authorization),
+        headers: headers ?? header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');

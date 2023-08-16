@@ -10,7 +10,7 @@ Future<SpaceDTO?> stopSpace({
     accountAddress ??= getCachedWallet()?.address;
     signer ??= getCachedWallet()?.signer;
 
-    final space = await getSpace(spaceId: spaceId);
+    final space = await getSpaceById(spaceId: spaceId);
 
     if (space.status != ChatStatus.ENDED) {
       throw Exception('Space already ended');
