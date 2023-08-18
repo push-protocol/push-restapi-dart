@@ -65,12 +65,20 @@ class Video {
             'video': video,
             'audio': audio,
           });
-      setData((oldData) {
-        return produce(oldData, (draft) {
-          draft.local.stream = localStream;
-          draft.local.video = video;
-          draft.local.audio = audio;
-        });
+      providerContainer
+          .read(videoCallStateProvider.notifier)
+          .setData((oldData) {
+        final newLocal = Local(
+          stream: localStream,
+          audio: audio,
+          video: video,
+          address: oldData.local!.address,
+        );
+        return VideoCallData(
+          meta: oldData.meta,
+          local: newLocal,
+          incoming: oldData.incoming,
+        );
       });
     } catch (err) {
       print('error in create: $err');
