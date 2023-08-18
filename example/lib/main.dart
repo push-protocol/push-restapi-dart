@@ -1,3 +1,4 @@
+import 'package:example/functions/video/__video.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '__lib.dart';
@@ -6,7 +7,8 @@ import 'package:ethers/signers/wallet.dart' as ether;
 void main() async {
   //testSendVideoCallNotification();
 
-  testFetchRequests();
+  // testFetchRequests();
+  testVideoInitialise();
 }
 
 exampleInit() async {
