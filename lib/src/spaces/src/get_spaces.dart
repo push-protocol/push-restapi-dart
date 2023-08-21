@@ -6,7 +6,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 ///toDecrypt: If true, the method will return decrypted message content in response
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
-Future<List<SpaceFeeds>?> chats({
+Future<List<SpaceFeeds>?> spaceFeeds({
   String? accountAddress,
   String? pgpPrivateKey,
   bool toDecrypt = false,

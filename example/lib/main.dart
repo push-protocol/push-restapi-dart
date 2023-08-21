@@ -3,13 +3,30 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 void main() async {
   //testSendVideoCallNotification();
 
   // testFetchRequests();
-  // testCreateGroup();
-  // testSendToGroup();
-  testSend();
+  // testVideoInitialise();
+
+  runApp(
+    ProviderScope(
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: HomeScreen(),
+    );
+  }
 }
 
 exampleInit() async {

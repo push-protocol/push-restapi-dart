@@ -202,7 +202,7 @@ Future<Map<String, dynamic>> getEip712Signature(
   // final domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  // TODO
+  
   final signedMessage = "";
 
   final verificationProof = isDomainEmpty

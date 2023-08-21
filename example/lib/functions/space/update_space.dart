@@ -17,7 +17,7 @@ void testUpdateSpace() async {
 
   var uuid = Uuid();
   var spaceName = 'space-' + uuid.v4();
-  final result = await push.create(
+  final result = await push.createSpace(
       signer: signer,
       spaceName: spaceName,
       spaceDescription: "Testing dart",

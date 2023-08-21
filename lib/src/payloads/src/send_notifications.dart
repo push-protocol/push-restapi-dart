@@ -40,7 +40,6 @@ Future<dynamic> sendNotification(SendNotificationInputOptions options) async {
     // generates random uuid
     final String uuid = getUUID();
 
-    // TODO
     final String communicatorContract = '';
     //getPushCommunicatorContractAddress(chainId);
 

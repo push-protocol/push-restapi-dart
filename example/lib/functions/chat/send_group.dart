@@ -1,7 +1,6 @@
 import 'package:example/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'package:ethers/signers/wallet.dart' as ethers;
 import 'package:ethers/signers/wallet.dart' as ether;
 
 void testSendToGroup() async {
@@ -31,12 +30,12 @@ void testSendToGroup() async {
 
   print('pgpPrivateKey: $pgpPrivateKey');
 
-
-  final options = SendOptions(
+  final options = ChatSendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
     messageContent: 'Hey again!!!!!7',
-    receiverAddress: '00a886257fd96028f3131c77a2fb11b702bd05465fd19479b9024643167e99e6',
+    receiverAddress:
+        '00a886257fd96028f3131c77a2fb11b702bd05465fd19479b9024643167e99e6',
     // receiverPgpPubicKey: '',
   );
 

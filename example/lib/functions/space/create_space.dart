@@ -13,7 +13,7 @@ void testCreateSpace() async {
     address: ethersWallet.address!,
   );
 
-  final result = await push.create(
+  final result = await push.createSpace(
       signer: signer,
       spaceName: "Testing dart - 123567810123",
       spaceDescription: "Testing dart",

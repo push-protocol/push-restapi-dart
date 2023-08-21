@@ -31,12 +31,11 @@ void testSend() async {
   print('pgpPrivateKey: $pgpPrivateKey');
 
 
-  final options = SendOptions(
+  final options = ChatSendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
     messageContent: 'Hey again!!!!!7',
     receiverAddress: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
-    receiverPgpPubicKey: '',
   );
 
   final result = await send(options);

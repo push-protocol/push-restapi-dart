@@ -1,4 +1,3 @@
-// import 'dart:html';
 import 'package:webrtc_interface/webrtc_interface.dart';
 
 void restartVideoStream(MediaStream stream) {
