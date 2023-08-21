@@ -1,16 +1,18 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
 import '../__lib.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   Wallet? pushWallet;
 
   connectWallet() async {
@@ -54,6 +56,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  requestPermissions() {
+    Permission.camera.request();
+  }
+
+  onVideo() {
+    final VideoCallData video = ref.read(videoCallStateProvider);
+    try {
+      final optiions = VideoCreateInputOptions();
+      ref.read(videoCallStateProvider.notifier).create(optiions);
+    } catch (e) {}
+  }
+
   final actions = [
     NavItem(
       title: 'Chats',
@@ -67,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return Scaffold(
       backgroundColor: Colors.purpleAccent,
       body: SafeArea(
@@ -77,13 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.topCenter,
                 child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
             SizedBox(height: 64),
+            if (pushWallet == null)
+              MaterialButton(
+                color: Colors.white,
+                child: Text(
+                  'Connect Wallet',
+                  style: TextStyle(fontSize: 16),
+                ),
+                onPressed: connectWallet,
+              )
+            else
+              Text('Address: ${pushWallet?.address}', style: TextStyle(color: Colors.white),),
+            SizedBox(height: 16),
             MaterialButton(
               color: Colors.white,
               child: Text(
-                'Connect Wallet',
+                'Video Button',
                 style: TextStyle(fontSize: 16),
               ),
-              onPressed: connectWallet,
+              onPressed: onVideo,
             ),
             SizedBox(height: 16),
             if (pushWallet != null)

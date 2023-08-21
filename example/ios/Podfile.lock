@@ -16,6 +16,8 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.1.1):
+    - Flutter
   - ReachabilitySwift (5.0.0)
   - WebRTC-SDK (114.5735.02)
 
@@ -27,6 +29,7 @@ DEPENDENCIES:
   - livekit_client (from `.symlinks/plugins/livekit_client/ios`)
   - openpgp (from `.symlinks/plugins/openpgp/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
 
 SPEC REPOS:
   trunk:
@@ -48,6 +51,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/openpgp/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
 
 SPEC CHECKSUMS:
   connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
@@ -55,8 +60,9 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_webrtc: 1944895d4e908c4bc722929dc4b9f8620d8e1b2f
   livekit_client: dedfd6601bfb2c567d6988491c8bab7ceeb5a6d9
-  openpgp: 7138b409d3187b0c6151a593a2cdebb2b53a9a65
+  openpgp: 7d926bdb9e5544b1ae69a7a051716c36a3271b38
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   WebRTC-SDK: dd913fd31cfbf1d43b9a22d83f4c6354c960c623
 

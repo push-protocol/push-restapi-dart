@@ -115,7 +115,7 @@ class VideoCallData {
 }
 
 class Local {
-  final MediaStream stream;
+  final webrtc.MediaStream? stream;
   final bool? audio;
   final bool? video;
   final String address;

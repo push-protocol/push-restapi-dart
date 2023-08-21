@@ -1,14 +1,35 @@
 import 'package:example/functions/video/__video.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   //testSendVideoCallNotification();
 
   // testFetchRequests();
-  testVideoInitialise();
+  // testVideoInitialise();
+
+  runApp(
+    ProviderScope(
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: HomeScreen(),
+    );
+  }
 }
 
 exampleInit() async {

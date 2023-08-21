@@ -12,6 +12,38 @@ class VideoCallStateNotifier extends StateNotifier<VideoCallData> {
   void setData(SetDataFunction fn) {
     final newState = fn(state);
     state = newState;
+    log('setData: $state');
+  }
+
+  Future<void> create(VideoCreateInputOptions? options) async {
+    bool audio = options?.audio ?? true;
+    bool video = options?.video ?? true;
+    rtc.MediaStream? stream = options?.stream;
+
+    try {
+      final rtc.MediaStream localStream = stream ??
+          await rtc.navigator.mediaDevices.getUserMedia({
+            // for frontend
+            'video': video,
+            'audio': audio,
+          });
+      setData((oldData) {
+        final String address = oldData.local?.address ?? getCachedUser()!.did!;
+        final newLocal = Local(
+          stream: localStream,
+          audio: audio,
+          video: video,
+          address: address,
+        );
+        return VideoCallData(
+          meta: oldData.meta,
+          local: newLocal,
+          incoming: oldData.incoming,
+        );
+      });
+    } catch (err) {
+      print('error in create: $err');
+    }
   }
 }
 
@@ -52,36 +84,5 @@ class Video {
     setData = (SetDataFunction fn) {
       container.read(videoCallStateProvider.notifier).setData(fn);
     };
-  }
-
-  Future<void> create(VideoCreateInputOptions? options) async {
-    bool audio = options?.audio ?? true;
-    bool video = options?.video ?? true;
-    dynamic stream = options?.stream;
-    try {
-      final localStream = stream ??
-          await rtc.navigator.mediaDevices.getUserMedia({
-            // for frontend
-            'video': video,
-            'audio': audio,
-          });
-      providerContainer
-          .read(videoCallStateProvider.notifier)
-          .setData((oldData) {
-        final newLocal = Local(
-          stream: localStream,
-          audio: audio,
-          video: video,
-          address: oldData.local!.address,
-        );
-        return VideoCallData(
-          meta: oldData.meta,
-          local: newLocal,
-          incoming: oldData.incoming,
-        );
-      });
-    } catch (err) {
-      print('error in create: $err');
-    }
   }
 }
