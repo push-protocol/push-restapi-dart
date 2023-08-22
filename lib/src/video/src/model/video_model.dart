@@ -227,12 +227,33 @@ class VideoCreateInputOptions {
   });
 }
 
+/// Wea re goood
+class VideoRequestInputDetails {
+  final SPACE_REQUEST_TYPE type;
+  final Map<String, dynamic> data;
+
+  VideoRequestInputDetails({
+    required this.type,
+    required this.data,
+  });
+}
+
 class VideoRequestInputOptions {
-  late String senderAddress;
-  late String recipientAddress;
-  late String chatId;
-  void Function(String)? onReceiveMessage;
-  bool? retry;
+  final String senderAddress;
+  final String recipientAddress;
+  final String chatId;
+  final void Function(String)? onReceiveMessage;
+  final bool? retry;
+  final VideoRequestInputDetails? details;
+
+  VideoRequestInputOptions({
+    required this.senderAddress,
+    required this.recipientAddress,
+    required this.chatId,
+    this.onReceiveMessage,
+    this.retry,
+    this.details,
+  });
 }
 
 class VideoAcceptRequestInputOptions {
@@ -245,7 +266,8 @@ class VideoAcceptRequestInputOptions {
 }
 
 class PeerData {
-  final MediaStream stream; // You need to define IMediaStream accordingly
+  final webrtc.MediaStream?
+      stream; // You need to define IMediaStream accordingly
   final bool? audio;
   final bool? video;
   final String address;
@@ -253,7 +275,7 @@ class PeerData {
   final int retryCount;
 
   PeerData({
-    required this.stream,
+    this.stream,
     this.audio,
     this.video,
     required this.address,
@@ -263,7 +285,6 @@ class PeerData {
 
   Map<String, dynamic> toJson() {
     return {
-      'stream': stream.toJson(),
       'audio': audio,
       'video': video,
       'address': address,
@@ -274,7 +295,6 @@ class PeerData {
 
   factory PeerData.fromJson(Map<String, dynamic> json) {
     return PeerData(
-      stream: MediaStream.fromJson(json['stream']), // Update accordingly
       audio: json['audio'],
       video: json['video'],
       address: json['address'],

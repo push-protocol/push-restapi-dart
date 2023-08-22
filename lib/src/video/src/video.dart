@@ -1,18 +1,25 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../push_restapi_dart.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 
 typedef SetDataFunction = VideoCallData Function(VideoCallData);
 
 final VideoCallData initVideoCallData = VideoCallData();
 
-class VideoCallStateNotifier extends StateNotifier<VideoCallData> {
-  VideoCallStateNotifier() : super(initVideoCallData);
+class VideoCallStateNotifier extends ChangeNotifier {
+  VideoCallStateNotifier() {
+    videoCallData = VideoCallData();
+  }
+  // VideoCallStateNotifier() : super(initVideoCallData);
+
+  late VideoCallData videoCallData;
 
   void setData(SetDataFunction fn) {
-    final newState = fn(state);
-    state = newState;
-    log('setData: $state');
+    final newState = fn(videoCallData);
+    videoCallData = newState;
+    log('setData: $videoCallData');
   }
 
   Future<void> create(VideoCreateInputOptions? options) async {
@@ -45,12 +52,14 @@ class VideoCallStateNotifier extends StateNotifier<VideoCallData> {
       print('error in create: $err');
     }
   }
+
+  Future<void> request(VideoRequestInputOptions options) async {}
 }
 
 final videoCallStateProvider =
-    StateNotifierProvider<VideoCallStateNotifier, VideoCallData>(
-  (ref) => VideoCallStateNotifier(),
-);
+    ChangeNotifierProvider<VideoCallStateNotifier>((ref) {
+  return VideoCallStateNotifier();
+});
 
 class Video {
   late VideoCallData data;

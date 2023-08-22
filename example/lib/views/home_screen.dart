@@ -61,7 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   onVideo() {
-    final VideoCallData video = ref.read(videoCallStateProvider);
+    // final VideoCallData video = ref.read(videoCallStateProvider).videoCallData;
     try {
       final optiions = VideoCreateInputOptions();
       ref.read(videoCallStateProvider.notifier).create(optiions);
@@ -81,7 +81,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
     return Scaffold(
       backgroundColor: Colors.purpleAccent,
       body: SafeArea(
@@ -102,7 +101,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onPressed: connectWallet,
               )
             else
-              Text('Address: ${pushWallet?.address}', style: TextStyle(color: Colors.white),),
+              Text(
+                'Address: ${pushWallet?.address}',
+                style: TextStyle(color: Colors.white),
+              ),
             SizedBox(height: 16),
             MaterialButton(
               color: Colors.white,
