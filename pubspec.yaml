@@ -29,7 +29,7 @@ dependencies:
   dart_pg: ^1.1.5
   encrypt: ^5.0.1
   flutter_webrtc: ^0.9.36
-
+  flutter_riverpod: ^2.3.7
   livekit_client: ^1.4.1
 
   uuid: ^3.0.4
