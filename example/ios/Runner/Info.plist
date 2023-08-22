@@ -52,5 +52,10 @@
 	<string>Allow Push to acceess Camera?</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Push to use Microphone?</string>
+
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>audio</string>
+	</array>
 </dict>
 </plist>
