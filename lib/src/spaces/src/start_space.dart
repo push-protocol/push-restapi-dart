@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 import '../../../push_restapi_dart.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
@@ -101,6 +103,27 @@ Future<String> _createLivePeerRoom() async {
   return result['id'];
 }
 
+Future<void> _startLiveStream({
+  required String roomId,
+  required String streamId
+}) async {
+  try{
+  final result = await http.post(
+    baseUrl: _livepeerBaseUrl,
+    path: '/room/$roomId/egress',
+    headers: {
+      "Authorization": 'Bearer $_livepeerApiKey',
+    },
+    data: {
+      "streamId": streamId
+    }
+  );
+  } catch(error){
+    print(error);
+    throw ErrorDescription("Error in starting live stream");
+  }
+}
+
 Future<LivepeerParticipant> _addLivepeerRoomParticipant({
   required String roomId,
   required String participantName,
@@ -117,4 +140,15 @@ Future<LivepeerParticipant> _addLivepeerRoomParticipant({
   );
 
   return LivepeerParticipant.fromJson(result);
+}
+
+Future<dynamic> connectToRoomAndPublishVideoAudio({
+  required String url,
+  required String token
+}) async {
+  final roomOptions = RoomOptions(
+    adaptiveStream: true,
+  );
+  final room = await LiveKitClient.connect(url, token, roomOptions: roomOptions);
+  return room;
 }
