@@ -27,7 +27,7 @@ void testUpdateSpace() async {
       isPublic: true,
       scheduleAt: DateTime(2024, 01, 91));
 
-  var spaceDTO = await push.update(
+  var spaceDTO = await push.updateSpace(
     signer: signer,
     spaceId: result!.spaceId,
     spaceName: spaceName,

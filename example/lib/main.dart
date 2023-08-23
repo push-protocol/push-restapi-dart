@@ -5,17 +5,22 @@ import 'package:ethers/signers/wallet.dart' as ether;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'functions/space/trending_spaces.dart';
+
 void main() async {
   //testSendVideoCallNotification();
 
   // testFetchRequests();
   // testVideoInitialise();
 
-  runApp(
-    ProviderScope(
-      child: const MyApp(),
-    ),
-  );
+  await exampleInit();
+  testTrendingSpace();
+
+  // runApp(
+  //   ProviderScope(
+  //     child: const MyApp(),
+  //   ),
+  // );
 }
 
 class MyApp extends StatelessWidget {

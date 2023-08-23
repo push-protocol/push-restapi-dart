@@ -20,5 +20,8 @@ Future<SpaceFeeds?> spaceFeed({
       return null;
     }
     return SpaceFeeds.fromJson(result['data']);
-  } catch (e) {}
+  } catch (e) {
+    log('Error: spaceFeed $e');
+    return null;
+  }
 }

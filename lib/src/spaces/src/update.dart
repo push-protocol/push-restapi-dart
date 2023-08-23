@@ -1,7 +1,7 @@
 import '../../../push_restapi_dart.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
-Future<SpaceDTO?> update({
+Future<SpaceDTO?> updateSpace({
   String? account,
   Signer? signer,
   required String spaceId,
