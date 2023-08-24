@@ -1,3 +1,3 @@
-## 0.1.3-alpha
+## 0.1.4-alpha
 
-- Initial version.
+- Added Spaces Functions

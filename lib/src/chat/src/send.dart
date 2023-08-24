@@ -59,7 +59,7 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
       receiverAccount ??=
           await createUserEmpty(accountAddress: options.receiverAddress);
     } else {
-      for (int i = 0; i < (group?.members?.length ?? 0); i++) {
+      for (int i = 0; i < (group?.members.length ?? 0); i++) {
         groupReciverAccounts.add(group!.members[i].publicKey!);
       }
       groupReciverAccounts.add(getPublicKeyFromString(senderAcount.publicKey!));

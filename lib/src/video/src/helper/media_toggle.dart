@@ -1,4 +1,5 @@
-import 'package:webrtc_interface/webrtc_interface.dart';
+
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 void restartVideoStream(MediaStream stream) {
   print('RESTART LOCAL STREAM');
