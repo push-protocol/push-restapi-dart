@@ -1,5 +1,4 @@
 // ignore_for_file: constant_identifier_names
-import 'dart:convert';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../../../push_restapi_dart.dart';
@@ -225,7 +224,7 @@ class VideoAcceptRequestInputOptions {
 }
 
 class PeerData {
-  final MediaStream stream;
+  final MediaStream? stream;
   final bool? audio;
   final bool? video;
   final String address;

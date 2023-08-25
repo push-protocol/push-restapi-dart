@@ -1,18 +1,25 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../push_restapi_dart.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
+final PushVideoCallProvider =
+    ChangeNotifierProvider<VideoCallStateNotifier>((ref) {
+  return VideoCallStateNotifier();
+});
+
 typedef SetDataFunction = VideoCallData Function(VideoCallData);
 
-late VideoCallData initVideoCallData = VideoCallData();
+ VideoCallData initVideoCallData = VideoCallData();
 
 class VideoCallStateNotifier extends ChangeNotifier {
-late VideoCallData data;
-  late Signer signer;
+  late VideoCallData data;
+  late Signer? signer;
   late int chainId;
-  late String pgpPrivateKey;
+  late String? pgpPrivateKey;
   late int callType;
   late Function(MediaStream receivedStream, String senderAddress, bool? audio)
       onReceiveStream;
@@ -23,7 +30,25 @@ late VideoCallData data;
   //     iceCandidates: RTCIceCandidate[]
   //   }
   // }
-  late Map<String, Map<String, dynamic>> _rtcPeer = {};
+   final Map<String, Map<String, dynamic>> _rtcPeer = {};
+
+  initializeVideo({
+    Signer? signer,
+    required int chainId,
+    String? pgpPrivateKey,
+    required int callType,
+    required VideoCallData data,
+    required Function(
+            MediaStream receivedStream, String senderAddress, bool? audio)
+        onReceiveStream,
+  }) {
+    this.signer = signer ?? getCachedWallet()?.signer;
+    this.chainId = chainId;
+    this.pgpPrivateKey = pgpPrivateKey ?? getCachedWallet()?.pgpPrivateKey;
+    videoCallData = data;
+    this.onReceiveStream = onReceiveStream;
+    notifyListeners();
+  }
 
   VideoCallStateNotifier() {
     videoCallData = VideoCallData();
@@ -37,30 +62,6 @@ late VideoCallData data;
     videoCallData = newState;
     log('setData: $videoCallData');
   }
-
-  // Video({
-  //   required this.signer,
-  //   required this.chainId,
-  //   required this.pgpPrivateKey,
-  //   required this.callType,
-  //   required setData,
-  //   required data,
-  //   required this.onReceiveStream,
-  // }) {
-  //   onReceiveStream = onReceiveStream;
-
-  //   // Initialize the react state
-  //   final container = ProviderContainer();
-  //   container.read(videoCallStateProvider);
-
-  //   // Initialize the class variable
-  //   data = initVideoCallData;
-
-  //   // Set the state updating function
-  //   setData = (SetDataFunction fn) {
-  //     container.read(videoCallStateProvider.notifier).setData(fn);
-  //   };
-  // }
 
   Future<void> create(VideoCreateInputOptions? options) async {
     bool audio = options?.audio ?? true;
@@ -120,7 +121,10 @@ late VideoCallData data;
           ]
         });
 
-        _rtcPeer[recipientAddress] = { 'peerConnection': peer, 'iceCandidates': [] };
+        _rtcPeer[recipientAddress] = {
+          'peerConnection': peer,
+          'iceCandidates': []
+        };
 
         // add local stream's tracks to RTC connection
         // this.data.local.stream!.getTracks().forEach((track) {
@@ -133,8 +137,8 @@ late VideoCallData data;
         };
 
         // listen for local iceCandidate and add it to the list of IceCandidates
-        peer.onIceCandidate =
-            (RTCIceCandidate candidate) => _rtcPeer[recipientAddress]?['iceCandidates'].add(candidate);
+        peer.onIceCandidate = (RTCIceCandidate candidate) =>
+            _rtcPeer[recipientAddress]?['iceCandidates'].add(candidate);
 
         // create SDP Offer
         RTCSessionDescription offer = await peer.createOffer();
@@ -164,8 +168,3 @@ late VideoCallData data;
     }
   }
 }
-
-final videoCallStateProvider =
-    ChangeNotifierProvider<VideoCallStateNotifier>((ref) {
-  return VideoCallStateNotifier();
-});
