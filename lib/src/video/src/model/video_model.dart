@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names
-import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
+
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../../../push_restapi_dart.dart';
 
 class Meta {
@@ -95,27 +96,27 @@ class VideoCallData {
     this.incoming = const [],
   });
 
-  factory VideoCallData.fromJson(Map<String, dynamic> json) {
-    return VideoCallData(
-      meta: Meta.fromJson(json['meta']),
-      local: Local.fromJson(json['local']),
-      incoming: List<PeerData>.from(
-        json['incoming'].map((peerData) => PeerData.fromJson(peerData)),
-      ),
-    );
-  }
+  // factory VideoCallData.fromJson(Map<String, dynamic> json) {
+  //   return VideoCallData(
+  //     meta: Meta.fromJson(json['meta']),
+  //     local: Local.fromJson(json['local']),
+  //     incoming: List<PeerData>.from(
+  //       json['incoming'].map((peerData) => PeerData.fromJson(peerData)),
+  //     ),
+  //   );
+  // }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'meta': meta?.toJson(),
-      'local': local?.toJson(),
-      'incoming': incoming.map((peerData) => peerData.toJson()).toList(),
-    };
-  }
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     'meta': meta?.toJson(),
+  //     'local': local?.toJson(),
+  //     'incoming': incoming.map((peerData) => peerData.toJson()).toList(),
+  //   };
+  // }
 }
 
 class Local {
-  final webrtc.MediaStream? stream;
+  final MediaStream? stream;
   final bool? audio;
   final bool? video;
   final String address;
@@ -173,52 +174,10 @@ class VideoCallIncoming {
   late int retryCount;
 }
 
-class MediaStream {
-  dynamic stream;
-  String? audio;
-  String? video;
-  String? address;
-  Object? status; //MediaStream
-  int? retryCount;
-
-  MediaStream({
-    this.stream,
-    this.audio,
-    this.video,
-    this.address,
-    this.status,
-    this.retryCount,
-  });
-
-  factory MediaStream.fromJson(Map<String, dynamic> json) {
-    return MediaStream(
-      stream: json.containsKey('stream')
-          ? MediaStream.fromJson(json['stream'])
-          : null,
-      audio: json['audio'],
-      video: json['video'],
-      address: json['address'],
-      status: json['status'],
-      retryCount: json['retryCount'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'stream': stream?.toJson(),
-      'audio': audio,
-      'video': video,
-      'address': address,
-      'status': status,
-      'retryCount': retryCount,
-    };
-  }
-}
-
 class VideoCreateInputOptions {
   final bool video;
   final bool audio;
-  final webrtc.MediaStream? stream;
+  final MediaStream? stream;
 
   VideoCreateInputOptions({
     this.video = true,
@@ -227,7 +186,6 @@ class VideoCreateInputOptions {
   });
 }
 
-/// Wea re goood
 class VideoRequestInputDetails {
   final SPACE_REQUEST_TYPE type;
   final Map<String, dynamic> data;
@@ -266,8 +224,7 @@ class VideoAcceptRequestInputOptions {
 }
 
 class PeerData {
-  final webrtc.MediaStream?
-      stream; // You need to define IMediaStream accordingly
+  final MediaStream? stream;
   final bool? audio;
   final bool? video;
   final String address;

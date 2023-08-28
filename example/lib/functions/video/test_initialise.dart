@@ -12,22 +12,17 @@ void testVideoInitialise() async {
     address: ethersWallet.address!,
   );
 
-  final videoCallDataProvider = StateProvider<push.VideoCallData>((ref) {
-    // Initialize your VideoCallData instance here
-    return push.VideoCallData();
-  });
   final videoProvider = Provider((ref) {
-    return push.Video(
-      callType: push.VIDEO_CALL_TYPE.PUSH_VIDEO,
-      signer: signer,
-      chainId: 1,
-      pgpPrivateKey: 'private_key',
-      setData: ref.read(videoCallDataProvider),
-      data: "", // Provide initial data here
-      onReceiveStream: (receivedStream, senderAddress, audio) async {
-        // Implementation of onReceiveStream
-      },
-    );
+    return ref.read(push.PushVideoCallProvider.notifier).initializeVideo(
+          callType: push.VIDEO_CALL_TYPE.PUSH_VIDEO,
+          signer: signer,
+          chainId: 1,
+          pgpPrivateKey: 'private_key',
+          data: push.initVideoCallData, // Provide initial data here
+          onReceiveStream: (receivedStream, senderAddress, audio) async {
+            // Implementation of onReceiveStream
+          },
+        );
   });
   print("video");
   print(videoProvider);

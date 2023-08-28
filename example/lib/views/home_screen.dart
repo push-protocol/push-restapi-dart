@@ -64,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // final VideoCallData video = ref.read(videoCallStateProvider).videoCallData;
     try {
       final optiions = VideoCreateInputOptions();
-      ref.read(videoCallStateProvider.notifier).create(optiions);
+      ref.read(PushVideoCallProvider.notifier).create(optiions);
     } catch (e) {}
   }
 
