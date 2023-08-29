@@ -44,7 +44,7 @@ Future<SpaceDTO?> startSpace({
 
     ///connect room to stream
 
-    await _startLiveStream(roomId: roomId, streamId: stream.id!);
+    await _startLiveStream(roomId: roomId, streamId: stream.streamId!);
 
     final group = await push.updateGroup(
       chatId: spaceId,
