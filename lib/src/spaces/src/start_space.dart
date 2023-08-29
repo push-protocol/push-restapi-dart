@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import '../../../push_restapi_dart.dart';
@@ -52,7 +54,10 @@ Future<SpaceDTO?> startSpace({
       members: convertedMembers,
       admins: convertedAdmins,
       signer: signer,
-      meta: roomId,
+      meta: jsonEncode({
+        "playbackId": stream.playbackId,
+        "roomId": roomId,
+      }),
       scheduleAt: space.scheduleAt,
       scheduleEnd: space.scheduleEnd,
       status: ChatStatus.ACTIVE,
