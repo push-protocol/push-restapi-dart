@@ -9,7 +9,9 @@ export 'src/get_spaces.dart';
 export 'src/start_space.dart';
 export 'src/update.dart';
 export 'src/trending.dart';
+export 'src/approve.dart';
 
 export 'src/models/livepeer_models.dart';
 
 export 'src/helpers/send_live_space_data.dart';
+export 'src/helpers/get_incoming_index_from_address.dart';
