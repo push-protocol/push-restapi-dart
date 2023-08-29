@@ -5,11 +5,16 @@ import 'package:ethers/signers/wallet.dart' as ether;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'functions/space/create_space.dart';
+
 void main() async {
   //testSendVideoCallNotification();
 
   // testFetchRequests();
   // testVideoInitialise();
+
+  testCreateSpace();
+  // testStartSpace();
 
   runApp(
     ProviderScope(
@@ -24,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: HomeScreen(),
+      home: Scaffold(),
     );
   }
 }

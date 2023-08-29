@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import '../../../push_restapi_dart.dart';
@@ -9,12 +8,15 @@ Future<SpaceDTO?> startSpace({
   Signer? signer,
   required String spaceId,
   required String livepeerApiKey,
+  required Function(ProgressHookType) progressHook,
 }) async {
   try {
     accountAddress ??= getCachedWallet()?.address;
     signer ??= getCachedWallet()?.signer;
 
     final space = await getSpaceById(spaceId: spaceId);
+
+    _livepeerApiKey = livepeerApiKey;
 
     if (space.status != ChatStatus.PENDING) {
       throw Exception(
@@ -26,19 +28,6 @@ Future<SpaceDTO?> startSpace({
     final convertedAdmins =
         getSpaceAdminsList(space.members, space.pendingMembers);
 
-    final group = await push.updateGroup(
-        chatId: spaceId,
-        groupName: space.spaceName,
-        groupImage: space.spaceImage!,
-        groupDescription: space.spaceDescription!,
-        members: convertedMembers,
-        admins: convertedAdmins,
-        signer: signer,
-        scheduleAt: space.scheduleAt,
-        scheduleEnd: space.scheduleEnd,
-        status: ChatStatus.ACTIVE,
-        isPublic: space.isPublic);
-
     ////Create Stream
     final stream = await _createStreamService(spaceName: space.spaceName);
 
@@ -46,17 +35,29 @@ Future<SpaceDTO?> startSpace({
     final roomId = await _createLivePeerRoom();
 
     ///add local user as participant
-    final participant = await _addLivepeerRoomParticipant(
+    await _addLivepeerRoomParticipant(
       roomId: roomId,
-      participantName: accountAddress!,
+      participantName: accountAddress ?? signer!.getAddress(),
     );
 
-
     ///connect room to stream
-    
 
+    await _startLiveStream(roomId: roomId, streamId: stream.id!);
 
-
+    final group = await push.updateGroup(
+      chatId: spaceId,
+      groupName: space.spaceName,
+      groupImage: space.spaceImage!,
+      groupDescription: space.spaceDescription!,
+      members: convertedMembers,
+      admins: convertedAdmins,
+      signer: signer,
+      meta: roomId,
+      scheduleAt: space.scheduleAt,
+      scheduleEnd: space.scheduleEnd,
+      status: ChatStatus.ACTIVE,
+      isPublic: space.isPublic,
+    );
 
     if (group != null) {
       return groupDtoToSpaceDto(group);
@@ -70,7 +71,7 @@ Future<SpaceDTO?> startSpace({
 }
 
 final _livepeerBaseUrl = 'https://livepeer.studio/api';
-final String _livepeerApiKey = '';
+String _livepeerApiKey = '';
 
 Future<LivepeerStreamDetails> _createStreamService({
   required String spaceName,
@@ -79,6 +80,7 @@ Future<LivepeerStreamDetails> _createStreamService({
     baseUrl: _livepeerBaseUrl,
     path: '/stream',
     headers: {
+      'Content-Type': 'application/json',
       "Authorization": 'Bearer $_livepeerApiKey',
     },
     data: {
@@ -95,6 +97,7 @@ Future<String> _createLivePeerRoom() async {
     baseUrl: _livepeerBaseUrl,
     path: '/room',
     headers: {
+      'Content-Type': 'application/json',
       "Authorization": 'Bearer $_livepeerApiKey',
     },
     data: {},
@@ -103,22 +106,21 @@ Future<String> _createLivePeerRoom() async {
   return result['id'];
 }
 
-Future<void> _startLiveStream({
-  required String roomId,
-  required String streamId
-}) async {
-  try{
-  final result = await http.post(
-    baseUrl: _livepeerBaseUrl,
-    path: '/room/$roomId/egress',
-    headers: {
-      "Authorization": 'Bearer $_livepeerApiKey',
-    },
-    data: {
-      "streamId": streamId
-    }
-  );
-  } catch(error){
+Future<void> _startLiveStream(
+    {required String roomId, required String streamId}) async {
+  try {
+    final result = await http.post(
+        baseUrl: _livepeerBaseUrl,
+        path: '/room/$roomId/egress',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": 'Bearer $_livepeerApiKey',
+        },
+        data: {
+          "streamId": streamId
+        });
+    log('result: $result');
+  } catch (error) {
     print(error);
     throw ErrorDescription("Error in starting live stream");
   }
@@ -132,6 +134,7 @@ Future<LivepeerParticipant> _addLivepeerRoomParticipant({
     baseUrl: _livepeerBaseUrl,
     path: '/room/$roomId/user',
     headers: {
+      'Content-Type': 'application/json',
       "Authorization": 'Bearer $_livepeerApiKey',
     },
     data: {
@@ -142,13 +145,12 @@ Future<LivepeerParticipant> _addLivepeerRoomParticipant({
   return LivepeerParticipant.fromJson(result);
 }
 
-Future<dynamic> connectToRoomAndPublishVideoAudio({
-  required String url,
-  required String token
-}) async {
+Future<dynamic> connectToRoomAndPublishVideoAudio(
+    {required String url, required String token}) async {
   final roomOptions = RoomOptions(
     adaptiveStream: true,
   );
-  final room = await LiveKitClient.connect(url, token, roomOptions: roomOptions);
+  final room =
+      await LiveKitClient.connect(url, token, roomOptions: roomOptions);
   return room;
 }

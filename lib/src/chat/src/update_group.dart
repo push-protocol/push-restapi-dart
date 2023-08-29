@@ -80,6 +80,7 @@ Future<GroupDTO?> updateGroup(
       'verificationProof': verificationProof,
       'scheduleAt': scheduleAt?.toIso8601String(),
       'scheduleEnd': scheduleEnd?.toIso8601String(),
+      if (meta != null) 'meta': meta,
     };
 
     final result = await http.put(

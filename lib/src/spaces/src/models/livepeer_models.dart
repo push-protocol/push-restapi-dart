@@ -1,17 +1,20 @@
 
 class LivepeerStreamDetails {
+  String? id;
   String? streamKey;
   String? playbackId;
 
   LivepeerStreamDetails({this.streamKey, this.playbackId});
 
   LivepeerStreamDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     streamKey = json['streamKey'];
     playbackId = json['playbackId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
     data['streamKey'] = streamKey;
     data['playbackId'] = playbackId;
     return data;
