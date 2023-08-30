@@ -1,9 +1,11 @@
 import '../../../push_restapi_dart.dart';
 
-Future<void> join() async {
+Future<void> joinSpace() async {
   try {
+    var data = providerContainer.read(PushSpaceProvider).data;
+    
     final space =
-        await getSpaceById(spaceId: this.spaceSpecificData['spaceId']);
+        await getSpaceById(spaceId: data.spaceId);
 
     if (space.status != ChatStatus.ACTIVE) {
       throw Exception('Space not active yet');
@@ -13,7 +15,8 @@ Future<void> join() async {
 
     var isSpeaker = false;
     var isListener = false;
-    final localAddress = pCAIP10ToWallet(this.data['local']['address']);
+    // TODO: get local address from Wallet provider
+    final localAddress = pCAIP10ToWallet();
     space.members.forEach((member) {
       if (pCAIP10ToWallet(member.wallet) == localAddress) {
         if (member.isSpeaker) {
@@ -32,24 +35,19 @@ Future<void> join() async {
       }
     });
 
-    final hostAddress = pCAIP10ToWallet(space.spaceCreator);
-    final incomingIndex =
-        getIncomingIndexFromAddress(this.data['incoming'], hostAddress);
-
-    // check if we aren't already connected to the host
-    if ((isSpeaker || isSpeakerPending) && incomingIndex > -1) {
-      return;
-    }
+    // TODO: check from livekit SDK if we are already part of the room
+    // if yes -> return
 
     // according to the found role (speaker or listener), executing req logic
 
     // if speaker is pending then approve first or if listener is pending/not found then approve first
     if (!isSpeaker && !isListener) {
       print('CALLING APPROVE');
+      // TODO: Get the signer, pgpPrivateKey here
       await approveSpaceRequest(
-          senderAddress: this.spaceSpecificData['spaceId'],
-          signer: this.signer,
-          pgpPrivateKey: this.pgpPrivateKey);
+          senderAddress: data.spaceId,
+          signer: ,
+          pgpPrivateKey: );
     }
 
     if (isSpeaker || isSpeakerPending) {
@@ -57,14 +55,12 @@ Future<void> join() async {
     }
 
     final updatedSpace =
-        await getSpaceById(spaceId: this.spaceSpecificData['spaceId']);
+        await getSpaceById(spaceId: data.spaceId);
 
-    print('UPDATED SPACE $updatedSpace');
-    // update space specific data
-    // this.setSpaceSpecificData(() => {
-    //       ...updatedSpace,
-    //       liveSpaceData: this.spaceSpecificData['liveSpaceData'],
-    //     });
+    // update space data
+    providerContainer.read(PushSpaceProvider.notifier).setData((oldData){
+      return SpaceData.fromSpaceDTO(updatedSpace, data.liveSpaceData);
+    });
   } catch (err) {
     print('[Push SDK] - API  - Error - API join -: $err');
     throw Exception('[Push SDK] - API  - Error - API join -: $err');
