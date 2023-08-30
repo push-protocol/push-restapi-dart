@@ -11,7 +11,7 @@ final PushVideoCallProvider =
   return VideoCallStateNotifier();
 });
 
-typedef SetDataFunction = VideoCallData Function(VideoCallData);
+typedef SetVideoDataFunction = VideoCallData Function(VideoCallData);
 
  VideoCallData initVideoCallData = VideoCallData();
 
@@ -57,7 +57,7 @@ class VideoCallStateNotifier extends ChangeNotifier {
 
   late VideoCallData videoCallData;
 
-  void setData(SetDataFunction fn) {
+  void setData(SetVideoDataFunction fn) {
     final newState = fn(videoCallData);
     videoCallData = newState;
     log('setData: $videoCallData');

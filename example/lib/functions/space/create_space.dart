@@ -16,6 +16,28 @@ void testCreateSpace() async {
     address: ethersWallet.address!,
   );
 
+  final user = await push.getUser(address: ethersWallet.address!);
+
+  if (user == null) {
+    print('Cannot get user');
+    return;
+  }
+  String? pgpPrivateKey = null;
+  if (user.encryptedPrivateKey != null) {
+    pgpPrivateKey = await push.decryptPGPKey(
+      encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+      wallet: push.getWallet(signer: signer),
+    );
+  }
+
+  await push.initPush(
+    wallet: push.Wallet(
+      address: ethersWallet.address!,
+      pgpPrivateKey: pgpPrivateKey,
+    ),
+    env: push.ENV.staging,
+  );
+
   final generator = UniqueNamesGenerator(
     // Config.fallback() can also be used
     config: Config(dictionaries: [adjectives, animals, colors]),

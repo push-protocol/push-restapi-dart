@@ -328,6 +328,7 @@ class SpaceDTO {
   DateTime? scheduleAt;
   DateTime? scheduleEnd;
   ChatStatus? status;
+  String? meta;
 
   SpaceDTO({
     required this.members,
@@ -346,6 +347,7 @@ class SpaceDTO {
     this.scheduleAt,
     this.scheduleEnd,
     this.status,
+    this.meta,
   });
 
   Map<String, dynamic> toJson() {
@@ -388,6 +390,7 @@ class SpaceDTO {
         spaceDescription = json['spaceDescription'],
         spaceCreator = json['spaceCreator'],
         spaceId = json['spaceId'],
+        meta = json['meta'],
         scheduleAt = json['scheduleAt'] != null
             ? DateTime.parse(json['scheduleAt'])
             : null,

@@ -1,11 +1,12 @@
+import 'dart:convert';
+
 import '../../../push_restapi_dart.dart';
 
 Future<void> joinSpace() async {
   try {
-    var data = providerContainer.read(PushSpaceProvider).data;
-    
-    final space =
-        await getSpaceById(spaceId: data.spaceId);
+    SpaceData spaceData = providerContainer.read(PushSpaceProvider).data;
+
+    final SpaceDTO space = await getSpaceById(spaceId: spaceData.spaceId);
 
     if (space.status != ChatStatus.ACTIVE) {
       throw Exception('Space not active yet');
@@ -15,9 +16,12 @@ Future<void> joinSpace() async {
 
     var isSpeaker = false;
     var isListener = false;
-    // TODO: get local address from Wallet provider
-    final localAddress = pCAIP10ToWallet();
-    space.members.forEach((member) {
+    final localAddress = getCachedWallet()?.address;
+    if (localAddress == null) {
+      throw Exception('Cannot find local user address');
+    }
+
+    for (var member in space.members) {
       if (pCAIP10ToWallet(member.wallet) == localAddress) {
         if (member.isSpeaker) {
           isSpeaker = true;
@@ -25,15 +29,15 @@ Future<void> joinSpace() async {
           isListener = true;
         }
       }
-    });
+    }
 
     var isSpeakerPending = false;
-    space.pendingMembers.forEach((pendingMember) {
+    for (var pendingMember in space.pendingMembers) {
       if (pCAIP10ToWallet(pendingMember.wallet) == localAddress &&
           pendingMember.isSpeaker) {
         isSpeakerPending = true;
       }
-    });
+    }
 
     // TODO: check from livekit SDK if we are already part of the room
     // if yes -> return
@@ -44,22 +48,25 @@ Future<void> joinSpace() async {
     if (!isSpeaker && !isListener) {
       print('CALLING APPROVE');
       // TODO: Get the signer, pgpPrivateKey here
+      final localWallet = getCachedWallet();
       await approveSpaceRequest(
-          senderAddress: data.spaceId,
-          signer: ,
-          pgpPrivateKey: );
+          senderAddress: spaceData.spaceId,
+          signer: localWallet?.signer,
+          pgpPrivateKey: localWallet?.pgpPrivateKey);
     }
 
     if (isSpeaker || isSpeakerPending) {
       // TODO: Add the join room logic here
+      final roomId = jsonDecode(space.meta ?? '')["roomId"];
+
+      addSpeakingParticipant(roomId: roomId, participantName: localAddress);
     }
 
-    final updatedSpace =
-        await getSpaceById(spaceId: data.spaceId);
+    final updatedSpace = await getSpaceById(spaceId: spaceData.spaceId);
 
     // update space data
-    providerContainer.read(PushSpaceProvider.notifier).setData((oldData){
-      return SpaceData.fromSpaceDTO(updatedSpace, data.liveSpaceData);
+    providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+      return SpaceData.fromSpaceDTO(updatedSpace, spaceData.liveSpaceData);
     });
   } catch (err) {
     print('[Push SDK] - API  - Error - API join -: $err');

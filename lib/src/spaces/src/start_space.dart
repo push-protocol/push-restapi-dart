@@ -156,8 +156,11 @@ Future<LivepeerParticipant> _addLivepeerRoomParticipant({
   return LivepeerParticipant.fromJson(result);
 }
 
-Future<Room?> connectToRoomAndPublishAudio(
-    {required String url, required String token}) async {
+Future<Room?> connectToRoomAndPublishAudio({
+  required String url,
+  required String token,
+  bool autoOnMic = false,
+}) async {
   try {
     final roomOptions = RoomOptions(
       adaptiveStream: true,
@@ -166,7 +169,9 @@ Future<Room?> connectToRoomAndPublishAudio(
     final room = Room();
 
     await room.connect(url, token, roomOptions: roomOptions);
-    room.localParticipant!.setMicrophoneEnabled(true);
+    if (autoOnMic) {
+      room.localParticipant!.setMicrophoneEnabled(true);
+    }
     return room;
   } catch (e) {
     return null;
@@ -177,4 +182,24 @@ String _extractWebSocketUrlFromJoinUrl(String joinUrl) {
   final url = joinUrl.split('=')[1];
 
   return url.replaceAll('&token', '');
+}
+
+Future<Room?> addSpeakingParticipant({
+  required String roomId,
+  required String participantName,
+  bool autoOnMic = false,
+}) async {
+  ///add local user as participant
+  final participant = await _addLivepeerRoomParticipant(
+    roomId: roomId,
+    participantName: participantName,
+  );
+
+  final url = _extractWebSocketUrlFromJoinUrl(participant.joinUrl!);
+
+  return connectToRoomAndPublishAudio(
+    url: url,
+    token: participant.token!,
+    autoOnMic: autoOnMic,
+  );
 }
