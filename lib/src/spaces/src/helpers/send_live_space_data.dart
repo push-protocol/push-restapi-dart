@@ -12,6 +12,7 @@ Future sendLiveSpaceData({
 }) async {
   assert(MetaAction.isValidMeatAction(action));
 
+  // TODO: Add livespace data under messageObj.info.arbitary
   final options = ChatSendOptions(
       messageContent: 'PUSH SPACE META MESSAGE',
       messageType: MessageType.META,
