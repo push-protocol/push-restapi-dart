@@ -37,13 +37,19 @@ Future<SpaceDTO?> startSpace({
     final roomId = await _createLivePeerRoom();
 
     ///add local user as participant
-    await _addLivepeerRoomParticipant(
+    final participant = await _addLivepeerRoomParticipant(
       roomId: roomId,
       participantName: accountAddress ?? signer!.getAddress(),
     );
 
-    ///connect room to stream
+    final url = _extractWebSocketUrlFromJoinUrl(participant.joinUrl!);
 
+    connectToRoomAndPublishAudio(
+      url: url,
+      token: participant.token!,
+    );
+
+    ///connect room to stream
     await _startLiveStream(roomId: roomId, streamId: stream.streamId!);
 
     final group = await push.updateGroup(
@@ -150,12 +156,25 @@ Future<LivepeerParticipant> _addLivepeerRoomParticipant({
   return LivepeerParticipant.fromJson(result);
 }
 
-Future<dynamic> connectToRoomAndPublishVideoAudio(
+Future<Room?> connectToRoomAndPublishAudio(
     {required String url, required String token}) async {
-  final roomOptions = RoomOptions(
-    adaptiveStream: true,
-  );
-  final room =
-      await LiveKitClient.connect(url, token, roomOptions: roomOptions);
-  return room;
+  try {
+    final roomOptions = RoomOptions(
+      adaptiveStream: true,
+    );
+
+    final room = Room();
+
+    await room.connect(url, token, roomOptions: roomOptions);
+    room.localParticipant!.setMicrophoneEnabled(true);
+    return room;
+  } catch (e) {
+    return null;
+  }
+}
+
+String _extractWebSocketUrlFromJoinUrl(String joinUrl) {
+  final url = joinUrl.split('=')[1];
+
+  return url.replaceAll('&token', '');
 }
