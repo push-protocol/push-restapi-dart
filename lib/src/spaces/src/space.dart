@@ -65,11 +65,23 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   updateMeta({
     required String meta,
-  }){
-    updateSpaceMeta(meta: meta, signer:, pgpPrivateKey: )
+  }) {
+    final localWallet = getCachedWallet();
+
+    updateSpaceMeta(
+      meta: meta,
+      signer: localWallet!.signer!,
+      pgpPrivateKey: localWallet.pgpPrivateKey!,
+    );
   }
 
   join() {
     joinSpace();
   }
+
+  start() {}
+
+  leave() {}
+
+  stop() {}
 }
