@@ -58,6 +58,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 #### 1. [Wallet to Wallet Chat](doc/Chats.md)
 #### 2. [Group Chat](doc/GroupChat.md)
 #### 3. [Channels](doc/Chats.md)
+#### 3. [Spaces](doc/Spaces.md)
 ---
 
 ## 🚀 Getting Started

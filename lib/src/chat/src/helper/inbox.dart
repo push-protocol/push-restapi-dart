@@ -108,10 +108,11 @@ Future<List<SpaceFeeds>> getTrendingSpaceInboxList({
 }) async {
   final List<SpaceFeeds> feedsOutputlist = [];
   for (var feed in feedsList) {
-    late Message? message;
+    Message? message;
     if (feed.threadhash != null) {
       message = await getCID(cid: feed.threadhash!);
     }
+
     // This is for groups that are created without any message
     message ??= Message(
       encType: 'PlainText',

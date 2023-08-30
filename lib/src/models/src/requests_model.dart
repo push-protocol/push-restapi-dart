@@ -82,10 +82,11 @@ class SpaceFeeds {
   String? wallets;
   String? combinedDID;
   String? name;
-  dynamic spaceInformation;
+
   Message? msg;
   bool? deprecated;
   String? deprecatedCode;
+  SpaceDTO? spaceInformation;
 
   SpaceFeeds(
       {this.spaceId,
@@ -115,7 +116,9 @@ class SpaceFeeds {
     wallets = json['wallets'];
     combinedDID = json['combinedDID'];
     name = json['name'];
-    spaceInformation = json['spaceInformation'];
+    if (json['spaceInformation'] != null) {
+      spaceInformation = SpaceDTO.fromJson(json['spaceInformation']);
+    }
   }
 
   Map<String, dynamic> toJson() {
