@@ -76,7 +76,7 @@ class SpaceData extends SpaceDTO {
           scheduleEnd: scheduleEnd,
           status: status,
         ) {
-    this.liveSpaceData = liveSpaceData;
+    // this.liveSpaceData = liveSpaceData;
   }
 
   static SpaceData fromSpaceDTO(
