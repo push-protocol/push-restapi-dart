@@ -39,7 +39,5 @@ getBatch({
       user = await populateDeprecatedUser(user: user);
       output.add(user);
     }
-
-    
   }
 }

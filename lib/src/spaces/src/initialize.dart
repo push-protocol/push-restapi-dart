@@ -5,14 +5,14 @@ Future initializeSpace({
 }) async {
   try {
     final space = await getSpaceById(spaceId: spaceId);
-    
+
     var data = providerContainer.read(PushSpaceProvider).data;
     var liveSpaceData = data.liveSpaceData;
     if (space.status == ChatStatus.ACTIVE) {
       // TODO: call getLiveSpaceData
     }
 
-    providerContainer.read(PushSpaceProvider.notifier).setData((oldData){
+    providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
       return SpaceData.fromSpaceDTO(space, liveSpaceData);
     });
   } catch (e) {

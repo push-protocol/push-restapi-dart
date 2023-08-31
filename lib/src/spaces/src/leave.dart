@@ -1,1 +1,1 @@
-leave(){}
+leave() {}

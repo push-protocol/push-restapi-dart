@@ -4,14 +4,13 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
 
-
 void main() async {
   //testSendVideoCallNotification();
 
   // testFetchRequests();
   // testVideoInitialise();
 
-  // testCreateSpace();
+  testCreateSpace();
   // testStartSpace();
 
   runApp(
@@ -28,9 +27,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.purple,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.purple)
-      ),
+          primaryColor: Colors.purple,
+          appBarTheme: AppBarTheme(backgroundColor: Colors.purple)),
       home: HomeScreen(),
     );
   }

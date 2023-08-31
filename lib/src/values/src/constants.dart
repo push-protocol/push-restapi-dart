@@ -63,7 +63,7 @@ class AdditionalMetaType {
   static const CUSTOM = 0;
   static const PUSH_VIDEO = 1;
 
-    static isValidAdditionalMetaType(int type) {
+  static isValidAdditionalMetaType(int type) {
     return [CUSTOM, PUSH_VIDEO].contains(type);
   }
 }

@@ -37,9 +37,7 @@ void testUpdateSpace() async {
       'eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723',
       signer.address
     ],
-    speakers: [
-      signer.address
-    ],
+    speakers: [signer.address],
     scheduleAt: DateTime.now(),
     scheduleEnd: DateTime.now().add(Duration(days: 10)),
     status: ChatStatus.ACTIVE,

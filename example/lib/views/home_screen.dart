@@ -1,4 +1,5 @@
-import 'package:example/views/list_of_spaces_screen.dart';
+import 'package:example/views/my_spaces_screen.dart';
+import 'package:example/views/trending_space_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
@@ -24,10 +25,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  connectWallet() async {
+  final mnemonic1 =
+      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
+  final mnemonic2 =
+      'label mobile gas salt service gravity nose bomb marine online say twice';
+  connectWallet(String mnemonic) async {
     updateLoading(true);
-    const mnemonic =
-        'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
     final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
     final signer = EthersSigner(
       ethersWallet: ethersWallet,
@@ -38,6 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final user = await getUser(address: ethersWallet.address!);
 
     if (user == null) {
+      updateLoading(false);
       print('Cannot get user');
       return;
     }
@@ -66,6 +70,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  connectWallet3() async {
+    updateLoading(true);
+    final ethersWallet = ether.Wallet.fromPrivateKey(
+        "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
+
+    final signer = EthersSigner(
+      ethersWallet: ethersWallet,
+      address: ethersWallet.address!,
+    );
+
+    final user = await getUser(address: ethersWallet.address!);
+
+    if (user == null) {
+      print('Cannot get user');
+      return;
+    }
+    String? pgpPrivateKey = null;
+    if (user.encryptedPrivateKey != null) {
+      pgpPrivateKey = await decryptPGPKey(
+        encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+        wallet: getWallet(signer: signer),
+      );
+    }
+
+    pushWallet = Wallet(
+        address: ethersWallet.address!,
+        pgpPrivateKey: pgpPrivateKey,
+        signer: signer);
+
+    updateLoading(false);
+    await initPush(
+      wallet: pushWallet,
+      env: ENV.staging,
+    );
+  }
+
   requestPermissions() {
     Permission.camera.request();
   }
@@ -84,21 +124,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       NavItem(
         title: 'Create Space',
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CreateSpaceScreen(),
-              ));
+          pushScreen(
+            context,
+            CreateSpaceScreen(),
+          );
         },
       ),
       NavItem(
         title: 'My Spaces',
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MySpacesScreen(),
-              ));
+          pushScreen(
+            context,
+            MySpacesScreen(),
+          );
+        },
+      ),
+      NavItem(
+        title: 'Trending Spaces',
+        onPressed: () {
+          pushScreen(
+            context,
+            TrendingSpaceScreen(),
+          );
         },
       ),
     ];
@@ -117,13 +164,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
                   SizedBox(height: 64),
                   if (pushWallet == null)
-                    MaterialButton(
-                      color: Colors.white,
-                      child: Text(
-                        'Connect Wallet',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      onPressed: connectWallet,
+                    Wrap(
+                      children: [
+                        MaterialButton(
+                          color: Colors.white,
+                          child: Text(
+                            'Connect Wallet 1',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            connectWallet(mnemonic1);
+                          },
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        MaterialButton(
+                          color: Colors.white,
+                          child: Text(
+                            'Connect Wallet 2',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            connectWallet(mnemonic2);
+                          },
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        MaterialButton(
+                          color: Colors.white,
+                          child: Text(
+                            'Connect Wallet 3',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            connectWallet3();
+                          },
+                        ),
+                      ],
                     )
                   else
                     Expanded(
@@ -172,6 +251,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+}
+
+pushScreen(BuildContext context, Widget screen) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screen,
+      ));
 }
 
 class NavItem {

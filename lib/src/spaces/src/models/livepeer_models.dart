@@ -1,4 +1,3 @@
-
 class LivepeerStreamDetails {
   String? streamId;
   String? streamKey;

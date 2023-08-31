@@ -1,5 +1,4 @@
 import 'package:example/__lib.dart';
-import 'package:example/functions/space/start_space.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 
 import 'package:ethers/signers/wallet.dart' as ether;
@@ -40,11 +39,10 @@ void testCreateSpace() async {
 
   final generator = UniqueNamesGenerator(
     // Config.fallback() can also be used
-    config: Config(dictionaries: [adjectives, animals, colors]),
+    config: Config(dictionaries: [names, animals, colors]),
   );
 
-  String spaceName =
-      ' Testing dart  Space ${generator.generate()} '.replaceAll('_', '');
+  String spaceName = 'Space ${generator.generate()} '.replaceAll('_', ' ');
   if (spaceName.length > 50) {
     spaceName = spaceName.substring(0, 45);
   }
@@ -59,13 +57,14 @@ void testCreateSpace() async {
       speakers: [
         "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280",
         '0xB6E3Dc6b35A294f6Bc8de33969185A615e8596D3',
+        '0x8ca107e6845b095599FDc1A937E6f16677a90325',
       ],
       isPublic: true,
-      scheduleAt: DateTime.now().add(Duration(hours: 2)));
+      scheduleAt: DateTime.now().toUtc().add(Duration(minutes: 1)));
 
   print(result);
   if (result != null) {
     print('testCreateSpace response: spaceId = ${result.spaceId}');
-    testStartSpace(result.spaceId);
+    // testStartSpace(result.spaceId);
   }
 }

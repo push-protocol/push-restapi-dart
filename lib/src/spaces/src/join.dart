@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:livekit_client/livekit_client.dart';
+
 import '../../../push_restapi_dart.dart';
 
-Future<void> joinSpace(
-    {required String spaceId,
-    String? address,
-    String? pgpPrivateKey,
-    Signer? signer}) async {
+Future<SpaceDTO?> joinSpace({
+  required String spaceId,
+  String? address,
+  String? pgpPrivateKey,
+  Signer? signer,
+  required Function(Room?) updateRoom,
+}) async {
   try {
     final SpaceDTO space = await getSpaceById(spaceId: spaceId);
 
@@ -14,7 +18,7 @@ Future<void> joinSpace(
       throw Exception('Space not active yet');
     }
 
-    SpaceData spaceData = providerContainer.read(PushSpaceProvider).data;
+    // SpaceData spaceData = providerContainer.read(PushSpaceProvider).data;
 
     // checking what is the current role of caller address
 
@@ -54,7 +58,7 @@ Future<void> joinSpace(
       // TODO: Get the signer, pgpPrivateKey here
       final localWallet = getCachedWallet();
       await approveSpaceRequest(
-          senderAddress: spaceData.spaceId,
+          senderAddress: spaceId,
           signer: signer ?? localWallet?.signer,
           pgpPrivateKey: pgpPrivateKey ?? localWallet?.pgpPrivateKey);
     }
@@ -63,15 +67,17 @@ Future<void> joinSpace(
       // TODO: Add the join room logic here
       final roomId = jsonDecode(space.meta ?? '')["roomId"];
 
-      addSpeakingParticipant(roomId: roomId, participantName: localAddress);
+      final room = await addSpeakingParticipant(
+          roomId: roomId, participantName: localAddress);
+      updateRoom(room);
     }
 
-    final updatedSpace = await getSpaceById(spaceId: spaceData.spaceId);
+    return await getSpaceById(spaceId: spaceId);
 
     // update space data
-    providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-      return SpaceData.fromSpaceDTO(updatedSpace, spaceData.liveSpaceData);
-    });
+    // providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+    //   return SpaceData.fromSpaceDTO(updatedSpace, spaceData.liveSpaceData);
+    // });
   } catch (err) {
     print('[Push SDK] - API  - Error - API join -: $err');
     throw Exception('[Push SDK] - API  - Error - API join -: $err');

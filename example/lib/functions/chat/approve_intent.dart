@@ -26,8 +26,14 @@ void testApproveIntent() async {
       wallet: getWallet(signer: signer),
     );
   }
-  final result =
-      await requests(toDecrypt: true, accountAddress: signer.address, pgpPrivateKey: pgpPrivateKey);
+  final result = await requests(
+      toDecrypt: true,
+      accountAddress: signer.address,
+      pgpPrivateKey: pgpPrivateKey);
   print(result);
-  approve(senderAddress: "0xaba32d63052de97Bc3bc749b7241cB4E2479c401", account: signer.address, signer: signer, pgpPrivateKey: pgpPrivateKey);
+  approve(
+      senderAddress: "0xaba32d63052de97Bc3bc749b7241cB4E2479c401",
+      account: signer.address,
+      signer: signer,
+      pgpPrivateKey: pgpPrivateKey);
 }

@@ -30,7 +30,6 @@ void testSend() async {
 
   print('pgpPrivateKey: $pgpPrivateKey');
 
-
   final options = ChatSendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
