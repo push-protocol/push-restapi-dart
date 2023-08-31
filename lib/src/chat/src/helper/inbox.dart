@@ -60,7 +60,7 @@ Future<List<SpaceFeeds>> getSpaceInboxList({
 }) async {
   final List<SpaceFeeds> feedsOutputlist = [];
   for (var feed in feedsList) {
-    late Message? message;
+    Message? message;
     if (feed.threadhash != null) {
       message = await getCID(cid: feed.threadhash!);
     }

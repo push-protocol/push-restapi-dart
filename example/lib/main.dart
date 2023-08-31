@@ -1,13 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '__lib.dart';
 import 'package:ethers/signers/wallet.dart' as ether;
 
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'functions/space/trending_spaces.dart';
-
-import 'functions/space/create_space.dart';
 
 void main() async {
   //testSendVideoCallNotification();
@@ -15,7 +11,7 @@ void main() async {
   // testFetchRequests();
   // testVideoInitialise();
 
-  testCreateSpace();
+  // testCreateSpace();
   // testStartSpace();
 
   runApp(
@@ -30,8 +26,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(),
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.purple,
+        appBarTheme: AppBarTheme(backgroundColor: Colors.purple)
+      ),
+      home: HomeScreen(),
     );
   }
 }

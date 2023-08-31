@@ -31,10 +31,10 @@ Future<SpaceDTO?> startSpace({
         getSpaceAdminsList(space.members, space.pendingMembers);
 
     ////Create Stream
-    // final stream = await _createStreamService(spaceName: space.spaceName);
+    final stream = await _createStreamService(spaceName: space.spaceName);
 
     ///Create room
-    // final roomId = await _createLivePeerRoom();
+    final roomId = await _createLivePeerRoom();
 
     ///add local user as participant
     final participant = await _addLivepeerRoomParticipant(
@@ -44,10 +44,13 @@ Future<SpaceDTO?> startSpace({
 
     final url = _extractWebSocketUrlFromJoinUrl(participant.joinUrl!);
 
-    connectToRoomAndPublishAudio(
+    final room = await connectToRoomAndPublishAudio(
       url: url,
       token: participant.token!,
     );
+    providerContainer
+        .read(PushSpaceProvider.notifier)
+        .updateLocalUserRoom(room);
 
     ///connect room to stream
     await _startLiveStream(roomId: roomId, streamId: stream.streamId!);
@@ -80,7 +83,7 @@ Future<SpaceDTO?> startSpace({
     rethrow;
   }
 }
-/*
+
 final _livepeerBaseUrl = 'https://livepeer.studio/api';
 String _livepeerApiKey = '';
 
