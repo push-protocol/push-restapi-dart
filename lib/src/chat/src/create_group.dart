@@ -21,6 +21,8 @@ Future<GroupDTO?> createGroup({
   DateTime? scheduleEnd,
 }) async {
   try {
+    account ??= getCachedWallet()?.address;
+    signer ??= getCachedWallet()?.signer;
     if (account == null && signer == null) {
       throw Exception('At least one from account or signer is necessary!');
     }

@@ -44,10 +44,13 @@ Future<SpaceDTO?> startSpace({
 
     final url = _extractWebSocketUrlFromJoinUrl(participant.joinUrl!);
 
-    connectToRoomAndPublishAudio(
+    final room = await connectToRoomAndPublishAudio(
       url: url,
       token: participant.token!,
     );
+    providerContainer
+        .read(PushSpaceProvider.notifier)
+        .updateLocalUserRoom(room);
 
     ///connect room to stream
     await _startLiveStream(roomId: roomId, streamId: stream.streamId!);

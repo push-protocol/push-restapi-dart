@@ -2,21 +2,25 @@ import 'dart:convert';
 
 import '../../../push_restapi_dart.dart';
 
-Future<void> joinSpace() async {
+Future<void> joinSpace(
+    {required String spaceId,
+    String? address,
+    String? pgpPrivateKey,
+    Signer? signer}) async {
   try {
-    SpaceData spaceData = providerContainer.read(PushSpaceProvider).data;
-
-    final SpaceDTO space = await getSpaceById(spaceId: spaceData.spaceId);
+    final SpaceDTO space = await getSpaceById(spaceId: spaceId);
 
     if (space.status != ChatStatus.ACTIVE) {
       throw Exception('Space not active yet');
     }
 
+    SpaceData spaceData = providerContainer.read(PushSpaceProvider).data;
+
     // checking what is the current role of caller address
 
     var isSpeaker = false;
     var isListener = false;
-    final localAddress = getCachedWallet()?.address;
+    final localAddress = address ?? getCachedWallet()?.address;
     if (localAddress == null) {
       throw Exception('Cannot find local user address');
     }
@@ -51,8 +55,8 @@ Future<void> joinSpace() async {
       final localWallet = getCachedWallet();
       await approveSpaceRequest(
           senderAddress: spaceData.spaceId,
-          signer: localWallet?.signer,
-          pgpPrivateKey: localWallet?.pgpPrivateKey);
+          signer: signer ?? localWallet?.signer,
+          pgpPrivateKey: pgpPrivateKey ?? localWallet?.pgpPrivateKey);
     }
 
     if (isSpeaker || isSpeakerPending) {
