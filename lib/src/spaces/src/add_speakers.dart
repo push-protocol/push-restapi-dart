@@ -16,7 +16,7 @@ Future<SpaceDTO> addSpeakers({
   if (speakers.isEmpty) {
     throw Exception("Speaker address array cannot be empty!");
   }
-  
+
   try {
     for (var speaker in speakers) {
       if (!isValidETHAddress(speaker)) {

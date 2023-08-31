@@ -11,6 +11,7 @@ Future<SpaceDTO?> startSpace({
   required String spaceId,
   required String livepeerApiKey,
   required Function(ProgressHookType) progressHook,
+  required Function(Room?) updateRoom,
 }) async {
   try {
     accountAddress ??= getCachedWallet()?.address;
@@ -48,9 +49,7 @@ Future<SpaceDTO?> startSpace({
       url: url,
       token: participant.token!,
     );
-    providerContainer
-        .read(PushSpaceProvider.notifier)
-        .updateLocalUserRoom(room);
+    updateRoom(room);
 
     ///connect room to stream
     await _startLiveStream(roomId: roomId, streamId: stream.streamId!);

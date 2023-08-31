@@ -2,12 +2,10 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
-Future<List<SpaceFeeds>?> trending({
+Future<List<SpaceFeeds>?> trendingSpaces({
   int page = 1,
   int limit = 10,
 }) async {
-
-
   try {
     final result = await http.get(
       path: '/v1/spaces/trending?page=$page&limit=$limit',
@@ -17,11 +15,8 @@ Future<List<SpaceFeeds>?> trending({
       return null;
     }
 
-    
-
-    final requestList = (result['spaces'] as List)
-        .map((e) => SpaceFeeds.fromJson(e))
-        .toList();
+    final requestList =
+        (result['spaces'] as List).map((e) => SpaceFeeds.fromJson(e)).toList();
     final feedWithInbox = await getTrendingSpaceInboxList(
       feedsList: requestList,
     );

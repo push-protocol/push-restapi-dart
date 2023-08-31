@@ -13,7 +13,7 @@ final PushVideoCallProvider =
 
 typedef SetVideoDataFunction = VideoCallData Function(VideoCallData);
 
- VideoCallData initVideoCallData = VideoCallData();
+VideoCallData initVideoCallData = VideoCallData();
 
 class VideoCallStateNotifier extends ChangeNotifier {
   late VideoCallData data;
@@ -30,7 +30,7 @@ class VideoCallStateNotifier extends ChangeNotifier {
   //     iceCandidates: RTCIceCandidate[]
   //   }
   // }
-   final Map<String, Map<String, dynamic>> _rtcPeer = {};
+  final Map<String, Map<String, dynamic>> _rtcPeer = {};
 
   initializeVideo({
     Signer? signer,

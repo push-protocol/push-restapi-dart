@@ -1,1 +1,1 @@
-rejectPromotionInvite(){}
+rejectPromotionInvite() {}

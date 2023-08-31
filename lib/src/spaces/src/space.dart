@@ -87,35 +87,49 @@ class SpaceStateNotifier extends ChangeNotifier {
       address: address,
       pgpPrivateKey: pgpPrivateKey,
       signer: signer,
+      updateRoom: updateLocalUserRoom,
     );
   }
 
-  start({
+  Future<SpaceDTO?> start({
     String? accountAddress,
     Signer? signer,
     required String spaceId,
     String? livepeerApiKey,
     required dynamic Function(ProgressHookType) progressHook,
-  }) {
+  }) async {
     livepeerApiKey ??= '4217cd75-ce67-49af-a6dd-aa1581f7d651';
-    startSpace(
-      accountAddress: accountAddress,
-      signer: signer,
-      spaceId: spaceId,
-      livepeerApiKey: livepeerApiKey,
-      progressHook: progressHook,
-    );
+    return startSpace(
+        accountAddress: accountAddress,
+        signer: signer,
+        spaceId: spaceId,
+        livepeerApiKey: livepeerApiKey,
+        progressHook: progressHook,
+        updateRoom: updateLocalUserRoom);
   }
 
   updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
     notifyListeners();
+    log('updateLocalUserRoom: $_room ');
   }
 
-  setMicrophoneState(bool isOn) {
+  bool get isSpeakerConnected => _room != null;
+
+  bool get isMicOn => _isMicOn;
+  bool _isMicOn = false;
+  setMicrophoneState(bool isOn) async {
     if (_room != null) {
-      _room?.localParticipant?.setMicrophoneEnabled(isOn);
+      _isMicOn = isOn;
+      await _room?.localParticipant?.setMicrophoneEnabled(isOn);
+      log('setMicrophoneState: $_room _isMicOn= $_isMicOn');
+      notifyListeners();
     }
+    log('setMicrophoneState: $_room done');
+  }
+
+  toggleMic() {
+    setMicrophoneState(!_isMicOn);
   }
 
   leave() {}

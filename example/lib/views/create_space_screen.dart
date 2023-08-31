@@ -113,13 +113,15 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
       spaceImage: 'spaceImage',
       listeners: listeners,
       speakers: speakers,
-      isPublic: false,
+      isPublic: true,
       scheduleAt: DateTime.now(),
     );
     if (result == null) {
-      _showMyDialog(title: 'Error', message: 'Space not created');
+      showMyDialog(
+          context: context, title: 'Error', message: 'Space not created');
     } else {
-      _showMyDialog(
+      showMyDialog(
+        context: context,
         title: 'Success',
         message: 'Space created successfully',
         onClose: () {
@@ -128,7 +130,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         },
       );
     }
-   
+
     updateLoading(false);
   }
 
@@ -145,48 +147,51 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     speakerController.clear();
     setState(() {});
   }
+}
 
-  Future<void> _showMyDialog({
-    required String title,
-    required String message,
-    void Function()? onClose,
-  }) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
+Future<void> showMyDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  void Function()? onClose,
+}) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(message),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: onClose ??
-                  () {
-                    Navigator.of(context).pop();
-                  },
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Close'),
+            onPressed: onClose ??
+                () {
+                  Navigator.of(context).pop();
+                },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class InputField extends StatelessWidget {
   final TextEditingController? controller;
   final String label;
+  final String? hintText;
   final Widget? suffixIcon;
 
   const InputField({
     super.key,
     this.controller,
+    this.hintText,
     required this.label,
     this.suffixIcon,
   });
@@ -196,6 +201,7 @@ class InputField extends StatelessWidget {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
+          hintText: hintText,
           border: OutlineInputBorder(),
           label: Text(label),
           suffixIcon: suffixIcon),

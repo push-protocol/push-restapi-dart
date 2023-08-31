@@ -1,7 +1,5 @@
 // ignore_for_file: constant_identifier_names, camel_case_types, non_constant_identifier_names
 
-
-
 import '../../../push_restapi_dart.dart';
 
 final Map<String, dynamic> PROGRESSHOOK = {

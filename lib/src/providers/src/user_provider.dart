@@ -30,7 +30,7 @@ class EthWalletProvider extends StateNotifier<Wallet?> {
 
     await ref
         .read(userProvider.notifier)
-        .setCurrentUserByAddress(wallet.address??'');
+        .setCurrentUserByAddress(wallet.address ?? '');
   }
 }
 

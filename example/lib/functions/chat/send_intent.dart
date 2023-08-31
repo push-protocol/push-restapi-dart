@@ -6,8 +6,7 @@ void handleProgress(progressType) {
 }
 
 testCreatPushProfile() async {
-    // const mnemonic =
-    //   'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
+  // const mnemonic =
+  //   'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
   // final walletMnemonic = ether.Wallet.fromMnemonic(mnemonic);
-  
 }

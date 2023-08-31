@@ -4,6 +4,4 @@ connectInvitee({
   required SpaceDTO space,
   required signalData,
   required String inviteeAddress,
-}) {
-  
-}
+}) {}

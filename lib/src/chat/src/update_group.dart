@@ -84,6 +84,7 @@ Future<GroupDTO?> updateGroup(
       'scheduleAt': scheduleAt?.toIso8601String(),
       'scheduleEnd': scheduleEnd?.toIso8601String(),
       if (meta != null) 'meta': meta,
+      if (status != null) 'status': chatStringFromChatStatus(status),
     };
 
     final result = await http.put(
@@ -91,7 +92,7 @@ Future<GroupDTO?> updateGroup(
       data: body,
     );
 
-    if (result == null) {
+    if (result == null || result is String) {
       return null;
     }
 
