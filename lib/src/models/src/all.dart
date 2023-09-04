@@ -236,6 +236,7 @@ class GroupDTO {
   DateTime? scheduleAt;
   DateTime? scheduleEnd;
   String? groupType;
+  String? meta;
   ChatStatus? status;
 
   GroupDTO({
@@ -256,6 +257,7 @@ class GroupDTO {
     this.scheduleEnd,
     required this.groupType,
     this.status,
+    this.meta,
   });
 
   Map<String, dynamic> toJson() {
@@ -277,6 +279,7 @@ class GroupDTO {
     data['scheduleAt'] = scheduleAt?.toIso8601String();
     data['scheduleEnd'] = scheduleEnd?.toIso8601String();
     data['groupType'] = groupType;
+    data['meta'] = meta;
     data['status'] = chatStringFromChatStatus(status);
     return data;
   }
@@ -306,6 +309,7 @@ class GroupDTO {
             ? DateTime.parse(json['scheduleEnd'])
             : null,
         groupType = json['groupType'],
+        meta = json['meta'],
         status = json['status'] != null
             ? chatStatusFromString(json['status'])
             : null;

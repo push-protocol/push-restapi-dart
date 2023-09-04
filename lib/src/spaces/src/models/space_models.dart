@@ -1,4 +1,4 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart';
+import '../../../../push_restapi_dart.dart';
 
 class Peer {
   String address = '';
@@ -76,7 +76,7 @@ class SpaceData extends SpaceDTO {
           scheduleEnd: scheduleEnd,
           status: status,
         ) {
-    // this.liveSpaceData = liveSpaceData;
+    this.liveSpaceData = initLiveSpaceData;
   }
 
   static SpaceData fromSpaceDTO(

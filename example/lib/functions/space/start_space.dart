@@ -16,8 +16,6 @@ testStartSpace(String spaceId) {
   push.startSpace(
     signer: signer,
     spaceId: spaceId,
-    // spaceId: 'spaces:118a0710ea84fd48ebb1869bd6b882ad1d937ce6f6103bd231a34865357cc0a7',
-    livepeerApiKey: '4217cd75-ce67-49af-a6dd-aa1581f7d651',
     progressHook: (p0) {},
     updateRoom: (p0) {},
   );

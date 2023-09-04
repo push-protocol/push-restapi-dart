@@ -1,12 +1,9 @@
-import 'package:example/views/my_spaces_screen.dart';
-import 'package:example/views/trending_space_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
 import '../__lib.dart';
-import 'create_space_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

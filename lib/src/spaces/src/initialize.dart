@@ -1,6 +1,6 @@
 import '../../../push_restapi_dart.dart';
 
-Future initializeSpace({
+Future<SpaceData?> initializeSpace({
   required String spaceId,
 }) async {
   try {
@@ -15,6 +15,7 @@ Future initializeSpace({
     providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
       return SpaceData.fromSpaceDTO(space, liveSpaceData);
     });
+    return SpaceData.fromSpaceDTO(space, liveSpaceData);
   } catch (e) {
     print('[Push SDK] - API  - Error - API initialize -:  $e');
     rethrow;

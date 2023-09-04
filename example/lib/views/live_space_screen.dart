@@ -14,6 +14,7 @@ class LiveSpaceRoom extends ConsumerStatefulWidget {
 class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
   @override
   Widget build(BuildContext context) {
+    final data = widget.space;
     return Scaffold(
       appBar: AppBar(
         title: Text('Space'),
@@ -22,7 +23,82 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
         padding: EdgeInsets.all(24),
         child: Column(
           children: [
-            Expanded(child: Column()),
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    color: Colors.grey.withOpacity(.2),
+                    child: Image.network(
+                      data.spaceImage!,
+                      height: 200,
+                      width: 200,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Space Name:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  data.spaceName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Space Id:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  data.spaceId,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Space Description:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  data.spaceDescription ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Space Creator:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  data.spaceCreator,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            )),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.end,
