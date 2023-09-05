@@ -3,9 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:push_restapi_dart/src/spaces/src/initialize.dart';
-import 'package:push_restapi_dart/src/spaces/src/join.dart';
-import 'package:push_restapi_dart/src/spaces/src/update_space_meta.dart';
+
+import 'helpers/live_peer.dart';
+import 'initialize.dart';
+import 'join.dart';
+import 'update_space_meta.dart';
 
 import '../../../push_restapi_dart.dart';
 
@@ -76,13 +78,18 @@ class SpaceStateNotifier extends ChangeNotifier {
     );
   }
 
-  join({
+  Future<SpaceDTO?> join({
     required String spaceId,
     String? address,
     String? pgpPrivateKey,
     Signer? signer,
-  }) {
-    joinSpace(
+    String? livepeerApiKey,
+  }) async {
+    if (livepeerApiKey != null) {
+      setLivePeerKey(livepeerApiKey);
+    }
+    // initialize(spaceId: spaceId);
+    return joinSpace(
       spaceId: spaceId,
       address: address,
       pgpPrivateKey: pgpPrivateKey,
@@ -98,20 +105,22 @@ class SpaceStateNotifier extends ChangeNotifier {
     String? livepeerApiKey,
     required dynamic Function(ProgressHookType) progressHook,
   }) async {
-    livepeerApiKey ??= '4217cd75-ce67-49af-a6dd-aa1581f7d651';
+    initialize(spaceId: spaceId);
+    if (livepeerApiKey != null) {
+      setLivePeerKey(livepeerApiKey);
+    }
     return startSpace(
-        accountAddress: accountAddress,
-        signer: signer,
-        spaceId: spaceId,
-        livepeerApiKey: livepeerApiKey,
-        progressHook: progressHook,
-        updateRoom: updateLocalUserRoom);
+      accountAddress: accountAddress,
+      signer: signer,
+      spaceId: spaceId,
+      progressHook: progressHook,
+      updateRoom: updateLocalUserRoom,
+    );
   }
 
   updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
     notifyListeners();
-    log('updateLocalUserRoom: $_room ');
   }
 
   bool get isSpeakerConnected => _room != null;
@@ -122,10 +131,8 @@ class SpaceStateNotifier extends ChangeNotifier {
     if (_room != null) {
       _isMicOn = isOn;
       await _room?.localParticipant?.setMicrophoneEnabled(isOn);
-      log('setMicrophoneState: $_room _isMicOn= $_isMicOn');
       notifyListeners();
     }
-    log('setMicrophoneState: $_room done');
   }
 
   toggleMic() {

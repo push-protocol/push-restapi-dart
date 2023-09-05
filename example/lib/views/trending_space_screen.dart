@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'create_space_screen.dart';
+import '../__lib.dart';
 
 class TrendingSpaceScreen extends ConsumerStatefulWidget {
   const TrendingSpaceScreen({super.key});
@@ -32,6 +31,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
               suffixIcon: MaterialButton(
                 color: Colors.purple,
                 child: Text('Join'),
+                textColor: Colors.white,
                 onPressed: () {
                   onJoin(controller.text);
                 },
@@ -93,8 +93,24 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
   }
 
   onJoin(String spaceId) {
-    ref.read(PushSpaceProvider.notifier).join(
+    showLoadingDialog(context);
+    ref
+        .read(PushSpaceProvider.notifier)
+        .join(
           spaceId: spaceId,
+        )
+        .then((value) {
+      Navigator.pop(context);
+      if (value == null) {
+        showMyDialog(context: context, title: 'Error', message: 'Cannot Join');
+      } else {
+        pushScreen(
+          context,
+          LiveSpaceRoom(space: value),
         );
+      }
+    }).catchError((e) {
+      Navigator.pop(context);
+    });
   }
 }

@@ -10,7 +10,7 @@ void main() async {
   // testFetchRequests();
   // testVideoInitialise();
 
-  testCreateSpace();
+  // testCreateSpace();
   // testStartSpace();
 
   runApp(

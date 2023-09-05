@@ -1,9 +1,6 @@
-import 'package:example/__lib.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
-
-import 'create_space_screen.dart';
-import 'live_space_screen.dart';
+import '../__lib.dart';
 
 class MySpacesScreen extends ConsumerStatefulWidget {
   const MySpacesScreen({super.key});
@@ -39,7 +36,7 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
             itemBuilder: (context, index) {
               final item = spaces[index];
               return ListTile(
-                onTap: () => onStart(item.spaceId),
+                onTap: () => onStart(item),
                 title: Text('${item.spaceInformation?.spaceName}'),
                 subtitle: Column(
                   children: [
@@ -51,7 +48,7 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
                     ? MaterialButton(
                         shape: RoundedRectangleBorder(),
                         color: Colors.purple,
-                        onPressed: () => onStart(item.spaceId),
+                        onPressed: () => onStart(item),
                         child: Text('Start'),
                         textColor: Colors.white,
                       )
@@ -64,14 +61,25 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
     );
   }
 
-  onStart(spaceId) {
+  onStart(SpaceFeeds item) {
+    if (item.spaceInformation?.status != ChatStatus.PENDING) {
+      showMyDialog(
+          context: context,
+          title: 'Error',
+          message:
+              'Unable to start the space as it is not in the pending state');
+      return;
+    }
+
+    showLoadingDialog(context);
     ref
         .read(PushSpaceProvider.notifier)
         .start(
-          spaceId: spaceId!,
+          spaceId: item.spaceId!,
           progressHook: (p0) {},
         )
         .then((value) {
+      Navigator.pop(context);
       if (value == null) {
         showMyDialog(
             context: context, title: 'Error', message: 'Space not created');
@@ -83,6 +91,10 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
           LiveSpaceRoom(
             space: value,
           ));
-    });
+    }).catchError(
+      (err) {
+        Navigator.pop(context);
+      },
+    );
   }
 }

@@ -40,7 +40,6 @@ Future<String?> approve({
   };
   final hash = generateHash(bodyToBeHashed);
 
-  //TODO add sign function parameter values
   final signature = await sign(
     message: hash,
     privateKey: pgpPrivateKey,
@@ -58,6 +57,20 @@ Future<String?> approve({
   };
 
   final result = await http.put(
-      path: '/v1/chat/request/accept', data: body, skipJsonDecode: true);
-  return result?['data'];
+    path: '/v1/chat/request/accept',
+    data: body,
+    skipJsonDecode: true,
+  );
+
+  log('accept result: $result');
+
+  if (result == null) {
+    return null;
+  }
+
+  if (result is String) {
+    return result;
+  }
+
+  return result['data'];
 }

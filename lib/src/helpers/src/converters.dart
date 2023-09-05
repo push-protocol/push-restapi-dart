@@ -57,6 +57,7 @@ SpaceDTO groupDtoToSpaceDto(GroupDTO groupDto) {
     status: groupData['status'] != null
         ? chatStatusFromString(groupData['status'])
         : null,
+    meta: groupDto.meta,
   );
 }
 
