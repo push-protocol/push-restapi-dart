@@ -51,7 +51,7 @@ exampleInit() async {
   if (user == null) {
     print('Cannot get user');
     return;
-  } 
+  }
 
   String? pgpPrivateKey = null;
   if (user.encryptedPrivateKey != null) {

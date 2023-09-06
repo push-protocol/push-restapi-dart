@@ -1,9 +1,10 @@
-import 'package:better_player/better_player.dart';
+// import 'package:better_player/better_player.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:example/views/create_space_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
+import 'package:video_player/video_player.dart';
 
 class LiveSpaceRoom extends ConsumerStatefulWidget {
   final SpaceDTO space;
@@ -15,6 +16,7 @@ class LiveSpaceRoom extends ConsumerStatefulWidget {
 }
 
 class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
+  VideoPlayerController? _controller;
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(PushSpaceProvider);
@@ -101,26 +103,65 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                 // _setPlaybackUrl(vm.spacePlaybackUrl);
 
                 if (vm.spacePlaybackUrl != null) {
-                  BetterPlayerDataSource betterPlayerDataSource =
-                      BetterPlayerDataSource(
-                    BetterPlayerDataSourceType.network,
-                    vm.spacePlaybackUrl!,
-                    liveStream: true,
-                    videoFormat: BetterPlayerVideoFormat.hls,
-                    useHlsAudioTracks: true,
-                    useHlsTracks: true,
-                  );
-                  final _controller = BetterPlayerController(
-                      BetterPlayerConfiguration(),
-                      betterPlayerDataSource: betterPlayerDataSource);
-                  return SizedBox(
-                      height: 300,
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: BetterPlayer(
-                          controller: _controller,
+                  if (_controller == null) {
+                    _controller = VideoPlayerController.networkUrl(
+                      Uri.parse(vm.spacePlaybackUrl!),
+                      formatHint: VideoFormat.hls,
+                      videoPlayerOptions:
+                          VideoPlayerOptions(allowBackgroundPlayback: true),
+                    )..initialize().then((_) {
+                        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                        setState(() {});
+                      });
+                    return SizedBox.shrink();
+                  }
+
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 200,
+                        child: _controller!.value.isInitialized
+                            ? AspectRatio(
+                                aspectRatio: _controller!.value.aspectRatio,
+                                child: VideoPlayer(_controller!),
+                              )
+                            : SizedBox.shrink(),
+                      ),
+                      MaterialButton(
+                        padding: EdgeInsets.all(16),
+                        color: Colors.white,
+                        shape: CircleBorder(),
+                        child: Icon(
+                          Icons.play_arrow,
+                          size: 32,
                         ),
-                      ));
+                        onPressed: () {
+                          _controller!.play();
+                        },
+                      ),
+                    ],
+                  );
+
+                  // BetterPlayerDataSource betterPlayerDataSource =
+                  //     BetterPlayerDataSource(
+                  //   BetterPlayerDataSourceType.network,
+                  //   vm.spacePlaybackUrl!,
+                  //   liveStream: true,
+                  //   videoFormat: BetterPlayerVideoFormat.hls,
+                  //   useHlsAudioTracks: true,
+                  //   useHlsTracks: true,
+                  // );
+                  // final _controller = BetterPlayerController(
+                  //     BetterPlayerConfiguration(),
+                  //     betterPlayerDataSource: betterPlayerDataSource);
+                  // return SizedBox(
+                  //     height: 300,
+                  //     child: AspectRatio(
+                  //       aspectRatio: 16 / 9,
+                  //       child: BetterPlayer(
+                  //         controller: _controller,
+                  //       ),
+                  //     ));
                 }
                 return SizedBox.shrink();
               },
