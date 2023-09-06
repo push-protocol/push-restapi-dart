@@ -11,6 +11,7 @@ Future<SpaceDTO?> joinSpace({
   String? pgpPrivateKey,
   Signer? signer,
   required Function(Room?) updateRoom,
+  required Function(String?) updatePlaybackUrl,
 }) async {
   try {
     final SpaceDTO space = await getSpaceById(spaceId: spaceId);
@@ -69,16 +70,19 @@ Future<SpaceDTO?> joinSpace({
       final room = await addSpeakingParticipant(
           roomId: roomId, participantName: localAddress);
       updateRoom(room);
+    } else {
+      if (space.meta == null) {
+        throw Exception('Space meta not updated');
+      }
+      final meta = jsonDecode(space.meta ?? '');
+
+      final playbackId = meta["playbackId"];
+      final String? playbackUrl = await getPlaybackUrl(playbackId: playbackId);
+
+      updatePlaybackUrl(playbackUrl);
     }
 
     return space;
-
-    // await getSpaceById(spaceId: spaceId);
-
-    // update space data
-    // providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-    //   return SpaceData.fromSpaceDTO(updatedSpace, spaceData.liveSpaceData);
-    // });
   } catch (err) {
     log('[Push SDK] - API  - Error - API join -: $err');
     throw Exception('[Push SDK] - API  - Error - API join -: $err');

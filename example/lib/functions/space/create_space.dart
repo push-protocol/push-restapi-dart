@@ -48,19 +48,22 @@ void testCreateSpace() async {
   }
 
   final result = await push.createSpace(
-      signer: signer,
-      spaceName: spaceName,
-      spaceDescription: "Testing dart for description for $spaceName",
-      spaceImage:
-          "https://res.cloudinary.com/drdjegqln/image/upload/v1686227557/Push-Logo-Standard-Dark_xap7z5.png",
-      listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
-      speakers: [
-        "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280",
-        '0xB6E3Dc6b35A294f6Bc8de33969185A615e8596D3',
-        '0x8ca107e6845b095599FDc1A937E6f16677a90325',
-      ],
-      isPublic: true,
-      scheduleAt: DateTime.now().toUtc().add(Duration(minutes: 1)));
+    signer: signer,
+    spaceName: spaceName,
+    spaceDescription: "Testing dart for description for $spaceName",
+    spaceImage:
+        "https://res.cloudinary.com/drdjegqln/image/upload/v1686227557/Push-Logo-Standard-Dark_xap7z5.png",
+    listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
+    speakers: [
+      "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280",
+      '0xB6E3Dc6b35A294f6Bc8de33969185A615e8596D3',
+      '0x8ca107e6845b095599FDc1A937E6f16677a90325',
+    ],
+    isPublic: true,
+    scheduleAt: DateTime.now().toUtc().add(
+          Duration(minutes: 1),
+        ),
+  );
 
   print(result);
   if (result != null) {

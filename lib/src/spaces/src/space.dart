@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -41,6 +42,8 @@ SpaceData initSpaceData = SpaceData(
 class SpaceStateNotifier extends ChangeNotifier {
   // to store the room data upon start/join
   Room? _room;
+  String? _playbackUrl;
+  String? get spacePlaybackUrl => _playbackUrl;
 
   // TODO: store signer, localAddress on class so that dev doesnt have to pass it everywhere
 
@@ -51,6 +54,51 @@ class SpaceStateNotifier extends ChangeNotifier {
     final newState = fn(data);
     data = newState;
     log('setData: $data');
+  }
+
+  BetterPlayerController? _controller;
+  BetterPlayerController? get controller => _controller;
+  _setPlaybackUrl(String? url) {
+    try {
+      _playbackUrl = url;
+      notifyListeners();
+      log('_setPlaybackUrl _playbackUrl: $_playbackUrl');
+
+      if (url != null) {
+        BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network,
+          url,
+          liveStream: true,
+          videoFormat: BetterPlayerVideoFormat.hls,
+          useHlsAudioTracks: true,
+          useHlsTracks: true,
+        );
+        _controller = BetterPlayerController(BetterPlayerConfiguration(),
+            betterPlayerDataSource: betterPlayerDataSource);
+      }
+    } catch (e) {
+      log('_setPlaybackUrl url: $url Error: $e ');
+    }
+  }
+
+  bool _isPlaying = false;
+  bool get isPlaying => _isPlaying;
+
+  setListerningState(bool isPlay) {
+    try {
+      if (_controller == null) {
+        _isPlaying = false;
+        notifyListeners();
+        return;
+      }
+      if (isPlay) {
+        _controller!.pause();
+      } else {
+        _controller!.pause();
+      }
+      _isPlaying = isPlay;
+      notifyListeners();
+    } catch (e) {}
   }
 
   SpaceStateNotifier() {
@@ -94,7 +142,8 @@ class SpaceStateNotifier extends ChangeNotifier {
       address: address,
       pgpPrivateKey: pgpPrivateKey,
       signer: signer,
-      updateRoom: updateLocalUserRoom,
+      updatePlaybackUrl: _setPlaybackUrl,
+      updateRoom: _updateLocalUserRoom,
     );
   }
 
@@ -114,16 +163,17 @@ class SpaceStateNotifier extends ChangeNotifier {
       signer: signer,
       spaceId: spaceId,
       progressHook: progressHook,
-      updateRoom: updateLocalUserRoom,
+      updateRoom: _updateLocalUserRoom,
     );
   }
 
-  updateLocalUserRoom(Room? localRoom) {
+  _updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
     notifyListeners();
   }
 
   bool get isSpeakerConnected => _room != null;
+  bool get isListenerConnected => _playbackUrl != null;
 
   bool get isMicOn => _isMicOn;
   bool _isMicOn = false;
