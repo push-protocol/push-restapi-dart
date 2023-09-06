@@ -98,20 +98,34 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
             Consumer(
               builder: (context, ref, child) {
                 final vm = ref.watch(PushSpaceProvider);
-                if (vm.controller == null) {
-                  return SizedBox.shrink();
+                // _setPlaybackUrl(vm.spacePlaybackUrl);
+
+                if (vm.spacePlaybackUrl != null) {
+                  BetterPlayerDataSource betterPlayerDataSource =
+                      BetterPlayerDataSource(
+                    BetterPlayerDataSourceType.network,
+                    vm.spacePlaybackUrl!,
+                    liveStream: true,
+                    videoFormat: BetterPlayerVideoFormat.hls,
+                    useHlsAudioTracks: true,
+                    useHlsTracks: true,
+                  );
+                  final _controller = BetterPlayerController(
+                      BetterPlayerConfiguration(),
+                      betterPlayerDataSource: betterPlayerDataSource);
+                  return SizedBox(
+                      height: 300,
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: BetterPlayer(
+                          controller: _controller,
+                        ),
+                      ));
                 }
-                return SizedBox(
-                    height: 300,
-                    child: AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: BetterPlayer(
-                        controller: vm.controller!,
-                      ),
-                    ));
+                return SizedBox.shrink();
               },
             ),
-            if (vm.controller == null)
+            if (vm.isSpeakerConnected)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -134,7 +148,6 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                   Consumer(builder: (context, ref, child) {
                     final vm = ref.watch(PushSpaceProvider);
                     bool isSpeaker = vm.isSpeakerConnected;
-                    bool isListener = vm.isListenerConnected;
 
                     if (isSpeaker) {
                       bool isMicOn = vm.isMicOn;
@@ -152,26 +165,6 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                                 ref.read(PushSpaceProvider.notifier).toggleMic,
                           ),
                           Text('Mic')
-                        ],
-                      );
-                    }
-                    if (isListener) {
-                      final isPlaying = vm.isPlaying;
-                      return Column(
-                        children: [
-                          MaterialButton(
-                            padding: EdgeInsets.all(16),
-                            color: Colors.white,
-                            shape: CircleBorder(),
-                            child: Icon(
-                              isPlaying ? Icons.pause : Icons.play_arrow,
-                              size: 32,
-                            ),
-                            onPressed: () {
-                              vm.setListerningState(!isPlaying);
-                            },
-                          ),
-                          Text(''),
                         ],
                       );
                     }

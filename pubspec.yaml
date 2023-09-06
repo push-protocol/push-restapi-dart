@@ -28,7 +28,7 @@ dependencies:
   flutter_webrtc: ^0.9.36
   flutter_riverpod: ^2.3.7
   livekit_client: ^1.4.1
-  better_player: ^0.0.63
+  
   
 
   uuid: ^3.0.4
