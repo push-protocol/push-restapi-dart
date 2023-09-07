@@ -69,6 +69,7 @@ class HttpService {
     String? authorization,
     required String path,
     bool skipJsonDecode = false,
+    Map<String, String>? headers,
   }) async {
     http_package.Response? response;
     try {
@@ -78,7 +79,7 @@ class HttpService {
 
       response = await http_package.get(
         url,
-        headers: header(authorization),
+        headers: headers ?? header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');

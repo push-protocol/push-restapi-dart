@@ -41,6 +41,14 @@ SpaceData initSpaceData = SpaceData(
 class SpaceStateNotifier extends ChangeNotifier {
   // to store the room data upon start/join
   Room? _room;
+  String? _playbackUrl;
+  String? get spacePlaybackUrl => _playbackUrl;
+
+  _setPlaybackUrl(String? url) {
+    _playbackUrl = url;
+    notifyListeners();
+    log('_setPlaybackUrl _playbackUrl: $_playbackUrl');
+  }
 
   // TODO: store signer, localAddress on class so that dev doesnt have to pass it everywhere
 
@@ -52,6 +60,9 @@ class SpaceStateNotifier extends ChangeNotifier {
     data = newState;
     log('setData: $data');
   }
+
+  // bool _isPlaying = false;
+  // bool get isPlaying => _isPlaying;
 
   SpaceStateNotifier() {
     data = initSpaceData;
@@ -94,7 +105,8 @@ class SpaceStateNotifier extends ChangeNotifier {
       address: address,
       pgpPrivateKey: pgpPrivateKey,
       signer: signer,
-      updateRoom: updateLocalUserRoom,
+      updatePlaybackUrl: _setPlaybackUrl,
+      updateRoom: _updateLocalUserRoom,
     );
   }
 
@@ -114,16 +126,17 @@ class SpaceStateNotifier extends ChangeNotifier {
       signer: signer,
       spaceId: spaceId,
       progressHook: progressHook,
-      updateRoom: updateLocalUserRoom,
+      updateRoom: _updateLocalUserRoom,
     );
   }
 
-  updateLocalUserRoom(Room? localRoom) {
+  _updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
     notifyListeners();
   }
 
   bool get isSpeakerConnected => _room != null;
+  bool get isListenerConnected => _playbackUrl != null;
 
   bool get isMicOn => _isMicOn;
   bool _isMicOn = false;

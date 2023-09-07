@@ -1,11 +1,42 @@
 import 'package:livekit_client/livekit_client.dart';
 
 import '../../../../push_restapi_dart.dart';
+import '../models/playback.dart';
 
 final _livepeerBaseUrl = 'https://livepeer.studio/api';
 String _livepeerApiKey = '4217cd75-ce67-49af-a6dd-aa1581f7d651';
 setLivePeerKey(String key) {
   _livepeerApiKey = key;
+}
+
+Future<String?> getPlaybackUrl({
+  required String playbackId,
+}) async {
+  try {
+    final result = await http.get(
+      baseUrl: _livepeerBaseUrl,
+      path: '/playback/$playbackId',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": 'Bearer $_livepeerApiKey',
+      },
+    );
+
+    final data = LivePeerPlaybackResponse.fromJson(result);
+
+    final sources = data.meta?.source ?? [];
+    String? playbackUrl;
+    for (var item in sources) {
+      if (item.hrn == "HLS (TS)") {
+        playbackUrl = item.url;
+        break;
+      }
+    }
+    return playbackUrl;
+  } catch (e) {
+    log('[Push SDK] - API  - Error - $e');
+    return null;
+  }
 }
 
 Future<LivepeerStreamDetails> createStreamService({

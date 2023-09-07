@@ -63,6 +63,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
                         },
                         title: Text('${item.spaceInformation?.spaceName}'),
                         subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('${item.spaceId}'),
                             Text('${item.spaceInformation?.scheduleAt}'),
