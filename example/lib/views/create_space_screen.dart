@@ -24,6 +24,8 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     });
   }
 
+  DateTime _dateTime = DateTime.now().toUtc().add(Duration(minutes: 5));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +38,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
           children: [
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Speakers'),
                   Wrap(
@@ -84,6 +87,11 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                       icon: Icon(Icons.add),
                     ),
                   ),
+                  SizedBox(height: 16),
+                  DataView(
+                    label: 'Start Time',
+                    value: _dateTime.toString(),
+                  ),
                 ],
               ),
             ),
@@ -114,7 +122,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
       listeners: listeners,
       speakers: speakers,
       isPublic: true,
-      scheduleAt: DateTime.now(),
+      scheduleAt: _dateTime,
     );
     if (result == null) {
       showMyDialog(
