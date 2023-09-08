@@ -1,5 +1,5 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
@@ -26,97 +26,68 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
   final mnemonic2 =
       'label mobile gas salt service gravity nose bomb marine online say twice';
+  final mnemonic3 =
+      'priority feed chair canoe news gym cost permit sea worry modify save';
+  final mnemonic4 =
+      'roast exclude blame mixture dune neither vital liquid winter summer nation solution';
+  final mnemonic5 =
+      'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
+
   connectWallet(String mnemonic) async {
-    updateLoading(true);
-    final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-    final signer = EthersSigner(
-      ethersWallet: ethersWallet,
-      address: ethersWallet.address!,
-    );
-
-    print('walletMnemonic.address: ${ethersWallet.address}');
-    final user = await getUser(address: ethersWallet.address!);
-
-    if (user == null) {
-      updateLoading(false);
-      print('Cannot get user');
-      return;
-    }
-
-    String? pgpPrivateKey = null;
-    if (user.encryptedPrivateKey != null) {
-      pgpPrivateKey = await decryptPGPKey(
-        encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-        wallet: getWallet(signer: signer),
-      );
-    }
-
-    print('pgpPrivateKey: $pgpPrivateKey');
-
-    pushWallet = Wallet(
-      address: ethersWallet.address,
-      signer: signer,
-      pgpPrivateKey: pgpPrivateKey,
-    );
-
-    updateLoading(false);
-
-    initPush(
-      wallet: pushWallet,
-      env: ENV.staging,
-    );
-  }
-
-  connectWallet3() async {
-    updateLoading(true);
-    final ethersWallet = ether.Wallet.fromPrivateKey(
-        "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
-
-    final signer = EthersSigner(
-      ethersWallet: ethersWallet,
-      address: ethersWallet.address!,
-    );
-
-    final user = await getUser(address: ethersWallet.address!);
-
-    if (user == null) {
-      print('Cannot get user');
-      return;
-    }
-    String? pgpPrivateKey = null;
-    if (user.encryptedPrivateKey != null) {
-      pgpPrivateKey = await decryptPGPKey(
-        encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-        wallet: getWallet(signer: signer),
-      );
-    }
-
-    pushWallet = Wallet(
-        address: ethersWallet.address!,
-        pgpPrivateKey: pgpPrivateKey,
-        signer: signer);
-
-    updateLoading(false);
-    await initPush(
-      wallet: pushWallet,
-      env: ENV.staging,
-    );
-  }
-
-  requestPermissions() {
-    Permission.camera.request();
-  }
-
-  onVideo() {
-    // final VideoCallData video = ref.read(videoCallStateProvider).videoCallData;
     try {
-      final optiions = VideoCreateInputOptions();
-      ref.read(PushVideoCallProvider.notifier).create(optiions);
-    } catch (e) {}
+      showLoadingDialog(context);
+      final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
+      final signer = EthersSigner(
+        ethersWallet: ethersWallet,
+        address: ethersWallet.address!,
+      );
+
+      print('walletMnemonic.address: ${ethersWallet.address}');
+      final user = await getUser(address: ethersWallet.address!);
+
+      if (user == null) {
+        updateLoading(false);
+        print('Cannot get user');
+        return;
+      }
+
+      String? pgpPrivateKey = null;
+      if (user.encryptedPrivateKey != null) {
+        pgpPrivateKey = await decryptPGPKey(
+          encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+          wallet: getWallet(signer: signer),
+        );
+      }
+
+      print('pgpPrivateKey: $pgpPrivateKey');
+
+      pushWallet = Wallet(
+        address: ethersWallet.address,
+        signer: signer,
+        pgpPrivateKey: pgpPrivateKey,
+      );
+      setState(() {});
+
+      Navigator.pop(context);
+
+      initPush(
+        wallet: pushWallet,
+        env: ENV.staging,
+      );
+    } catch (e) {
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final accounts = [
+      mnemonic1,
+      mnemonic2,
+      mnemonic3,
+      mnemonic4,
+      mnemonic5,
+    ];
     final actions = [
       NavItem(
         title: 'Create Space',
@@ -162,55 +133,79 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   SizedBox(height: 64),
                   if (pushWallet == null)
                     Wrap(
-                      children: [
-                        MaterialButton(
-                          color: Colors.white,
-                          child: Text(
-                            'Connect Wallet 1',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {
-                            connectWallet(mnemonic1);
+                      spacing: 24,
+                      runSpacing: 24,
+                      children: List.generate(
+                        accounts.length,
+                        (index) => InkWell(
+                          onTap: () {
+                            connectWallet(accounts[index]);
                           },
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        MaterialButton(
-                          color: Colors.white,
-                          child: Text(
-                            'Connect Wallet 2',
-                            style: TextStyle(fontSize: 16),
+                          child: Container(
+                            padding: EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.person_4_rounded,
+                                  size: 32,
+                                ),
+                                Text('User ${index + 1}'),
+                              ],
+                            ),
                           ),
-                          onPressed: () {
-                            connectWallet(mnemonic2);
-                          },
                         ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        MaterialButton(
-                          color: Colors.white,
-                          child: Text(
-                            'Connect Wallet 3',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          onPressed: () {
-                            connectWallet3();
-                          },
-                        ),
-                      ],
+                      ),
                     )
                   else
                     Expanded(
                       child: Column(
                         children: [
-                          Center(
-                            child: Text(
-                              'Address: \n${pushWallet?.address}',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                              textAlign: TextAlign.center,
+                          DataView(
+                            color: Colors.white,
+                            label: 'Address: ',
+                            value: pushWallet?.address ?? '',
+                          ),
+                          SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: InkWell(
+                              onTap: () {
+                                FlutterClipboard.copy(pushWallet!.address!)
+                                    .then((value) {
+                                  showMyDialog(
+                                      context: context,
+                                      title: 'Address ',
+                                      message: 'address copied successfully');
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.white),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.copy,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      'Copy Address',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(height: 16),

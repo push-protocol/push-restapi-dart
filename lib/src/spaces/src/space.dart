@@ -152,7 +152,21 @@ class SpaceStateNotifier extends ChangeNotifier {
     setMicrophoneState(!_isMicOn);
   }
 
-  leave() {}
+  Future leave() async {
+    try {
+      _playbackUrl = null;
+      if (_room != null) {
+        await setMicrophoneState(false);
+        _room!.disconnect();
+      }
+
+      _room = null;
+    } catch (e) {
+      log('leave error $e');
+    }
+
+    notifyListeners();
+  }
 
   stop() {}
 }
