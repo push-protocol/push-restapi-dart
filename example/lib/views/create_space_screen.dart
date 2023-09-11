@@ -24,6 +24,8 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     });
   }
 
+  DateTime _dateTime = DateTime.now().toUtc().add(Duration(minutes: 5));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +38,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
           children: [
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Speakers'),
                   Wrap(
@@ -84,6 +87,11 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                       icon: Icon(Icons.add),
                     ),
                   ),
+                  SizedBox(height: 16),
+                  DataView(
+                    label: 'Start Time',
+                    value: _dateTime.toString(),
+                  ),
                 ],
               ),
             ),
@@ -110,11 +118,12 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     final result = await createSpace(
       spaceName: nameController.text.trim(),
       spaceDescription: descriptionController.text.trim(),
-      spaceImage: 'spaceImage',
+      spaceImage:
+          "https://res.cloudinary.com/drdjegqln/image/upload/v1686227557/Push-Logo-Standard-Dark_xap7z5.png",
       listeners: listeners,
       speakers: speakers,
       isPublic: true,
-      scheduleAt: DateTime.now(),
+      scheduleAt: _dateTime,
     );
     if (result == null) {
       showMyDialog(

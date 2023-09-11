@@ -1,7 +1,6 @@
 // import 'package:better_player/better_player.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:example/views/create_space_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:example/__lib.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:video_player/video_player.dart';
@@ -222,8 +221,20 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                           Icons.close,
                           color: Colors.white,
                         ),
-                        onPressed: () {
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          showLoadingDialog(context);
+                          await vm.leave().then((value) {
+                            showMyDialog(
+                              context: context,
+                              title: 'Space',
+                              message: 'Leave space success',
+                              onClose: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            );
+                          });
                         },
                       ),
                       Text('Leave')
@@ -243,7 +254,9 @@ class DataView extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
+    this.color,
   });
+  final Color? color;
   final String label, value;
 
   @override
@@ -256,13 +269,14 @@ class DataView extends StatelessWidget {
           style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 16,
-              color: Colors.grey[700]),
+              color: color ?? Colors.grey[700]),
         ),
         Text(
           value,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 18,
+            color: color,
           ),
         ),
       ],
