@@ -12,5 +12,6 @@ export 'src/providers/providers.dart';
 export 'src/values/values.dart';
 export 'src/payloads/payloads.dart';
 export 'src/video/video.dart';
+export 'src/sockets/sockets.dart';
 
 export 'src/main.dart';

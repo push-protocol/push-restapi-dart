@@ -39,9 +39,9 @@ class LoadingDialogState extends State<LoadingDialog>
   }
 }
 
-void showLoadingDialog(BuildContext context) {
+void showLoadingDialog([BuildContext? context]) {
   showDialog(
-    context: context,
+    context: context ?? Get.context!,
     barrierDismissible: false,
     barrierColor: const Color.fromRGBO(173, 173, 173, 0.23),
     builder: (BuildContext context) {

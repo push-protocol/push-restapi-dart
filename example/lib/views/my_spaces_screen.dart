@@ -138,7 +138,6 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
         return;
       }
       pushScreen(
-          context,
           LiveSpaceRoom(
             space: value,
           ));

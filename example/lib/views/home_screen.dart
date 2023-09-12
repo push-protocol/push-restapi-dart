@@ -1,8 +1,8 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:example/views/account_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'package:ethers/signers/wallet.dart' as ether;
 import '../__lib.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -13,110 +13,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  Wallet? pushWallet;
-
-  bool isLoading = false;
-  updateLoading(bool state) {
-    setState(() {
-      isLoading = state;
-    });
-  }
-
-  final mnemonic1 =
-      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
-  final mnemonic2 =
-      'label mobile gas salt service gravity nose bomb marine online say twice';
-  final mnemonic3 =
-      'priority feed chair canoe news gym cost permit sea worry modify save';
-  final mnemonic4 =
-      'roast exclude blame mixture dune neither vital liquid winter summer nation solution';
-  final mnemonic5 =
-      'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
-
-  connectWallet(String mnemonic) async {
-    try {
-      showLoadingDialog(context);
-      final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-      final signer = EthersSigner(
-        ethersWallet: ethersWallet,
-        address: ethersWallet.address!,
-      );
-
-      print('walletMnemonic.address: ${ethersWallet.address}');
-      final user = await getUser(address: ethersWallet.address!);
-
-      if (user == null) {
-        updateLoading(false);
-        print('Cannot get user');
-        return;
-      }
-
-      String? pgpPrivateKey = null;
-      if (user.encryptedPrivateKey != null) {
-        pgpPrivateKey = await decryptPGPKey(
-          encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-          wallet: getWallet(signer: signer),
-        );
-      }
-
-      print('pgpPrivateKey: $pgpPrivateKey');
-
-      pushWallet = Wallet(
-        address: ethersWallet.address,
-        signer: signer,
-        pgpPrivateKey: pgpPrivateKey,
-      );
-      setState(() {});
-
-      Navigator.pop(context);
-
-      initPush(
-        wallet: pushWallet,
-        env: ENV.staging,
-      );
-    } catch (e) {
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final accounts = [
-      mnemonic1,
-      mnemonic2,
-      mnemonic3,
-      mnemonic4,
-      mnemonic5,
-    ];
-    final actions = [
-      NavItem(
-        title: 'Create Space',
-        onPressed: () {
-          pushScreen(
-            context,
-            CreateSpaceScreen(),
-          );
-        },
-      ),
-      NavItem(
-        title: 'My Spaces',
-        onPressed: () {
-          pushScreen(
-            context,
-            MySpacesScreen(),
-          );
-        },
-      ),
-      NavItem(
-        title: 'Trending Spaces',
-        onPressed: () {
-          pushScreen(
-            context,
-            TrendingSpaceScreen(),
-          );
-        },
-      ),
-    ];
+    final vm = ref.watch(accountProvider);
+    final accounts = vm.accounts;
+    final actions = vm.actions;
+    Wallet? pushWallet = vm.pushWallet;
     return Scaffold(
       backgroundColor: Colors.purpleAccent,
       body: SafeArea(
@@ -139,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         accounts.length,
                         (index) => InkWell(
                           onTap: () {
-                            connectWallet(accounts[index]);
+                            vm.connectWallet(accounts[index]);
                           },
                           child: Container(
                             padding: EdgeInsets.all(24),
@@ -166,14 +68,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           DataView(
                             color: Colors.white,
                             label: 'Address: ',
-                            value: pushWallet?.address ?? '',
+                            value: pushWallet.address ?? '',
                           ),
                           SizedBox(height: 16),
                           Align(
                             alignment: Alignment.bottomRight,
                             child: InkWell(
                               onTap: () {
-                                FlutterClipboard.copy(pushWallet!.address!)
+                                FlutterClipboard.copy(pushWallet.address!)
                                     .then((value) {
                                   showMyDialog(
                                       context: context,
@@ -231,13 +133,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ),
-            if (isLoading)
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(.15),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              )
+            // if (isLoading)
+            //   Positioned.fill(
+            //     child: Container(
+            //       color: Colors.black.withOpacity(.15),
+            //       child: Center(child: CircularProgressIndicator()),
+            //     ),
+            //   )
           ],
         ),
       ),
@@ -245,9 +147,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-pushScreen(BuildContext context, Widget screen) {
+pop() {
+  Navigator.pop(Get.context!);
+}
+
+pushScreen(Widget screen) {
   Navigator.push(
-      context,
+      Get.context!,
       MaterialPageRoute(
         builder: (context) => screen,
       ));

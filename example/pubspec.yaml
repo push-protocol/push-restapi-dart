@@ -56,6 +56,7 @@ dependencies:
   push_restapi_dart:
     path: '../'
   flutter_svg: ^2.0.7
+  get: ^4.6.5
 
 
 flutter:
