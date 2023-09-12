@@ -106,7 +106,6 @@ class AccountProvider extends ChangeNotifier {
   }
 
   Future<void> creatSocketConnection() async {
-    log('creatSocketConnection: pushWallet!.address! = ${pushWallet!.address!}');
     final options = SocketInputOptions(
       user: pushWallet!.address!,
       env: ENV.staging,
@@ -119,7 +118,7 @@ class AccountProvider extends ChangeNotifier {
 
     final pushSDKSocket = await createSocketConnection(options);
     if (pushSDKSocket == null) {
-      throw Exception('PushSDKSocket | Notification Socket Connection Failed');
+      throw Exception('PushSDKSocket Connection Failed');
     }
 
     pushSDKSocket.connect();
@@ -128,10 +127,6 @@ class AccountProvider extends ChangeNotifier {
       EVENTS.CONNECT,
       (data) async {
         print(' NOTIFICATION EVENTS.CONNECT: $data');
-
-        await Future.delayed(
-            Duration(seconds: 5)); // Delay after connection is established
-        pushSDKSocket.disconnect();
       },
     );
     // Listening Feeds ( Notifications received by user )
