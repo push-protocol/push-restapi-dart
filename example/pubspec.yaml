@@ -20,17 +20,11 @@ dev_dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  crypto: ^3.0.3
-  hex: ^0.2.0
   http: ^1.1.0
-  pointycastle: ^3.7.3
   riverpod: ^2.3.6
   flutter_riverpod: ^2.3.7
-  openpgp: ^3.5.4
   web3dart: ^2.6.1
   eth_sig_util: ^0.0.9
-  encrypt: ^5.0.1
-  cryptography: ^2.5.0
   permission_handler: ^10.4.3
   unique_names_generator: ^1.0.0
   another_flushbar: ^1.12.29

@@ -30,8 +30,7 @@ Future<String> sign(
     {required String message,
     required String publicKey,
     required String privateKey}) async {
-  final signatureWithVersion =
-      await OpenPGP.sign(message, publicKey, privateKey, "");
+  final signatureWithVersion = await OpenPGP.sign(message, privateKey, "");
   return removeVersionFromPublicKey(signatureWithVersion);
 }
 
