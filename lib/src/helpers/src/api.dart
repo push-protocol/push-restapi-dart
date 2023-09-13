@@ -31,4 +31,18 @@ class Api {
    */
     ENV.local: 'http://localhost:4000/apis',
   };
+  static String getSocketAPIBaseUrls([ENV? env]) {
+    env ??= providerContainer.read(envProvider);
+    return Api._socketApiBaseUrlMap[env] ?? 'http://localhost:4000';
+  }
+
+  static final Map<ENV, String> _socketApiBaseUrlMap = {
+    ENV.prod: 'https://backend.epns.io',
+    ENV.staging: 'https://backend-staging.epns.io',
+    ENV.dev: 'https://backend-dev.epns.io',
+    /**
+   * **This is for local development only**
+   */
+    ENV.local: 'http://localhost:4000',
+  };
 }

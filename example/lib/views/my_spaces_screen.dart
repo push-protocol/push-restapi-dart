@@ -137,11 +137,9 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
 
         return;
       }
-      pushScreen(
-          context,
-          LiveSpaceRoom(
-            space: value,
-          ));
+      pushScreen(LiveSpaceRoom(
+        space: value,
+      ));
     }).catchError(
       (err) {
         Navigator.pop(context);

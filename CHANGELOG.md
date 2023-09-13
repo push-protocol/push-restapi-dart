@@ -1,3 +1,3 @@
-## 0.1.6-alpha
+## 0.2.1-alpha
 
-- Added Spaces 
+- Added Spaces Funtions
