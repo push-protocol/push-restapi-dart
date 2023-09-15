@@ -116,6 +116,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   SizedBox(height: 8),
                             ),
                           ),
+                          InkWell(
+                            onTap: () {
+                              ref.read(accountProvider).logOut();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  'Switch Account',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24),
                         ],
                       ),
                     ),

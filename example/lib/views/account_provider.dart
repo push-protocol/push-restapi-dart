@@ -177,4 +177,9 @@ class AccountProvider extends ChangeNotifier {
       },
     );
   }
+
+  logOut(){
+    pushWallet = null;
+    notifyListeners();
+  }
 }

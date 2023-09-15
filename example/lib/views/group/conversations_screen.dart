@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import '../../__lib.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
@@ -8,6 +9,17 @@ class ConversationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // floatingActionButton: MaterialButton(
+      //   height: 64,
+      //   color: Colors.purple,
+      //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      //   onPressed: () {
+      //     pushScreen(StartP2PChatScreen());
+      //   },
+      //   textColor: Colors.white,
+      //   child: Text('Start New Chat'),
+      //   padding: EdgeInsets.all(16),
+      // ),
       appBar: AppBar(
         title: Text('Conversations'),
       ),
