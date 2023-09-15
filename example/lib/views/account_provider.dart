@@ -177,42 +177,4 @@ class AccountProvider extends ChangeNotifier {
       },
     );
   }
-
-  connectWallet3() async {
-    showLoadingDialog();
-    final ethersWallet = ether.Wallet.fromPrivateKey(
-        "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
-
-    final signer = EthersSigner(
-      ethersWallet: ethersWallet,
-      address: ethersWallet.address!,
-    );
-
-    final user = await getUser(address: ethersWallet.address!);
-
-    if (user == null) {
-      print('Cannot get user');
-      return;
-    }
-    String? pgpPrivateKey = null;
-    if (user.encryptedPrivateKey != null) {
-      pgpPrivateKey = await decryptPGPKey(
-        encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-        wallet: getWallet(signer: signer),
-      );
-    }
-
-    pushWallet = Wallet(
-        address: ethersWallet.address!,
-        pgpPrivateKey: pgpPrivateKey,
-        signer: signer);
-
-    await initPush(
-      wallet: pushWallet,
-      env: ENV.staging,
-    );
-    notifyListeners();
-
-    pop();
-  }
 }

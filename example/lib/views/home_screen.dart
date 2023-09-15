@@ -180,26 +180,8 @@ class ConnectScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 32,),
-                  InkWell(
-                    onTap: () {
-                      vm.connectWallet3();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.person_4_rounded,
-                            size: 32,
-                          ),
-                          Text('User alt'),
-                        ],
-                      ),
-                    ),
+                  SizedBox(
+                    height: 32,
                   ),
                 ],
               ),

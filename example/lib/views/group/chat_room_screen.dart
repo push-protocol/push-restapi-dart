@@ -1,8 +1,10 @@
 import 'package:example/__lib.dart';
 import 'package:example/views/account_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 class ChatRoomScreen extends ConsumerStatefulWidget {
@@ -31,6 +33,13 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     });
   }
 
+  bool isSending = false;
+  updateSending(bool state) {
+    setState(() {
+      isSending = state;
+    });
+  }
+
   getRoomMessages() async {
     updateLoading(true);
     final hash = await conversationHash(conversationId: room.chatId!);
@@ -51,15 +60,17 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
   TextEditingController controller = TextEditingController();
   onSendMessage() async {
     try {
-      updateLoading(true);
+      updateSending(true);
       final options = ChatSendOptions(
           messageContent: controller.text.trim(),
           receiverAddress: room.chatId!);
       final message = await send(options);
-      updateLoading(false);
+      updateSending(false);
 
       if (message != null) {
         controller.clear();
+        getRoomMessages();
+        setState(() {});
       }
     } catch (e) {
       updateLoading(false);
@@ -82,18 +93,21 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
           child: Column(
             children: [
               Expanded(
-                  child: isLoading
+                  child: isLoading && messageList.isEmpty
                       ? Center(child: CircularProgressIndicator())
                       : messageList.isEmpty
                           ? Center(
                               child: Text('No messages found '),
                             )
-                          : ListView.builder(
+                          : ListView.separated(
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 4),
                               itemCount: texts.length,
                               reverse: true,
                               itemBuilder: (context, index) {
                                 final item = texts[index];
-                                bool isSender = myAddress == item.fromDID;
+                                bool isSender =
+                                    'eip155:$myAddress' == item.fromDID;
 
                                 return ChatBubble(
                                   clipper: ChatBubbleClipper1(
@@ -103,23 +117,31 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                   alignment: isSender
                                       ? Alignment.topRight
                                       : Alignment.topLeft,
-                                  margin: EdgeInsets.only(top: 20),
+                                
                                   backGroundColor: Colors.blue,
                                   child: Container(
+                                    margin: EdgeInsets.all(8),
                                     constraints: BoxConstraints(
                                       maxWidth:
                                           MediaQuery.of(context).size.width *
                                               0.7,
                                     ),
                                     child: Column(
+                                      crossAxisAlignment: isSender
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '${item.messageContent}',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         Text(
-                                          '${DateTime.fromMillisecondsSinceEpoch(item.timestamp!)}',
-                                          style: TextStyle(color: Colors.white),
+                                          formatDateTime(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  item.timestamp!)),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10),
                                         ),
                                       ],
                                     ),
@@ -131,17 +153,20 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                 height: 24,
               ),
               InputField(
+                controller: controller,
                 label: '',
                 suffixIcon: InkWell(
                     onTap: () {
-                      if (!isLoading) {
+                      if (!isSending) {
                         onSendMessage();
                       }
                     },
-                    child: Icon(
-                      Icons.send,
-                      color: isLoading ? null : Colors.pinkAccent,
-                    )),
+                    child: isSending
+                        ? CupertinoActivityIndicator()
+                        : Icon(
+                            Icons.send,
+                            color: Colors.pinkAccent,
+                          )),
               )
             ],
           ),
@@ -149,4 +174,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
       ),
     );
   }
+}
+
+String formatDateTime(DateTime date, [String? format]) {
+  final DateFormat dateFormat = DateFormat(format ?? 'hh:mm');
+
+  return dateFormat.format(date);
 }

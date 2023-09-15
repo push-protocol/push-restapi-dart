@@ -62,7 +62,6 @@ getConversationHashService({
 
   return http.get(
     path: path,
-    skipJsonDecode: true,
   );
 }
 
@@ -70,6 +69,7 @@ Future<List<Message>?> getMessagesService({
   required String threadhash,
   required int limit,
 }) async {
+  log('getMessagesService: threadhash= $threadhash');
   final path = '/v1/chat/conversationhash/$threadhash?fetchLimit=$limit';
 
   final result = await http.get(path: path);

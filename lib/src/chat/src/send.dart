@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../../../push_restapi_dart.dart';
 
 class ChatSendOptions {
@@ -30,10 +28,10 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
   final isValidGroup = isGroup(options.receiverAddress);
   final group =
       isValidGroup ? await getGroup(chatId: options.receiverAddress) : null;
-  final conversationResponse = jsonDecode((await conversationHash(
+  final conversationResponse = await conversationHash(
     conversationId: options.receiverAddress,
     accountAddress: options.accountAddress!,
-  ))!);
+  );
   if (!isValidETHAddress(options.accountAddress!)) {
     throw Exception('Invalid address ${options.accountAddress}');
   }
@@ -42,7 +40,7 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
   if (options.pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }
-  bool isIntent = !isValidGroup && conversationResponse["threadHash"] == null;
+  bool isIntent = !isValidGroup && conversationResponse == null;
   await validateSendOptions(options);
   try {
     final senderAcount = await getUser(address: options.accountAddress!);
@@ -125,6 +123,10 @@ validateSendOptions(ChatSendOptions options) async {
       throw Exception(
           'Invalid receiver. Please ensure \'receiver\' is a valid DID or ChatId in case of Group.');
     }
+  }
+
+  if (options.messageContent.isEmpty) {
+    throw Exception('Cannot send empty message');
   }
 }
 

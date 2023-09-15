@@ -27,7 +27,7 @@ Future<String?> conversationHash({
       conversationId: updatedConversationId,
       account: accountDID,
     );
-    return response;
+    return response['threadHash'];
   } catch (e) {
     log('[Push SDK] - Error - API conversationHash: $e');
     rethrow;
