@@ -32,7 +32,7 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
       isValidGroup ? await getGroup(chatId: options.receiverAddress) : null;
   final conversationResponse = jsonDecode((await conversationHash(
     conversationId: options.receiverAddress,
-    account: options.accountAddress!,
+    accountAddress: options.accountAddress!,
   ))!);
   if (!isValidETHAddress(options.accountAddress!)) {
     throw Exception('Invalid address ${options.accountAddress}');

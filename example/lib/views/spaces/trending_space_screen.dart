@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import '../__lib.dart';
+import '../../__lib.dart';
 
 class TrendingSpaceScreen extends ConsumerStatefulWidget {
   const TrendingSpaceScreen({super.key});

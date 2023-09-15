@@ -13,7 +13,7 @@ class Feeds {
   String? wallets;
   String? combinedDID;
   String? name;
-  dynamic groupInformation;
+  GroupDTO? groupInformation;
   Message? msg;
   bool? deprecated;
   String? deprecatedCode;
@@ -46,7 +46,9 @@ class Feeds {
     wallets = json['wallets'];
     combinedDID = json['combinedDID'];
     name = json['name'];
-    groupInformation = json['groupInformation'];
+    if (json['groupInformation'] != null) {
+      groupInformation = GroupDTO.fromJson(json['groupInformation']);
+    }
   }
 
   Map<String, dynamic> toJson() {

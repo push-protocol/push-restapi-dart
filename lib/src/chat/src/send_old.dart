@@ -41,7 +41,7 @@ Future<MessageWithCID?> send({
     if (isGroup) {
       conversationResponse = await conversationHash(
         conversationId: receiver,
-        account: address,
+        accountAddress: address,
       );
     }
 

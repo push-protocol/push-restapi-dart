@@ -72,7 +72,6 @@ Future<Map<String, String>> encryptAndSign({
   final cipherText =
       await aesEncrypt(plainText: plainText, secretKey: secretKey);
 
-//TODO fix issue in pgpEncrypt function
   final encryptedSecret = await pgpEncrypt(plainText: secretKey, keys: keys);
 
   final signature = await sign(

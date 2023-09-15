@@ -32,7 +32,7 @@ class AccountProvider extends ChangeNotifier {
         mnemonic5,
       ];
 
-  List<NavItem> get actions => [
+  List<NavItem> get spaceActions => [
         NavItem(
           title: 'Create Space',
           onPressed: () {
@@ -54,6 +54,33 @@ class AccountProvider extends ChangeNotifier {
           onPressed: () {
             pushScreen(
               TrendingSpaceScreen(),
+            );
+          },
+        ),
+      ];
+
+  List<NavItem> get chatActions => [
+        NavItem(
+          title: 'Create Group',
+          onPressed: () {
+            pushScreen(
+              CreateGroupScreen(),
+            );
+          },
+        ),
+        NavItem(
+          title: 'Conversations',
+          onPressed: () {
+            pushScreen(
+              ConversationsScreen(),
+            );
+          },
+        ),
+        NavItem(
+          title: 'Pending Requests',
+          onPressed: () {
+            pushScreen(
+              ChatRequestScreen(),
             );
           },
         ),
@@ -149,5 +176,43 @@ class AccountProvider extends ChangeNotifier {
         print(' NOTIFICATION EVENTS.DISCONNECT: $data');
       },
     );
+  }
+
+  connectWallet3() async {
+    showLoadingDialog();
+    final ethersWallet = ether.Wallet.fromPrivateKey(
+        "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
+
+    final signer = EthersSigner(
+      ethersWallet: ethersWallet,
+      address: ethersWallet.address!,
+    );
+
+    final user = await getUser(address: ethersWallet.address!);
+
+    if (user == null) {
+      print('Cannot get user');
+      return;
+    }
+    String? pgpPrivateKey = null;
+    if (user.encryptedPrivateKey != null) {
+      pgpPrivateKey = await decryptPGPKey(
+        encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+        wallet: getWallet(signer: signer),
+      );
+    }
+
+    pushWallet = Wallet(
+        address: ethersWallet.address!,
+        pgpPrivateKey: pgpPrivateKey,
+        signer: signer);
+
+    await initPush(
+      wallet: pushWallet,
+      env: ENV.staging,
+    );
+    notifyListeners();
+
+    pop();
   }
 }
