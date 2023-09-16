@@ -52,7 +52,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                   Wrap(
                     children: List.generate(
                       listeners.length,
-                      (index) => Chip(label: Text(speakers[index])),
+                      (index) => Chip(label: Text(listeners[index])),
                     ),
                   ),
                   SizedBox(height: 16),

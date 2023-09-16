@@ -32,7 +32,7 @@ class AccountProvider extends ChangeNotifier {
         mnemonic5,
       ];
 
-  List<NavItem> get actions => [
+  List<NavItem> get spaceActions => [
         NavItem(
           title: 'Create Space',
           onPressed: () {
@@ -54,6 +54,33 @@ class AccountProvider extends ChangeNotifier {
           onPressed: () {
             pushScreen(
               TrendingSpaceScreen(),
+            );
+          },
+        ),
+      ];
+
+  List<NavItem> get chatActions => [
+        NavItem(
+          title: 'Create Group',
+          onPressed: () {
+            pushScreen(
+              CreateGroupScreen(),
+            );
+          },
+        ),
+        NavItem(
+          title: 'Conversations',
+          onPressed: () {
+            pushScreen(
+              ConversationsScreen(),
+            );
+          },
+        ),
+        NavItem(
+          title: 'Pending Requests',
+          onPressed: () {
+            pushScreen(
+              ChatRequestScreen(),
             );
           },
         ),
@@ -149,5 +176,10 @@ class AccountProvider extends ChangeNotifier {
         print(' NOTIFICATION EVENTS.DISCONNECT: $data');
       },
     );
+  }
+
+  logOut(){
+    pushWallet = null;
+    notifyListeners();
   }
 }

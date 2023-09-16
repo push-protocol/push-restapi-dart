@@ -4,10 +4,15 @@ import '../../../push_restapi_dart.dart';
 /// Whenever a new message is sent or received, this CID will change.
 Future<String?> conversationHash({
   required String conversationId,
-  required String account,
+  String? accountAddress,
 }) async {
   try {
-    if (!isValidETHAddress(account)) {
+    accountAddress ??= getCachedWallet()?.address;
+    if (accountAddress == null) {
+      throw Exception('Account address is required.');
+    }
+
+    if (!isValidETHAddress(accountAddress)) {
       throw Exception('Invalid address!');
     }
 
@@ -15,14 +20,14 @@ Future<String?> conversationHash({
       address: conversationId,
     );
     final accountDID = await getUserDID(
-      address: account,
+      address: accountAddress,
     );
 
     final response = await getConversationHashService(
       conversationId: updatedConversationId,
       account: accountDID,
     );
-    return response;
+    return response['threadHash'];
   } catch (e) {
     log('[Push SDK] - Error - API conversationHash: $e');
     rethrow;

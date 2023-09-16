@@ -13,55 +13,44 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(accountProvider);
     final accounts = vm.accounts;
-    final actions = vm.actions;
+    final actions = currentIndex == 0 ? vm.spaceActions : vm.chatActions;
     Wallet? pushWallet = vm.pushWallet;
-    return Scaffold(
-      backgroundColor: Colors.purpleAccent,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  SizedBox(height: 16),
-                  Align(
+    return pushWallet == null
+        ? ConnectScreen(accounts: accounts, vm: vm)
+        : Scaffold(
+            backgroundColor: Colors.purpleAccent,
+            bottomNavigationBar: BottomNavigationBar(
+                currentIndex: currentIndex,
+                selectedItemColor: Colors.purpleAccent,
+                onTap: (value) {
+                  setState(() {
+                    currentIndex = value;
+                  });
+                },
+                items: [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.multitrack_audio_outlined),
+                      label: 'Spaces'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.forum), label: 'Chat')
+                ]),
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    SizedBox(height: 16),
+                    Align(
                       alignment: Alignment.topCenter,
-                      child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
-                  SizedBox(height: 64),
-                  if (pushWallet == null)
-                    Wrap(
-                      spacing: 24,
-                      runSpacing: 24,
-                      children: List.generate(
-                        accounts.length,
-                        (index) => InkWell(
-                          onTap: () {
-                            vm.connectWallet(accounts[index]);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.person_4_rounded,
-                                  size: 32,
-                                ),
-                                Text('User ${index + 1}'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  else
+                      child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG),
+                    ),
+                    SizedBox(height: 64),
                     Expanded(
                       child: Column(
                         children: [
@@ -127,19 +116,100 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   SizedBox(height: 8),
                             ),
                           ),
+                          InkWell(
+                            onTap: () {
+                              ref.read(accountProvider).logOut();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  'Switch Account',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24),
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+          );
+  }
+}
+
+class ConnectScreen extends StatelessWidget {
+  const ConnectScreen({
+    super.key,
+    required this.accounts,
+    required this.vm,
+  });
+
+  final List<String> accounts;
+  final AccountProvider vm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.purpleAccent,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  SizedBox(height: 16),
+                  Align(
+                      alignment: Alignment.topCenter,
+                      child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
+                  SizedBox(height: 64),
+                  Wrap(
+                    spacing: 24,
+                    runSpacing: 24,
+                    children: List.generate(
+                      accounts.length,
+                      (index) => InkWell(
+                        onTap: () {
+                          vm.connectWallet(accounts[index]);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.person_4_rounded,
+                                size: 32,
+                              ),
+                              Text('User ${index + 1}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
                 ],
               ),
             ),
-            // if (isLoading)
-            //   Positioned.fill(
-            //     child: Container(
-            //       color: Colors.black.withOpacity(.15),
-            //       child: Center(child: CircularProgressIndicator()),
-            //     ),
-            //   )
           ],
         ),
       ),
@@ -147,8 +217,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-pop() {
-  Navigator.pop(Get.context!);
+pop([BuildContext? context]) {
+  Navigator.pop(context ?? Get.context!);
 }
 
 pushScreen(Widget screen) {

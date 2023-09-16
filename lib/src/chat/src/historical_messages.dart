@@ -45,13 +45,13 @@ Future<List<Message>?> history({
       return null;
     }
 
-    final updatedMessages = addDeprecatedInfoToMessages(messages);
+    // final updatedMessages = addDeprecatedInfoToMessages(messages);
     final connectedUser =
         await getUser(address: pCAIP10ToWallet(accountAddress));
 
     if (toDecrypt) {
       return await decryptConversation(
-        messages: updatedMessages,
+        messages: messages,
         connectedUser: connectedUser,
         pgpPrivateKey: pgpPrivateKey,
       );
