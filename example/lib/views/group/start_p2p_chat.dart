@@ -55,9 +55,6 @@ class _StartP2PChatScreenState extends State<StartP2PChatScreen> {
     if (address.isEmpty || message.isEmpty) {
       return;
     }
-
-
-
   }
 
   bool isLoading = false;

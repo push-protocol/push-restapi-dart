@@ -117,7 +117,6 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                   alignment: isSender
                                       ? Alignment.topRight
                                       : Alignment.topLeft,
-                                
                                   backGroundColor: Colors.blue,
                                   child: Container(
                                     margin: EdgeInsets.all(8),
