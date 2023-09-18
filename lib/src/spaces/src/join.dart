@@ -45,11 +45,6 @@ Future<SpaceDTO?> joinSpace({
       }
     }
 
-    // TODO: check from livekit SDK if we are already part of the room
-    // if yes -> return
-
-    // according to the found role (speaker or listener), executing req logic
-
     // if speaker is pending then approve first or if listener is pending/not found then approve first
     if (!isSpeaker && !isListener) {
       final localWallet = getCachedWallet();

@@ -7,6 +7,7 @@ import '../../../push_restapi_dart.dart';
 Future<SpaceDTO?> startSpace({
   String? accountAddress,
   Signer? signer,
+  String? pgpPrivateKey,
   required String spaceId,
   required Function(ProgressHookType) progressHook,
   required Function(Room?) updateRoom,
@@ -59,6 +60,7 @@ Future<SpaceDTO?> startSpace({
       scheduleEnd: space.scheduleEnd,
       status: ChatStatus.ACTIVE,
       isPublic: space.isPublic,
+      pgpPrivateKey: pgpPrivateKey,
     );
 
     if (group != null) {
