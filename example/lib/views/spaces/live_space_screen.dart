@@ -31,17 +31,6 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
             Expanded(
                 child: ListView(
               children: [
-                Center(
-                  child: Container(
-                    color: Colors.grey.withOpacity(.2),
-                    padding: EdgeInsets.all(4),
-                    child: Image.network(
-                      data.spaceImage!,
-                      height: 200,
-                      width: 200,
-                    ),
-                  ),
-                ),
                 SizedBox(height: 12),
                 DataView(
                   label: 'Space Name:',

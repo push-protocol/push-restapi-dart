@@ -21,7 +21,7 @@ void testUpdateSpace() async {
       signer: signer,
       spaceName: spaceName,
       spaceDescription: "Testing dart",
-      spaceImage: "asdads",
+      spaceImage: "INVALID_URL",
       listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
       speakers: ["eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"],
       isPublic: true,
@@ -32,7 +32,7 @@ void testUpdateSpace() async {
     spaceId: result!.spaceId,
     spaceName: spaceName,
     spaceDescription: 'YourSpaceDescription',
-    spaceImage: 'YourSpaceImageUrl',
+    spaceImage: 'VALID_URL',
     listeners: [
       'eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723',
       signer.address

@@ -13,8 +13,8 @@ class AccountProvider extends ChangeNotifier {
 
   Wallet? pushWallet;
 
-  final mnemonic1 =
-      'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
+  // final mnemonic1 =
+  //     'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
   final mnemonic2 =
       'label mobile gas salt service gravity nose bomb marine online say twice';
   final mnemonic3 =
@@ -25,7 +25,7 @@ class AccountProvider extends ChangeNotifier {
       'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
 
   List<String> get accounts => [
-        mnemonic1,
+        // mnemonic1,
         mnemonic2,
         mnemonic3,
         mnemonic4,

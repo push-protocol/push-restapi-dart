@@ -7,7 +7,7 @@ Future<SpaceDTO?> updateSpace({
   required String spaceId,
   required String spaceName,
   required String spaceDescription,
-  required String spaceImage,
+  String? spaceImage,
   required List<String> listeners,
   required List<String> speakers,
   String? pgpPrivateKey,

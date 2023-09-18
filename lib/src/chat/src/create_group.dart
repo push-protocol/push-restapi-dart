@@ -6,7 +6,7 @@ Future<GroupDTO?> createGroup({
   Signer? signer,
   required String groupName,
   required String groupDescription,
-  required String groupImage,
+  String? groupImage,
   required List<String> members,
   required List<String> admins,
   required bool isPublic,

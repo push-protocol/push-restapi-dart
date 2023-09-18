@@ -46,7 +46,7 @@ Future<SpaceDTO?> startSpace({
     final group = await updateGroup(
       chatId: spaceId,
       groupName: space.spaceName,
-      groupImage: space.spaceImage!,
+      groupImage: space.spaceImage,
       groupDescription: space.spaceDescription!,
       members: convertedMembers,
       admins: convertedAdmins,
