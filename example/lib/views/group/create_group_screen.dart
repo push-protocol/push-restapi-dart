@@ -133,8 +133,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         groupDescription: descriptionController.text.trim(),
         members: members,
         admins: admins,
-        isPublic: true,
-        // scheduleAt: _dateTime,
+        isPublic: isPublic,
       );
       if (result == null) {
         showMyDialog(

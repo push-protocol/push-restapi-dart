@@ -1,4 +1,4 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 /// Return the latest message from all wallet addresses you have talked to.
 /// This can be used when building the inbox page.

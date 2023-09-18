@@ -9,6 +9,10 @@ Future<GroupDTO?> removeMembers({
   String? pgpPrivateKey,
   required List<String> members,
 }) async {
+  account ??= getCachedWallet()?.address;
+  signer ??= getCachedWallet()?.signer;
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+
   try {
     if (account == null && signer == null) {
       throw Exception('At least one from account or signer is necessary!');

@@ -2,7 +2,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<List<Feeds>> getInboxList({
   required List<Feeds> feedsList,
-  required String user,
+  required String accountAddress,
   required String? pgpPrivateKey,
   required bool toDecrypt,
 }) async {
@@ -34,7 +34,8 @@ Future<List<Feeds>> getInboxList({
   }
 
   if (toDecrypt) {
-    final connectedUser = await getUser(address: pCAIP10ToWallet(user));
+    final connectedUser =
+        await getUser(address: pCAIP10ToWallet(accountAddress));
     if (connectedUser == null) {
       throw Exception('Cannot find user');
     }

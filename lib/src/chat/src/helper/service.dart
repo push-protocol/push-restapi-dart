@@ -40,13 +40,6 @@ Future<User> createUserService({
   final responseData = await http.post(path: requestPath, data: body);
 
   if (responseData != null) {
-    // TODO: Add call to verifyPGPPublicKey
-    // responseData['publicKey'] = verifyPGPPublicKey(
-    //   responseData['encryptedPrivateKey'],
-    //   responseData['publicKey'],
-    //   responseData['did'],
-    // );
-    // return populateDeprecatedUser(responseData);
     return User.fromJson(responseData);
   } else {
     throw Exception('[Push SDK] - API $requestPath: Error');
