@@ -42,7 +42,7 @@ Future<List<Feeds>?> requests({
     final updatedChats = addDeprecatedInfo(requestList);
     final feedWithInbox = await getInboxList(
       feedsList: updatedChats,
-      user: userDID,
+      accountAddress: userDID,
       pgpPrivateKey: pgpPrivateKey,
       toDecrypt: toDecrypt,
     );

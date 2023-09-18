@@ -1,11 +1,17 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<SpaceFeeds?> spaceFeed({
-  required String accountAddress,
-  required String pgpPrivateKey,
+  String? accountAddress,
+  String? pgpPrivateKey,
   bool toDecrypt = true,
   required String recipient,
 }) async {
+  accountAddress ??= getCachedWallet()?.address;
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+  if (accountAddress == null) {
+    throw Exception('Account address is required.');
+  }
+
   final user = await getUserDID(address: accountAddress);
   final recipientWallet = await getUserDID(address: recipient);
 

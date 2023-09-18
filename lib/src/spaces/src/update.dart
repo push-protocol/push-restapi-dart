@@ -16,6 +16,9 @@ Future<SpaceDTO?> updateSpace({
   DateTime? scheduleEnd,
   required ChatStatus status,
 }) async {
+  account ??= getCachedWallet()?.address;
+  signer ??= getCachedWallet()?.signer;
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
   try {
     final space = await getSpaceById(spaceId: spaceId);
 

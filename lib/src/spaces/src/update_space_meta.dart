@@ -2,9 +2,12 @@ import '../../../push_restapi_dart.dart'; // Replace with actual import
 
 Future<void> updateSpaceMeta({
   required String meta,
-  required Signer signer,
-  required String pgpPrivateKey,
+  Signer? signer,
+  String? pgpPrivateKey,
 }) async {
+  signer ??= getCachedWallet()?.signer;
+  pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+
   try {
     var data = providerContainer.read(PushSpaceProvider).data;
 
