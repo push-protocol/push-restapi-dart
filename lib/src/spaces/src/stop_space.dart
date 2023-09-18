@@ -24,7 +24,7 @@ Future<SpaceDTO?> stopSpace({
     final group = await push.updateGroup(
         chatId: spaceId,
         groupName: space.spaceName,
-        groupImage: space.spaceImage!,
+        groupImage: space.spaceImage,
         groupDescription: space.spaceDescription!,
         members: convertedMembers,
         admins: convertedAdmins,

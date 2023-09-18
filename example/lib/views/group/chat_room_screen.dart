@@ -44,11 +44,14 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     updateLoading(true);
     final hash = await conversationHash(conversationId: room.chatId!);
 
-    final messages = await history(
-      limit: FetchLimit.MAX,
-      threadhash: hash!,
-      toDecrypt: true,
-    );
+    final messages = hash != null
+        ? await history(
+            limit: FetchLimit.MAX,
+            threadhash: hash,
+            toDecrypt: true,
+          )
+        : null;
+
     updateLoading(false);
 
     if (messages != null) {
@@ -117,7 +120,6 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                   alignment: isSender
                                       ? Alignment.topRight
                                       : Alignment.topLeft,
-                                
                                   backGroundColor: Colors.blue,
                                   child: Container(
                                     margin: EdgeInsets.all(8),

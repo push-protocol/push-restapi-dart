@@ -59,7 +59,7 @@ void updateGroupRequestValidator(
   String chatId,
   String groupName,
   String groupDescription,
-  String groupImage,
+  String? groupImage,
   List<String> members,
   List<String> admins,
   String address,
@@ -70,10 +70,6 @@ void updateGroupRequestValidator(
 
   if (groupName.isEmpty) {
     throw Exception('groupName cannot be null or empty');
-  }
-
-  if (groupImage.isEmpty) {
-    throw Exception('profilePicture cannot be null or empty');
   }
 
   if (groupName.length > 50) {

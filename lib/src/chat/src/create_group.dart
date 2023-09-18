@@ -6,7 +6,7 @@ Future<GroupDTO?> createGroup({
   Signer? signer,
   required String groupName,
   required String groupDescription,
-  required String groupImage,
+  String? groupImage,
   required List<String> members,
   required List<String> admins,
   required bool isPublic,
@@ -23,6 +23,8 @@ Future<GroupDTO?> createGroup({
   try {
     account ??= getCachedWallet()?.address;
     signer ??= getCachedWallet()?.signer;
+    pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
+    
     if (account == null && signer == null) {
       throw Exception('At least one from account or signer is necessary!');
     }

@@ -131,8 +131,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       final result = await createGroup(
         groupName: nameController.text.trim(),
         groupDescription: descriptionController.text.trim(),
-        groupImage:
-            "https://res.cloudinary.com/drdjegqln/image/upload/v1686227557/Push-Logo-Standard-Dark_xap7z5.png",
         members: members,
         admins: admins,
         isPublic: true,

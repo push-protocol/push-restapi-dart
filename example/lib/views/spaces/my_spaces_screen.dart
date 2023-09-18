@@ -25,8 +25,6 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
       final result = await createSpace(
         spaceName: spaceName,
         spaceDescription: "Testing dart for description for $spaceName",
-        spaceImage:
-            "https://res.cloudinary.com/drdjegqln/image/upload/v1686227557/Push-Logo-Standard-Dark_xap7z5.png",
         listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
         speakers: [
           "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280",

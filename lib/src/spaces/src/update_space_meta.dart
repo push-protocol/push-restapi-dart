@@ -22,7 +22,7 @@ Future<void> updateSpaceMeta({
     final group = await updateGroup(
       chatId: data.spaceId,
       groupName: space.spaceName,
-      groupImage: space.spaceImage!,
+      groupImage: space.spaceImage,
       groupDescription: space.spaceDescription!,
       isPublic: space.isPublic,
       members: convertedMembers,

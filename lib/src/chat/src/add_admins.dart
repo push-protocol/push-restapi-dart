@@ -56,7 +56,7 @@ Future<GroupDTO?> addAdmins({
     final updatedGroup = await push.updateGroup(
         chatId: chatId,
         groupName: group.groupName!,
-        groupImage: group.groupImage!,
+        groupImage: group.groupImage,
         groupDescription: group.groupDescription!,
         members: convertedMembers,
         admins: convertedAdmins,
