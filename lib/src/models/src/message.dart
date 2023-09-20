@@ -7,6 +7,7 @@ class Message {
   String toDID;
   String messageType;
   String messageContent;
+  dynamic messageObj;
   String signature;
   String sigType;
   String? link;
@@ -23,6 +24,7 @@ class Message {
     required this.toDID,
     required this.messageType,
     required this.messageContent,
+    this.messageObj,
     required this.signature,
     required this.sigType,
     this.link,
@@ -41,6 +43,7 @@ class Message {
       toDID: json['toDID'],
       messageType: json['messageType'],
       messageContent: json['messageContent'],
+      messageObj: json['messageObj'],
       signature: json['signature'],
       sigType: json['sigType'],
       link: json['link'],
@@ -60,6 +63,7 @@ class Message {
     data['toDID'] = toDID;
     data['messageType'] = messageType;
     data['messageContent'] = messageContent;
+    data['messageObj'] = messageObj;
     data['signature'] = signature;
     data['sigType'] = sigType;
     data['link'] = link;
@@ -217,17 +221,17 @@ class SendMessage {
 
 class Info {
   List<String> affected;
-  Map<String, dynamic>? arbitrary;
+  Map<String, dynamic> arbitrary;
 
   Info({
     required this.affected,
-    this.arbitrary,
+    required this.arbitrary,
   });
 
   factory Info.fromJson(Map<String, dynamic> map) {
     return Info(
-      affected: map['affected'] as List<String>,
-      arbitrary: map['arbitrary'] as Map<String, dynamic>?,
+      affected: List<String>.from(map['affected']),
+      arbitrary: map['arbitrary'] as Map<String, dynamic>,
     );
   }
 
@@ -252,7 +256,7 @@ class MetaMessage extends SendMessage {
 
   factory MetaMessage.fromJson(Map<String, dynamic> json) {
     return MetaMessage(
-      action: json['action'] as META_ACTION,
+      action: getMetaActionValue(json['action']),
       info: Info.fromJson(json['info']),
       content: json['content'] as String,
     );

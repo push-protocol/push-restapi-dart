@@ -9,6 +9,13 @@ class EmojiReaction {
     this.expiresIn = '',
   });
 
+  factory EmojiReaction.fromJson(Map<String, dynamic> map) {
+    return EmojiReaction(
+      emoji: map['emoji'] ?? '',
+      expiresIn: map['expiresIn'] ?? '',
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'emoji': emoji,
@@ -25,6 +32,15 @@ class Peer {
     this.address = '',
     this.emojiReactions,
   });
+
+  factory Peer.fromJson(Map<String, dynamic> map) {
+    return Peer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -45,6 +61,16 @@ class ListenerPeer extends Peer {
           address: address,
           emojiReactions: emojiReactions,
         );
+
+  factory ListenerPeer.fromJson(Map<String, dynamic> map) {
+    return ListenerPeer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+      handRaised: map['handRaised'] ?? false,
+    );
+  }
 
   @override
   Map<String, dynamic> toJson() {
@@ -67,6 +93,16 @@ class AdminPeer extends Peer {
           emojiReactions: emojiReactions,
         );
 
+  factory AdminPeer.fromJson(Map<String, dynamic> map) {
+    return AdminPeer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+      audio: map['audio'],
+    );
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -88,6 +124,21 @@ class LiveSpaceData {
     required this.speakers,
     required this.listeners,
   });
+
+  factory LiveSpaceData.fromJson(Map<String, dynamic> map) {
+    return LiveSpaceData(
+      host: AdminPeer.fromJson(map['host']),
+      coHosts: (map['coHosts'] as List<dynamic>)
+          .map((adminPeer) => AdminPeer.fromJson(adminPeer))
+          .toList(),
+      speakers: (map['speakers'] as List<dynamic>)
+          .map((adminPeer) => AdminPeer.fromJson(adminPeer))
+          .toList(),
+      listeners: (map['listeners'] as List<dynamic>)
+          .map((listenerPeer) => ListenerPeer.fromJson(listenerPeer))
+          .toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

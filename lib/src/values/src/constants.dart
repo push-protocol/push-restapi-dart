@@ -83,6 +83,43 @@ enum META_ACTION {
   USER_INTERACTION, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
 }
 
+META_ACTION getMetaActionValue(int index) {
+  switch (index) {
+    case 0:
+      return META_ACTION.CREATE_GROUP;
+    case 1:
+      return META_ACTION.ADD_MEMBER;
+    case 2:
+      return META_ACTION.REMOVE_MEMBER;
+    case 3:
+      return META_ACTION.PROMOTE_TO_ADMIN;
+    case 4:
+      return META_ACTION.DEMOTE_FROM_ADMIN;
+    case 5:
+      return META_ACTION.CHANGE_IMAGE_OR_DESC;
+    case 6:
+      return META_ACTION.CHANGE_META;
+    case 7:
+      return META_ACTION.CREATE_SPACE;
+    case 8:
+      return META_ACTION.ADD_LISTENER;
+    case 9:
+      return META_ACTION.REMOVE_LISTENER;
+    case 10:
+      return META_ACTION.PROMOTE_TO_SPEAKER;
+    case 11:
+      return META_ACTION.DEMOTE_FROM_SPEAKER;
+    case 12:
+      return META_ACTION.PROMOTE_TO_COHOST;
+    case 13:
+      return META_ACTION.DEMOTE_FROM_COHOST;
+    case 14:
+      return META_ACTION.USER_INTERACTION;
+    default:
+      throw ArgumentError('Invalid index: $index');
+  }
+}
+
 enum REACTION_TYPE {
   THUMBS_UP,
   THUMBS_DOWN,
