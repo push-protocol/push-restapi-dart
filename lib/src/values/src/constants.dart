@@ -50,14 +50,69 @@ class MessageType {
   static const FILE = 'File';
   static const MEDIA_EMBED = 'MediaEmbed';
   static const META = 'Meta';
+  static const REACTION = 'Reaction';
 
   /// @deprecated - Use MediaEmbed Instead
   static const GIF = 'GIF';
 
   static isValidMessageType(String type) {
-    return [TEXT, IMAGE, FILE, MEDIA_EMBED, META].contains(type);
+    return [TEXT, IMAGE, FILE, MEDIA_EMBED, META, REACTION].contains(type);
   }
 }
+
+enum META_ACTION {
+  /// DEFAULT GROUP ACTIONS
+  CREATE_GROUP,
+  ADD_MEMBER,
+  REMOVE_MEMBER,
+  PROMOTE_TO_ADMIN,
+  DEMOTE_FROM_ADMIN,
+
+  /// SHARED ACTIONS
+  CHANGE_IMAGE_OR_DESC,
+  CHANGE_META,
+
+  /// SPACES ACTIONS
+  CREATE_SPACE,
+  ADD_LISTENER,
+  REMOVE_LISTENER,
+  PROMOTE_TO_SPEAKER,
+  DEMOTE_FROM_SPEAKER,
+  PROMOTE_TO_COHOST,
+  DEMOTE_FROM_COHOST,
+  USER_INTERACTION, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
+}
+
+isValidMetaAction(int action) {
+  return META_ACTION.values.contains(action);
+}
+
+enum REACTION_TYPE {
+  THUMBS_UP,
+  THUMBS_DOWN,
+  HEART,
+  CLAP,
+  LAUGHING_FACE,
+  SAD_FACE,
+  ANGRY_FACE,
+  SURPRISED_FACE,
+  CLAPPING_HANDS,
+  FIRE,
+}
+
+// Create a mapping object that associates reaction types with their Unicode escape sequences
+const Map<REACTION_TYPE, String> REACTION_SYMBOL = {
+  REACTION_TYPE.THUMBS_UP: '\u{1F44D}',
+  REACTION_TYPE.THUMBS_DOWN: '\u{1F44E}',
+  REACTION_TYPE.HEART: '\u{2764}\u{FE0F}',
+  REACTION_TYPE.CLAP: '\u{1F44F}',
+  REACTION_TYPE.LAUGHING_FACE: '\u{1F602}',
+  REACTION_TYPE.SAD_FACE: '\u{1F622}',
+  REACTION_TYPE.ANGRY_FACE: '\u{1F621}',
+  REACTION_TYPE.SURPRISED_FACE: '\u{1F632}',
+  REACTION_TYPE.CLAPPING_HANDS: '\u{1F44F}\u{1F44F}',
+  REACTION_TYPE.FIRE: '\u{1F525}',
+};
 
 class AdditionalMetaType {
   static const CUSTOM = 0;

@@ -1,3 +1,5 @@
+import 'package:push_restapi_dart/push_restapi_dart.dart';
+
 class Message {
   String fromCAIP10;
   String toCAIP10;
@@ -143,5 +145,152 @@ class MessageWithCID {
       encryptedSecret: json['encryptedSecret'],
       verificationProof: json['verificationProof'],
     );
+  }
+}
+
+class SendMessage {
+  String type;
+  String content;
+  META_ACTION? action;
+  Info? info;
+  REACTION_TYPE? reactionAction;
+  String? reference;
+
+  SendMessage({
+    required this.type,
+    required this.content,
+    this.action,
+    this.info,
+    this.reactionAction,
+    this.reference,
+  });
+
+  factory SendMessage.fromMap(Map<String, dynamic> map) {
+    final messageType = map['type'] as String;
+    switch (messageType) {
+      case MessageType.TEXT:
+      case MessageType.IMAGE:
+      case MessageType.FILE:
+      case MessageType.MEDIA_EMBED:
+      case MessageType.GIF:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+        );
+      case MessageType.META:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+          action: map['action'] as META_ACTION,
+          info: Info.fromJson(map['info']),
+        );
+      case MessageType.REACTION:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+          reactionAction: map['action'] as REACTION_TYPE,
+          reference: map['reference'] as String?,
+        );
+      default:
+        throw ArgumentError('Invalid message type: $messageType');
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['type'] = type;
+    data['content'] = content;
+
+    if (type == MessageType.META) {
+      data['action'] = action.toString();
+      data['info'] = info?.toJson();
+    }
+
+    if (type == MessageType.REACTION) {
+      data['reactionAction'] = reactionAction;
+      data['reference'] = reference;
+    }
+
+    return data;
+  }
+}
+
+class Info {
+  List<String> affected;
+  Map<String, dynamic>? arbitrary;
+
+  Info({
+    required this.affected,
+    this.arbitrary,
+  });
+
+  factory Info.fromJson(Map<String, dynamic> map) {
+    return Info(
+      affected: map['affected'] as List<String>,
+      arbitrary: map['arbitrary'] as Map<String, dynamic>?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['affected'] = affected;
+    data['arbitrary'] = arbitrary;
+    return data;
+  }
+}
+
+class MetaMessage extends SendMessage {
+  MetaMessage({
+    required META_ACTION action,
+    required Info info,
+    required String content,
+  }) : super(
+            type: MessageType.META,
+            content: content,
+            action: action,
+            info: info);
+
+  factory MetaMessage.fromJson(Map<String, dynamic> json) {
+    return MetaMessage(
+      action: json['action'] as META_ACTION,
+      info: Info.fromJson(json['info']),
+      content: json['content'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['action'] = action?.index;
+    data['info'] = info?.toJson();
+    data['content'] = content;
+    return data;
+  }
+}
+
+class ReactionMessage extends SendMessage {
+  ReactionMessage({
+    required REACTION_TYPE action,
+    String? reference,
+    required String content,
+  }) : super(
+            type: MessageType.REACTION,
+            content: content,
+            reactionAction: action,
+            reference: reference);
+
+  factory ReactionMessage.fromJson(Map<String, dynamic> json) {
+    return ReactionMessage(
+      action: json['action'] as REACTION_TYPE,
+      reference: json['reference'] as String?,
+      content: json['content'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['action'] = action;
+    data['reference'] = reference;
+    data['content'] = content;
+    return data;
   }
 }

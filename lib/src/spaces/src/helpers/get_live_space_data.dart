@@ -2,8 +2,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future<LiveSpaceData> getLiveSpaceData({
   required String localAddress,
-  required String spaceId,
-  required String pgpPrivateKey,
+  required String spaceId
 }) async {
   // final threadhash = await conversationHash(
   //   account: localAddress,
