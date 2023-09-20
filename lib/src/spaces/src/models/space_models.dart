@@ -1,41 +1,160 @@
 import '../../../../push_restapi_dart.dart';
 
-class Peer {
-  String address = '';
-  EmojiReaction? emojiReactions;
-}
-
 class EmojiReaction {
   String emoji = '';
   String expiresIn = '';
+
+  EmojiReaction({
+    this.emoji = '',
+    this.expiresIn = '',
+  });
+
+  factory EmojiReaction.fromJson(Map<String, dynamic> map) {
+    return EmojiReaction(
+      emoji: map['emoji'] ?? '',
+      expiresIn: map['expiresIn'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'emoji': emoji,
+      'expiresIn': expiresIn,
+    };
+  }
+}
+
+class Peer {
+  String address = '';
+  EmojiReaction? emojiReactions;
+
+  Peer({
+    this.address = '',
+    this.emojiReactions,
+  });
+
+  factory Peer.fromJson(Map<String, dynamic> map) {
+    return Peer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'address': address,
+      'emojiReactions': emojiReactions?.toJson(),
+    };
+  }
 }
 
 class ListenerPeer extends Peer {
   bool handRaised = false;
+
+  ListenerPeer({
+    String address = '',
+    EmojiReaction? emojiReactions,
+    this.handRaised = false,
+  }) : super(
+          address: address,
+          emojiReactions: emojiReactions,
+        );
+
+  factory ListenerPeer.fromJson(Map<String, dynamic> map) {
+    return ListenerPeer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+      handRaised: map['handRaised'] ?? false,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'handRaised': handRaised,
+    };
+  }
 }
 
 class AdminPeer extends Peer {
   bool? audio;
+
+  AdminPeer({
+    String address = '',
+    EmojiReaction? emojiReactions,
+    this.audio,
+  }) : super(
+          address: address,
+          emojiReactions: emojiReactions,
+        );
+
+  factory AdminPeer.fromJson(Map<String, dynamic> map) {
+    return AdminPeer(
+      address: map['address'] ?? '',
+      emojiReactions: map['emojiReactions'] != null
+          ? EmojiReaction.fromJson(map['emojiReactions'])
+          : null,
+      audio: map['audio'],
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'audio': audio,
+    };
+  }
 }
 
 class LiveSpaceData {
   AdminPeer host = AdminPeer();
-  List<AdminPeer> coHosts = [];
+  // List<AdminPeer> coHosts = [];
   List<AdminPeer> speakers = [];
   List<ListenerPeer> listeners = [];
 
   LiveSpaceData({
     required this.host,
-    required this.coHosts,
+    // required this.coHosts,
     required this.speakers,
     required this.listeners,
   });
+
+  factory LiveSpaceData.fromJson(Map<String, dynamic> map) {
+    return LiveSpaceData(
+      host: AdminPeer.fromJson(map['host']),
+      // coHosts: (map['coHosts'] as List<dynamic>)
+      //     .map((adminPeer) => AdminPeer.fromJson(adminPeer))
+      //     .toList(),
+      speakers: (map['speakers'] as List<dynamic>)
+          .map((adminPeer) => AdminPeer.fromJson(adminPeer))
+          .toList(),
+      listeners: (map['listeners'] as List<dynamic>)
+          .map((listenerPeer) => ListenerPeer.fromJson(listenerPeer))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'host': host.toJson(),
+      // 'coHosts': coHosts.map((adminPeer) => adminPeer.toJson()).toList(),
+      'speakers': speakers.map((adminPeer) => adminPeer.toJson()).toList(),
+      'listeners':
+          listeners.map((listenerPeer) => listenerPeer.toJson()).toList(),
+    };
+  }
 }
 
 class SpaceData extends SpaceDTO {
   LiveSpaceData liveSpaceData = LiveSpaceData(
     host: AdminPeer(),
-    coHosts: [],
+    // coHosts: [],
     speakers: [],
     listeners: [],
   );

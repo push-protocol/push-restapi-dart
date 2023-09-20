@@ -65,6 +65,24 @@ Future<SpaceDTO?> joinSpace({
       final room = await addSpeakingParticipant(
           roomId: roomId, participantName: localAddress);
       updateRoom(room);
+
+      // fire a meta message to signal a speaker has joined
+      final spaceData = providerContainer.read(PushSpaceProvider).data;
+      spaceData.liveSpaceData.speakers.add(AdminPeer(
+          address: localAddress,
+          audio: false,
+          emojiReactions: EmojiReaction()));
+      log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
+
+      sendLiveSpaceData(
+          updatedLiveSpaceData: spaceData.liveSpaceData,
+          action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Need a better action
+          affectedAddresses: [localAddress],
+          spaceId: spaceId);
+
+      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+        return spaceData;
+      });
     } else {
       if (space.meta == null) {
         throw Exception('Space meta not updated');
