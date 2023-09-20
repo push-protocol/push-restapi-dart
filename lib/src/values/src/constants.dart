@@ -83,10 +83,6 @@ enum META_ACTION {
   USER_INTERACTION, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
 }
 
-isValidMetaAction(int action) {
-  return META_ACTION.values.contains(action);
-}
-
 enum REACTION_TYPE {
   THUMBS_UP,
   THUMBS_DOWN,

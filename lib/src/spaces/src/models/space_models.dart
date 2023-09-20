@@ -1,21 +1,79 @@
 import '../../../../push_restapi_dart.dart';
 
-class Peer {
-  String address = '';
-  EmojiReaction? emojiReactions;
-}
-
 class EmojiReaction {
   String emoji = '';
   String expiresIn = '';
+
+  EmojiReaction({
+    this.emoji = '',
+    this.expiresIn = '',
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'emoji': emoji,
+      'expiresIn': expiresIn,
+    };
+  }
+}
+
+class Peer {
+  String address = '';
+  EmojiReaction? emojiReactions;
+
+  Peer({
+    this.address = '',
+    this.emojiReactions,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'address': address,
+      'emojiReactions': emojiReactions?.toJson(),
+    };
+  }
 }
 
 class ListenerPeer extends Peer {
   bool handRaised = false;
+
+  ListenerPeer({
+    String address = '',
+    EmojiReaction? emojiReactions,
+    this.handRaised = false,
+  }) : super(
+          address: address,
+          emojiReactions: emojiReactions,
+        );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'handRaised': handRaised,
+    };
+  }
 }
 
 class AdminPeer extends Peer {
   bool? audio;
+
+  AdminPeer({
+    String address = '',
+    EmojiReaction? emojiReactions,
+    this.audio,
+  }) : super(
+          address: address,
+          emojiReactions: emojiReactions,
+        );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'audio': audio,
+    };
+  }
 }
 
 class LiveSpaceData {
@@ -30,6 +88,16 @@ class LiveSpaceData {
     required this.speakers,
     required this.listeners,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'host': host.toJson(),
+      'coHosts': coHosts.map((adminPeer) => adminPeer.toJson()).toList(),
+      'speakers': speakers.map((adminPeer) => adminPeer.toJson()).toList(),
+      'listeners':
+          listeners.map((listenerPeer) => listenerPeer.toJson()).toList(),
+    };
+  }
 }
 
 class SpaceData extends SpaceDTO {
