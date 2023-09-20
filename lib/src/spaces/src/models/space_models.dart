@@ -114,13 +114,13 @@ class AdminPeer extends Peer {
 
 class LiveSpaceData {
   AdminPeer host = AdminPeer();
-  List<AdminPeer> coHosts = [];
+  // List<AdminPeer> coHosts = [];
   List<AdminPeer> speakers = [];
   List<ListenerPeer> listeners = [];
 
   LiveSpaceData({
     required this.host,
-    required this.coHosts,
+    // required this.coHosts,
     required this.speakers,
     required this.listeners,
   });
@@ -128,9 +128,9 @@ class LiveSpaceData {
   factory LiveSpaceData.fromJson(Map<String, dynamic> map) {
     return LiveSpaceData(
       host: AdminPeer.fromJson(map['host']),
-      coHosts: (map['coHosts'] as List<dynamic>)
-          .map((adminPeer) => AdminPeer.fromJson(adminPeer))
-          .toList(),
+      // coHosts: (map['coHosts'] as List<dynamic>)
+      //     .map((adminPeer) => AdminPeer.fromJson(adminPeer))
+      //     .toList(),
       speakers: (map['speakers'] as List<dynamic>)
           .map((adminPeer) => AdminPeer.fromJson(adminPeer))
           .toList(),
@@ -143,7 +143,7 @@ class LiveSpaceData {
   Map<String, dynamic> toJson() {
     return {
       'host': host.toJson(),
-      'coHosts': coHosts.map((adminPeer) => adminPeer.toJson()).toList(),
+      // 'coHosts': coHosts.map((adminPeer) => adminPeer.toJson()).toList(),
       'speakers': speakers.map((adminPeer) => adminPeer.toJson()).toList(),
       'listeners':
           listeners.map((listenerPeer) => listenerPeer.toJson()).toList(),
@@ -154,7 +154,7 @@ class LiveSpaceData {
 class SpaceData extends SpaceDTO {
   LiveSpaceData liveSpaceData = LiveSpaceData(
     host: AdminPeer(),
-    coHosts: [],
+    // coHosts: [],
     speakers: [],
     listeners: [],
   );

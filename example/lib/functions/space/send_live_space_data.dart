@@ -31,9 +31,9 @@ Future<void> testSendLiveSpaceData() async {
   final affectedAddresses = [ethersWallet.address!];
   final updatedLiveSpaceData = LiveSpaceData(
       host: AdminPeer(address: ethersWallet.address!),
-      coHosts: [
-        AdminPeer(address: ethersWallet.address!)
-      ],
+      // coHosts: [
+      //   AdminPeer(address: ethersWallet.address!)
+      // ],
       speakers: [
         AdminPeer(address: ethersWallet.address!)
       ],

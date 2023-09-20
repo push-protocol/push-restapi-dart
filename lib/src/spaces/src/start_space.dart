@@ -64,7 +64,30 @@ Future<SpaceDTO?> startSpace({
     );
 
     if (group != null) {
-      return groupDtoToSpaceDto(group);
+      final space = groupDtoToSpaceDto(group);
+
+      final liveSpaceData = LiveSpaceData(
+          host: AdminPeer(
+              address: accountAddress ?? signer!.getAddress(),
+              audio: false,
+              emojiReactions: EmojiReaction()),
+          speakers: [],
+          listeners: []);
+      log('updatedLiveSpaceData ${liveSpaceData}');
+
+      sendLiveSpaceData(
+          updatedLiveSpaceData: liveSpaceData,
+          action: META_ACTION
+              .CREATE_SPACE, // TODO: Need a better action for starting space
+          affectedAddresses: [accountAddress ?? signer!.getAddress()],
+          spaceId: spaceId);
+
+      final spaceData = SpaceData.fromSpaceDTO(space, liveSpaceData);
+      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+        return spaceData;
+      });
+
+      return spaceData;
     } else {
       throw Exception('Error while updating Space : $spaceId');
     }
