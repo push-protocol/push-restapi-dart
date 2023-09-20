@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 import 'helpers/live_peer.dart';
+import 'on_receive_meta_message_for_space.dart';
 import 'initialize.dart';
 import 'join.dart';
 import 'update_space_meta.dart';
@@ -64,7 +65,11 @@ class SpaceStateNotifier extends ChangeNotifier {
     data = initSpaceData;
   }
 
-  // TODO: add -> onReceiveMetaMessage, stop
+  // TODO: add -> stop
+
+  onReceiveMetaMessage(Map<String, dynamic> metaMessage){
+    onReceiveMetaMessageForSpace(metaMessage);
+  }
 
   initialize({
     required String spaceId,
