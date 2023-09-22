@@ -19,7 +19,9 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(PushSpaceProvider);
-    final data = widget.space;
+    final SpaceDTO data = widget.space;
+    final liveSpaceData = vm.liveSpaceData;
+    final host = liveSpaceData.host;
     return Scaffold(
       appBar: AppBar(
         title: Text('Space'),
@@ -29,62 +31,85 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
         child: Column(
           children: [
             Expanded(
-                child: ListView(
-              children: [
-                SizedBox(height: 12),
-                DataView(
-                  label: 'Space Name:',
-                  value: data.spaceName,
-                ),
-                SizedBox(height: 12),
-                DataView(
-                  label: 'Space Id:',
-                  value: data.spaceId,
-                ),
-                SizedBox(height: 12),
-                DataView(
-                  label: 'Space Description:',
-                  value: data.spaceDescription ?? '',
-                ),
-                SizedBox(height: 12),
-                DataView(label: 'Space Creator', value: data.spaceCreator),
-                SizedBox(height: 24),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: InkWell(
-                    onTap: () {
-                      FlutterClipboard.copy(data.spaceId).then((value) {
-                        showMyDialog(
-                            context: context,
-                            title: 'Space ',
-                            message: 'Space Id copied successfully');
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.purple),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.copy),
-                          SizedBox(width: 12),
-                          Text(
-                            'Copy space id',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
+              child: ListView(
+                children: [
+                  SizedBox(height: 12),
+                  DataView(
+                    label: 'Space Name:',
+                    value: data.spaceName,
+                  ),
+                  SizedBox(height: 12),
+                  DataView(
+                    label: 'Space Id:',
+                    value: data.spaceId,
+                  ),
+                  SizedBox(height: 12),
+                  DataView(
+                    label: 'Space Description:',
+                    value: data.spaceDescription ?? '',
+                  ),
+                  SizedBox(height: 12),
+                  DataView(label: 'Space Creator', value: data.spaceCreator),
+                  SizedBox(height: 24),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: InkWell(
+                      onTap: () {
+                        FlutterClipboard.copy(data.spaceId).then((value) {
+                          showMyDialog(
+                              context: context,
+                              title: 'Space ',
+                              message: 'Space Id copied successfully');
+                        });
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.purple),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.copy,
+                              size: 14,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 12),
+                            Text(
+                              'Copy space id',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )),
+                  SizedBox(height: 24),
+                  Text('Host'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${host.address}',
+                        ),
+                      ),
+                      SizedBox(width: 24),
+                      Container(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Icon(
+                          host.audio == true ? Icons.mic : Icons.mic_off,
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
             Consumer(
               builder: (context, ref, child) {
                 final vm = ref.watch(PushSpaceProvider);
@@ -107,7 +132,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                   return Column(
                     children: [
                       SizedBox(
-                        height: 200,
+                        height: 100,
                         child: _controller!.value.isInitialized
                             ? AspectRatio(
                                 aspectRatio: _controller!.value.aspectRatio,
@@ -129,27 +154,6 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                       ),
                     ],
                   );
-
-                  // BetterPlayerDataSource betterPlayerDataSource =
-                  //     BetterPlayerDataSource(
-                  //   BetterPlayerDataSourceType.network,
-                  //   vm.spacePlaybackUrl!,
-                  //   liveStream: true,
-                  //   videoFormat: BetterPlayerVideoFormat.hls,
-                  //   useHlsAudioTracks: true,
-                  //   useHlsTracks: true,
-                  // );
-                  // final _controller = BetterPlayerController(
-                  //     BetterPlayerConfiguration(),
-                  //     betterPlayerDataSource: betterPlayerDataSource);
-                  // return SizedBox(
-                  //     height: 300,
-                  //     child: AspectRatio(
-                  //       aspectRatio: 16 / 9,
-                  //       child: BetterPlayer(
-                  //         controller: _controller,
-                  //       ),
-                  //     ));
                 }
                 return SizedBox.shrink();
               },
@@ -257,14 +261,14 @@ class DataView extends StatelessWidget {
           label,
           style: TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 16,
+              fontSize: 10,
               color: color ?? Colors.grey[700]),
         ),
         Text(
           value,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 18,
+            fontSize: 14,
             color: color,
           ),
         ),

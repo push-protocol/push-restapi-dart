@@ -1,20 +1,19 @@
 import '../../../push_restapi_dart.dart';
 
-Future<MetaMessage> onReceiveMetaMessageForSpace(Map<String, dynamic> metaMessage) async {
-  final oldSpaceData = providerContainer.read(PushSpaceProvider).data;
+Future<SpaceData?> onReceiveMetaMessageForSpace(
+  Map<String, dynamic> metaMessage,
+  String spaceId,
+) async {
+  try {
+    final latestSpace = await getSpaceById(spaceId: spaceId);
 
-  final latestSpace = await getSpaceById(spaceId: oldSpaceData.spaceId);
-  MetaMessage parsedMetaMessage = MetaMessage.fromJson(metaMessage);
-  final updatedSpaceData = SpaceData.fromSpaceDTO(
-      latestSpace, LiveSpaceData.fromJson(parsedMetaMessage.info!.arbitrary));
+    MetaMessage parsedMetaMessage =
+        MetaMessage.fromJson(metaMessage['messageObj']);
 
-  // TODO: Add the message queue here
-
-  log('onReceiveMetaMessageForSpace - updatedSpaceData $updatedSpaceData');
-
-  providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-    return updatedSpaceData;
-  });
-
-  return parsedMetaMessage;
+    return SpaceData.fromSpaceDTO(
+        latestSpace, LiveSpaceData.fromJson(parsedMetaMessage.info!.arbitrary));
+  } catch (e) {
+    log('[Push SDK] - onReceiveMetaMessageForSpace  - Error-:  $e');
+    rethrow;
+  }
 }

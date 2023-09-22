@@ -20,7 +20,6 @@ typedef SetDataFunction = SpaceData Function(SpaceData);
 
 LiveSpaceData initLiveSpaceData = LiveSpaceData(
   host: AdminPeer(),
-  // coHosts: [],
   speakers: [],
   listeners: [],
 );
@@ -40,6 +39,9 @@ SpaceData initSpaceData = SpaceData(
 );
 
 class SpaceStateNotifier extends ChangeNotifier {
+  SpaceStateNotifier() {
+    data = initSpaceData;
+  }
   // to store the room data upon start/join
   Room? _room;
   String? _playbackUrl;
@@ -53,6 +55,7 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   // to store data related to push space
   late SpaceData data;
+  LiveSpaceData get liveSpaceData => data.liveSpaceData;
 
   void setData(SetDataFunction fn) {
     final newState = fn(data);
@@ -61,20 +64,26 @@ class SpaceStateNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  SpaceStateNotifier() {
-    data = initSpaceData;
+  onReceiveMetaMessage(Map<String, dynamic> metaMessage) async {
+    final result =
+        await onReceiveMetaMessageForSpace(metaMessage, data.spaceId);
+    if (result != null) {
+      data = result;
+      notifyListeners();
+    }
   }
 
-  // TODO: add -> stop
-
-  onReceiveMetaMessage(Map<String, dynamic> metaMessage){
-    onReceiveMetaMessageForSpace(metaMessage);
-  }
-
-  initialize({
+  Future<SpaceData?> initializeData({
     required String spaceId,
-  }) {
-    initializeSpace(spaceId: spaceId);
+  }) async {
+    final result = await initializeSpace(spaceId: spaceId);
+    if (result != null) {
+      data = result;
+      notifyListeners();
+      return result;
+    } else {
+      throw Exception('Invalid Space id');
+    }
   }
 
   updateMeta({
@@ -90,18 +99,30 @@ class SpaceStateNotifier extends ChangeNotifier {
     Signer? signer,
     String? livepeerApiKey,
   }) async {
-    initialize(spaceId: spaceId);
+    if (spaceId != data.spaceId) {
+      await initializeData(spaceId: spaceId);
+    }
+
     if (livepeerApiKey != null) {
       setLivePeerKey(livepeerApiKey);
     }
-    return joinSpace(
+
+    final result = await joinSpace(
       spaceId: spaceId,
       address: address,
       pgpPrivateKey: pgpPrivateKey,
       signer: signer,
       updatePlaybackUrl: _setPlaybackUrl,
       updateRoom: _updateLocalUserRoom,
+      spaceData: data,
     );
+
+    if (result != null) {
+      data = result;
+      notifyListeners();
+    }
+
+    return result;
   }
 
   Future<SpaceDTO?> start({
@@ -111,17 +132,26 @@ class SpaceStateNotifier extends ChangeNotifier {
     String? livepeerApiKey,
     required dynamic Function(ProgressHookType) progressHook,
   }) async {
-    initialize(spaceId: spaceId);
     if (livepeerApiKey != null) {
       setLivePeerKey(livepeerApiKey);
     }
-    return startSpace(
+
+    final result = await startSpace(
       accountAddress: accountAddress,
       signer: signer,
       spaceId: spaceId,
       progressHook: progressHook,
       updateRoom: _updateLocalUserRoom,
     );
+
+    log('start: result= $result');
+    if (result != null) {
+      data = result;
+      notifyListeners();
+      log('start: result=liveSpaceData ${result.liveSpaceData.toJson()}');
+    }
+
+    return result;
   }
 
   _updateLocalUserRoom(Room? localRoom) {
@@ -141,27 +171,32 @@ class SpaceStateNotifier extends ChangeNotifier {
 
       // update the mic status of the client to others
       final localAddress = getCachedWallet()!.address!;
-      final spaceData = providerContainer.read(PushSpaceProvider).data;
-      for (var index = 0;
-          index < spaceData.liveSpaceData.speakers.length;
-          index++) {
-        if (spaceData.liveSpaceData.speakers[index].address == localAddress) {
-          spaceData.liveSpaceData.speakers[index].audio = isOn;
+
+      final spaceData = data;
+      final speakers = data.liveSpaceData.speakers.toList();
+
+      if (spaceData.liveSpaceData.host.address == localAddress) {
+        spaceData.liveSpaceData.host.audio = isOn;
+      }
+
+      for (var speaker in speakers) {
+        if (speaker.address == localAddress) {
+          speaker.audio = isOn;
+          break;
         }
       }
 
+      spaceData.liveSpaceData.speakers = speakers;
+
       sendLiveSpaceData(
-          updatedLiveSpaceData: spaceData.liveSpaceData,
-          action: META_ACTION
-              .USER_INTERACTION, // TODO: Need a better action for mic toggle
-          affectedAddresses: [localAddress],
-          spaceId: spaceData.spaceId);
+        updatedLiveSpaceData: spaceData.liveSpaceData,
+        action: META_ACTION
+            .USER_INTERACTION, // TODO: Need a better action for mic toggle
+        affectedAddresses: [localAddress],
+        spaceId: spaceData.spaceId,
+      );
 
-      log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
-      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-        return spaceData;
-      });
-
+      data = spaceData;
       notifyListeners();
     }
   }
@@ -179,19 +214,21 @@ class SpaceStateNotifier extends ChangeNotifier {
 
         // fire a meta message signaling that you have left the group
         final localAddress = getCachedWallet()!.address!;
-        final spaceData = providerContainer.read(PushSpaceProvider).data;
-        spaceData.liveSpaceData.speakers.removeWhere((speaker) => speaker.address == localAddress);
+        final spaceData = data;
+
+        final speakers = spaceData.liveSpaceData.speakers.toList();
+
+        speakers.removeWhere((speaker) => speaker.address == localAddress);
+        spaceData.liveSpaceData.speakers = speakers;
 
         sendLiveSpaceData(
             updatedLiveSpaceData: spaceData.liveSpaceData,
-            action: META_ACTION.DEMOTE_FROM_SPEAKER, // TODO: Need a better action for speaker leaving
+            action: META_ACTION
+                .DEMOTE_FROM_SPEAKER, // TODO: Need a better action for speaker leaving
             affectedAddresses: [localAddress],
             spaceId: spaceData.spaceId);
 
-        log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
-        providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-          return spaceData;
-        });
+        data = spaceData;
       }
 
       _room = null;

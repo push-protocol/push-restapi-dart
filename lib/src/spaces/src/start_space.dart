@@ -4,7 +4,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'helpers/live_peer.dart';
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceDTO?> startSpace({
+Future<SpaceData?> startSpace({
   String? accountAddress,
   Signer? signer,
   String? pgpPrivateKey,
@@ -67,27 +67,26 @@ Future<SpaceDTO?> startSpace({
       final space = groupDtoToSpaceDto(group);
 
       final liveSpaceData = LiveSpaceData(
-          host: AdminPeer(
-              address: accountAddress ?? signer!.getAddress(),
-              audio: false,
-              emojiReactions: EmojiReaction()),
-          speakers: [],
-          listeners: []);
-      log('updatedLiveSpaceData ${liveSpaceData}');
+        host: AdminPeer(
+          address: accountAddress ?? signer!.getAddress(),
+          audio: false,
+          emojiReactions: EmojiReaction(),
+        ),
+        speakers: [],
+        listeners: [],
+      );
 
       sendLiveSpaceData(
-          updatedLiveSpaceData: liveSpaceData,
-          action: META_ACTION
-              .CREATE_SPACE, // TODO: Need a better action for starting space
-          affectedAddresses: [accountAddress ?? signer!.getAddress()],
-          spaceId: spaceId);
+        updatedLiveSpaceData: liveSpaceData,
+        action: META_ACTION
+            .CREATE_SPACE, // TODO: Need a better action for starting space
+        affectedAddresses: [accountAddress ?? signer!.getAddress()],
+        spaceId: spaceId,
+      );
 
-      final spaceData = SpaceData.fromSpaceDTO(space, liveSpaceData);
-      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-        return spaceData;
-      });
+      final result = SpaceData.fromSpaceDTO(space, liveSpaceData);
 
-      return spaceData;
+      return result;
     } else {
       throw Exception('Error while updating Space : $spaceId');
     }

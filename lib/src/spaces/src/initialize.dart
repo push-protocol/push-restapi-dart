@@ -11,10 +11,6 @@ Future<SpaceData?> initializeSpace({
       liveSpaceData = await getLatestLiveSpaceData(spaceId: spaceId);
     }
 
-    providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-      return SpaceData.fromSpaceDTO(space, liveSpaceData);
-    });
-
     return SpaceData.fromSpaceDTO(space, liveSpaceData);
   } catch (e) {
     print('[Push SDK] - API - Error - API initialize -:  $e');

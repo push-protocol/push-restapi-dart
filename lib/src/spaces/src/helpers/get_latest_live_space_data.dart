@@ -1,11 +1,14 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-Future<LiveSpaceData> getLatestLiveSpaceData(
-    {String? accountAddress,
-    String? pgpPrivateKey,
-    required String spaceId}) async {
+Future<LiveSpaceData> getLatestLiveSpaceData({
+  String? accountAddress,
+  String? pgpPrivateKey,
+  required String spaceId,
+}) async {
   final threadhash = await conversationHash(
-      conversationId: spaceId, accountAddress: accountAddress);
+    conversationId: spaceId,
+    accountAddress: accountAddress,
+  );
 
   LiveSpaceData liveSpaceData = initLiveSpaceData;
 
