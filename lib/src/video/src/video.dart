@@ -105,9 +105,7 @@ class VideoCallStateNotifier extends ChangeNotifier {
 
     for (final recipientAddress in recipientAddresses) {
       try {
-        // TODO: Set video call data with status INITIALIZED
-
-        // TODO: Get ice server config from get_ice_server_config
+        
         RTCPeerConnection peer = await createPeerConnection({
           'iceServers':
               // replace the below array with decrypted turn server API result

@@ -291,6 +291,7 @@ class ReactionMessage extends SendMessage {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['action'] = action;
