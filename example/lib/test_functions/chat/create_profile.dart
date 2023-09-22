@@ -12,14 +12,12 @@ testCreatPushProfile() async {
   const mnemonic =
       'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
   final walletMnemonic = ether.Wallet.fromMnemonic(mnemonic);
-  // final signer = SignerPrivateKey(
-  //     wallet: walletMnemonic, address: walletMnemonic.address!);
+
   final signer = EthersSigner(
     ethersWallet: walletMnemonic,
     address: walletMnemonic.address!,
   );
-  // final result = createUser(signer: signer, progressHook: handleProgress);
-  // print(result);
+
   print('walletMnemonic.address: ${walletMnemonic.address}');
   final user = await getUser(address: walletMnemonic.address!);
 
