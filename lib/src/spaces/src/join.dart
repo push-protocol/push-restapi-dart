@@ -5,13 +5,14 @@ import 'package:livekit_client/livekit_client.dart';
 import 'helpers/live_peer.dart';
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceDTO?> joinSpace({
+Future<SpaceData?> joinSpace({
   required String spaceId,
   String? address,
   String? pgpPrivateKey,
   Signer? signer,
   required Function(Room?) updateRoom,
   required Function(String?) updatePlaybackUrl,
+  required SpaceData spaceData,
 }) async {
   try {
     final SpaceDTO space = await getSpaceById(spaceId: spaceId);
@@ -66,23 +67,23 @@ Future<SpaceDTO?> joinSpace({
           roomId: roomId, participantName: localAddress);
       updateRoom(room);
 
-      // fire a meta message to signal a speaker has joined
-      final spaceData = providerContainer.read(PushSpaceProvider).data;
-      spaceData.liveSpaceData.speakers.add(AdminPeer(
+      spaceData.liveSpaceData.speakers = [
+        ...spaceData.liveSpaceData.speakers,
+        AdminPeer(
           address: localAddress,
           audio: false,
-          emojiReactions: EmojiReaction()));
-      log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
+          emojiReactions: EmojiReaction(),
+        )
+      ];
+
 
       sendLiveSpaceData(
-          updatedLiveSpaceData: spaceData.liveSpaceData,
-          action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Need a better action
-          affectedAddresses: [localAddress],
-          spaceId: spaceId);
-
-      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-        return spaceData;
-      });
+        updatedLiveSpaceData: spaceData.liveSpaceData,
+        action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Need a better action
+        affectedAddresses: [localAddress],
+        spaceId: spaceId,
+      );
+      return spaceData;
     } else {
       if (space.meta == null) {
         throw Exception('Space meta not updated');
@@ -93,9 +94,16 @@ Future<SpaceDTO?> joinSpace({
       final String? playbackUrl = await getPlaybackUrl(playbackId: playbackId);
 
       updatePlaybackUrl(playbackUrl);
+      spaceData.liveSpaceData.listeners = [
+        ...spaceData.liveSpaceData.listeners,
+        ListenerPeer(
+          address: localAddress,
+          emojiReactions: EmojiReaction(),
+        )
+      ];
     }
 
-    return space;
+    return spaceData;
   } catch (err) {
     log('[Push SDK] - API  - Error - API join -: $err');
     throw Exception('[Push SDK] - API  - Error - API join -: $err');

@@ -6,15 +6,16 @@ Future sendLiveSpaceData({
   required List<String> affectedAddresses,
   required String spaceId,
 }) async {
-  log('updatedLiveSpaceData ${updatedLiveSpaceData.toJson}');
 
   final content = '${action.toString()} $affectedAddresses';
   final metaMessage = MetaMessage(
-      action: action,
-      info: Info(
-          affected: affectedAddresses,
-          arbitrary: updatedLiveSpaceData.toJson()),
-      content: content);
+    action: action,
+    info: Info(
+      affected: affectedAddresses,
+      arbitrary: updatedLiveSpaceData.toJson(),
+    ),
+    content: content,
+  );
 
   final options = ChatSendOptions(
       messageType: MessageType.META,

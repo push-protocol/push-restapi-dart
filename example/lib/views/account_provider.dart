@@ -13,8 +13,6 @@ class AccountProvider extends ChangeNotifier {
 
   Wallet? pushWallet;
 
-  // final mnemonic1 =
-  //     'coconut slight random umbrella print verify agent disagree endorse october beyond bracket';
   final mnemonic2 =
       'label mobile gas salt service gravity nose bomb marine online say twice';
   final mnemonic3 =
@@ -25,7 +23,6 @@ class AccountProvider extends ChangeNotifier {
       'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
 
   List<String> get accounts => [
-        // mnemonic1,
         mnemonic2,
         mnemonic3,
         mnemonic4,
@@ -156,26 +153,20 @@ class AccountProvider extends ChangeNotifier {
         print(' NOTIFICATION EVENTS.CONNECT: $data');
       },
     );
-    // Listening Feeds ( Notifications received by user )
     pushSDKSocket.on(
-      EVENTS.USER_FEEDS,
-      (data) {
-        print(' EVENTS.USER_FEEDS: $data');
-        
-        // add my listener for meta messages
-        // to change the state
-        // ref.read(PushSpaceProvider.notifier).setData((p0){
-        
-        // });
+      EVENTS.SPACES_MESSAGES,
+      (data) async {
+        print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+
+        final metaMessage = data as Map<String, dynamic>;
+
+        if (metaMessage['messageCategory'] == 'Chat' &&
+            metaMessage['messageType'] == 'Meta') {
+          ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+        }
       },
     );
-    // Listening Spam Feeds ( Spam Notifications received by user )
-    pushSDKSocket.on(
-      EVENTS.USER_SPAM_FEEDS,
-      (data) {
-        print(' EVENTS.USER_SPAM_FEEDS: $data');
-      },
-    );
+
     pushSDKSocket.on(
       EVENTS.DISCONNECT,
       (data) {

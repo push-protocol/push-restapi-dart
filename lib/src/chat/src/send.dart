@@ -27,8 +27,6 @@ class ChatSendOptions {
 Future<MessageWithCID?> send(ChatSendOptions options) async {
   ComputedOptions computedOptions = computeOptions(options);
 
-  log('send meta - computed options $computedOptions');
-
   computedOptions.accountAddress ??= getCachedWallet()?.address;
   if (computedOptions.accountAddress == null) {
     throw Exception('Account address is required.');
