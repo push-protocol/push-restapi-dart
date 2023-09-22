@@ -95,7 +95,7 @@ class AdminPeer extends Peer {
 
   factory AdminPeer.fromJson(Map<String, dynamic> map) {
     return AdminPeer(
-      address: map['address'] ?? 'Host Adrress',
+      address: map['address'] ?? '',
       emojiReactions: map['emojiReactions'] != null
           ? EmojiReaction.fromJson(map['emojiReactions'])
           : null,

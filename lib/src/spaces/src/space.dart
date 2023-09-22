@@ -232,7 +232,7 @@ class SpaceStateNotifier extends ChangeNotifier {
             affectedAddresses: [localAddress],
             spaceId: spaceData.spaceId);
 
-        data = spaceData;
+        data = initSpaceData;
       }
 
       _room = null;
