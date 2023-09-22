@@ -22,6 +22,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
     final SpaceDTO data = widget.space;
     final liveSpaceData = vm.liveSpaceData;
     final host = liveSpaceData.host;
+    final speakers = liveSpaceData.speakers;
     return Scaffold(
       appBar: AppBar(
         title: Text('Space'),
@@ -89,24 +90,74 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  Text('Host'),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${host.address}',
+                  SizedBox(height: 12),
+                  Divider(),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration:
+                        BoxDecoration(color: Colors.yellow.withOpacity(.3)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Host'),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${host.address}',
+                              ),
+                            ),
+                            SizedBox(width: 24),
+                            Container(
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              child: Icon(
+                                host.audio == true ? Icons.mic : Icons.mic_off,
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 24),
-                      Container(
-                        decoration: BoxDecoration(shape: BoxShape.circle),
-                        child: Icon(
-                          host.audio == true ? Icons.mic : Icons.mic_off,
-                        ),
-                      )
-                    ],
-                  )
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration:
+                        BoxDecoration(color: Colors.pinkAccent.withOpacity(.3)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Speakers'),
+                        SizedBox(height: 8),
+                        if (speakers.isEmpty) Text('No Speakers'),
+                        ...speakers.map(
+                          (e) => Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${e.address}',
+                                  ),
+                                ),
+                                SizedBox(width: 24),
+                                Container(
+                                  decoration:
+                                      BoxDecoration(shape: BoxShape.circle),
+                                  child: Icon(
+                                    e.audio == true
+                                        ? Icons.mic
+                                        : Icons.mic_off,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
