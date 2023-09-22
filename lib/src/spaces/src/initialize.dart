@@ -6,18 +6,18 @@ Future<SpaceData?> initializeSpace({
   try {
     final space = await getSpaceById(spaceId: spaceId);
 
-    var data = providerContainer.read(PushSpaceProvider).data;
-    var liveSpaceData = data.liveSpaceData;
+    LiveSpaceData liveSpaceData = initLiveSpaceData;
     if (space.status == ChatStatus.ACTIVE) {
-      // TODO: call getLiveSpaceData
+      liveSpaceData = await getLatestLiveSpaceData(spaceId: spaceId);
     }
 
     providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
       return SpaceData.fromSpaceDTO(space, liveSpaceData);
     });
+
     return SpaceData.fromSpaceDTO(space, liveSpaceData);
   } catch (e) {
-    print('[Push SDK] - API  - Error - API initialize -:  $e');
+    print('[Push SDK] - API - Error - API initialize -:  $e');
     rethrow;
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 import 'helpers/live_peer.dart';
+import 'on_receive_meta_message_for_space.dart';
 import 'initialize.dart';
 import 'join.dart';
 import 'update_space_meta.dart';
@@ -19,7 +20,7 @@ typedef SetDataFunction = SpaceData Function(SpaceData);
 
 LiveSpaceData initLiveSpaceData = LiveSpaceData(
   host: AdminPeer(),
-  coHosts: [],
+  // coHosts: [],
   speakers: [],
   listeners: [],
 );
@@ -50,8 +51,6 @@ class SpaceStateNotifier extends ChangeNotifier {
     log('_setPlaybackUrl _playbackUrl: $_playbackUrl');
   }
 
-  // TODO: store signer, localAddress on class so that dev doesnt have to pass it everywhere
-
   // to store data related to push space
   late SpaceData data;
 
@@ -59,17 +58,18 @@ class SpaceStateNotifier extends ChangeNotifier {
     final newState = fn(data);
     data = newState;
     log('setData: $data');
+    notifyListeners();
   }
-
-  // bool _isPlaying = false;
-  // bool get isPlaying => _isPlaying;
 
   SpaceStateNotifier() {
     data = initSpaceData;
   }
-  // SpaceStateNotifier() : super(initSpaceData);
 
-  // TODO: add -> start, onReceiveMetaMessage, leave, stop
+  // TODO: add -> stop
+
+  onReceiveMetaMessage(Map<String, dynamic> metaMessage){
+    onReceiveMetaMessageForSpace(metaMessage);
+  }
 
   initialize({
     required String spaceId,
@@ -80,13 +80,7 @@ class SpaceStateNotifier extends ChangeNotifier {
   updateMeta({
     required String meta,
   }) {
-    final localWallet = getCachedWallet();
-
-    updateSpaceMeta(
-      meta: meta,
-      signer: localWallet!.signer!,
-      pgpPrivateKey: localWallet.pgpPrivateKey!,
-    );
+    updateSpaceMeta(meta: meta);
   }
 
   Future<SpaceDTO?> join({
@@ -96,10 +90,10 @@ class SpaceStateNotifier extends ChangeNotifier {
     Signer? signer,
     String? livepeerApiKey,
   }) async {
+    initialize(spaceId: spaceId);
     if (livepeerApiKey != null) {
       setLivePeerKey(livepeerApiKey);
     }
-    // initialize(spaceId: spaceId);
     return joinSpace(
       spaceId: spaceId,
       address: address,
@@ -144,6 +138,30 @@ class SpaceStateNotifier extends ChangeNotifier {
     if (_room != null) {
       _isMicOn = isOn;
       await _room?.localParticipant?.setMicrophoneEnabled(isOn);
+
+      // update the mic status of the client to others
+      final localAddress = getCachedWallet()!.address!;
+      final spaceData = providerContainer.read(PushSpaceProvider).data;
+      for (var index = 0;
+          index < spaceData.liveSpaceData.speakers.length;
+          index++) {
+        if (spaceData.liveSpaceData.speakers[index].address == localAddress) {
+          spaceData.liveSpaceData.speakers[index].audio = isOn;
+        }
+      }
+
+      sendLiveSpaceData(
+          updatedLiveSpaceData: spaceData.liveSpaceData,
+          action: META_ACTION
+              .USER_INTERACTION, // TODO: Need a better action for mic toggle
+          affectedAddresses: [localAddress],
+          spaceId: spaceData.spaceId);
+
+      log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
+      providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+        return spaceData;
+      });
+
       notifyListeners();
     }
   }
@@ -158,6 +176,22 @@ class SpaceStateNotifier extends ChangeNotifier {
       if (_room != null) {
         await setMicrophoneState(false);
         _room!.disconnect();
+
+        // fire a meta message signaling that you have left the group
+        final localAddress = getCachedWallet()!.address!;
+        final spaceData = providerContainer.read(PushSpaceProvider).data;
+        spaceData.liveSpaceData.speakers.removeWhere((speaker) => speaker.address == localAddress);
+
+        sendLiveSpaceData(
+            updatedLiveSpaceData: spaceData.liveSpaceData,
+            action: META_ACTION.DEMOTE_FROM_SPEAKER, // TODO: Need a better action for speaker leaving
+            affectedAddresses: [localAddress],
+            spaceId: spaceData.spaceId);
+
+        log('updatedLiveSpaceData ${spaceData.liveSpaceData}');
+        providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
+          return spaceData;
+        });
       }
 
       _room = null;

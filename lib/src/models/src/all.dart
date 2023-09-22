@@ -533,17 +533,6 @@ class ChatOptionsType extends AccountEnvOptionsType {
   String? apiKey;
 }
 
-class ChatSendOptionsType {
-  String? messageContent;
-  String? messageType;
-  late String receiverAddress;
-  String? pgpPrivateKey;
-  String? apiKey;
-  late String env;
-  String? account;
-  dynamic signer;
-}
-
 class ConversationHashOptionsType extends AccountEnvOptionsType {
   late String conversationId;
 }

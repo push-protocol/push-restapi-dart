@@ -161,6 +161,12 @@ class AccountProvider extends ChangeNotifier {
       EVENTS.USER_FEEDS,
       (data) {
         print(' EVENTS.USER_FEEDS: $data');
+        
+        // add my listener for meta messages
+        // to change the state
+        // ref.read(PushSpaceProvider.notifier).setData((p0){
+        
+        // });
       },
     );
     // Listening Spam Feeds ( Spam Notifications received by user )

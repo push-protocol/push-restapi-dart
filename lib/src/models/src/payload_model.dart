@@ -4,6 +4,7 @@ class SendMessagePayload {
   String fromCAIP10;
   String toCAIP10;
   String messageContent;
+  dynamic messageObj;
   String messageType;
   String? signature;
   String encType;
@@ -17,6 +18,7 @@ class SendMessagePayload {
     required this.fromCAIP10,
     required this.toCAIP10,
     required this.messageContent,
+    this.messageObj,
     required this.messageType,
     this.signature,
     required this.encType,
@@ -32,6 +34,7 @@ class SendMessagePayload {
       'fromCAIP10': fromCAIP10,
       'toCAIP10': toCAIP10,
       'messageContent': messageContent,
+      'messageObj': messageObj,
       'messageType': messageType,
       'signature': signature,
       'encType': encType,
@@ -48,6 +51,7 @@ class SendMessagePayload {
       fromCAIP10: json['fromCAIP10'],
       toCAIP10: json['toCAIP10'],
       messageContent: json['messageContent'],
+      messageObj: json['messageObj'],
       messageType: json['messageType'],
       signature: json['signature'],
       encType: json['encType'],
