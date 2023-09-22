@@ -216,9 +216,13 @@ class SpaceStateNotifier extends ChangeNotifier {
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        final speakers = spaceData.liveSpaceData.speakers.toList();
+        final speakers = <AdminPeer>[];
 
-        speakers.removeWhere((speaker) => speaker.address == localAddress);
+        for (var speaker in spaceData.liveSpaceData.speakers) {
+          if (speaker.address != localAddress) {
+            speakers.add(speaker);
+          }
+        }
         spaceData.liveSpaceData.speakers = speakers;
 
         sendLiveSpaceData(
