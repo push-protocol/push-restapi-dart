@@ -1,4 +1,4 @@
-export 'functions/__functions.dart';
+export 'test_functions/__functions.dart';
 export 'models/__models.dart';
 export 'values/__values.dart';
 export 'views/__views.dart';
