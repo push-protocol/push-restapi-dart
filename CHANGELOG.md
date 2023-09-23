@@ -2,9 +2,9 @@
 
 ### Update
 
-- Add meta message in send
-- Fire meta messages in space class functions for host, speaker actions
-- Add real-time interaction to Space in Example app
+- Add realtime space data for speakers and host
+- Rename 'functions' directory to 'test_functions' in the example app.
+
 
 ---
 ### 0.2.3-alpha
