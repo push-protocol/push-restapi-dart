@@ -65,6 +65,9 @@ class SpaceStateNotifier extends ChangeNotifier {
   }
 
   onReceiveMetaMessage(Map<String, dynamic> metaMessage) async {
+    // when the space isnt joined we dont act on the recieved meta messages
+    if (data.spaceId == '') return;
+
     final result =
         await onReceiveMetaMessageForSpace(metaMessage, data.spaceId);
     if (result != null) {
@@ -209,26 +212,36 @@ class SpaceStateNotifier extends ChangeNotifier {
     try {
       _playbackUrl = null;
       if (_room != null) {
-        await setMicrophoneState(false);
+        // turn off mic
+        // TODO: Replace this with setMicrophoneState() call once we have the queue
+        _isMicOn = false;
+        await _room?.localParticipant?.setMicrophoneEnabled(false);
+        
+        // disconnect from the room
         _room!.disconnect();
 
-        // fire a meta message signaling that you have left the group
+        // fire a meta message signaling that the user has left the space
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        final speakers = <AdminPeer>[];
+        META_ACTION action = META_ACTION.DEMOTE_FROM_SPEAKER; // TODO: Need a better action for speaker leaving
 
-        for (var speaker in spaceData.liveSpaceData.speakers) {
-          if (speaker.address != localAddress) {
-            speakers.add(speaker);
+        if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
+          spaceData.liveSpaceData.host = AdminPeer();
+          action = META_ACTION.DEMOTE_FROM_ADMIN; // TODO: Need a better action for host leaving
+        } else {
+          final speakers = <AdminPeer>[];
+          for (var speaker in spaceData.liveSpaceData.speakers) {
+            if (speaker.address != localAddress) {
+              speakers.add(speaker);
+            }
           }
+          spaceData.liveSpaceData.speakers = speakers;
         }
-        spaceData.liveSpaceData.speakers = speakers;
 
         sendLiveSpaceData(
             updatedLiveSpaceData: spaceData.liveSpaceData,
-            action: META_ACTION
-                .DEMOTE_FROM_SPEAKER, // TODO: Need a better action for speaker leaving
+            action: action,
             affectedAddresses: [localAddress],
             spaceId: spaceData.spaceId);
 
