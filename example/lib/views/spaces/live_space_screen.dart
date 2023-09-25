@@ -101,6 +101,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                       children: [
                         Text('Host'),
                         SizedBox(height: 8),
+                        if (host.address == '') Text('Host hasnt joined the space yet'),
                         Row(
                           children: [
                             Expanded(
@@ -130,7 +131,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom> {
                       children: [
                         Text('Speakers'),
                         SizedBox(height: 8),
-                        if (speakers.isEmpty) Text('No Speakers'),
+                        if (speakers.isEmpty) Text('There are no speakers in the space currently'),
                         ...speakers.map(
                           (e) => Padding(
                             padding: const EdgeInsets.all(4.0),
