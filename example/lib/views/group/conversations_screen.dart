@@ -3,9 +3,16 @@ import 'dart:typed_data';
 import '../../__lib.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-class ConversationsScreen extends StatelessWidget {
+class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
 
+  @override
+  State<ConversationsScreen> createState() => _ConversationsScreenState();
+}
+
+class _ConversationsScreenState extends State<ConversationsScreen> {
+
+  List<Feeds> spaces = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +27,11 @@ class ConversationsScreen extends StatelessWidget {
       //   child: Text('Start New Chat'),
       //   padding: EdgeInsets.all(16),
       // ),
-      appBar: AppBar(
-        title: Text('Conversations'),
-      ),
+      appBar: AppBar(title: Text('Conversations')),
       body: FutureBuilder<List<Feeds>?>(
         future: chats(toDecrypt: true),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting && spaces.isEmpty) {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -34,7 +39,7 @@ class ConversationsScreen extends StatelessWidget {
           if (snapshot.data == null) {
             return Center(child: Text('Cannot load Conversations'));
           }
-          final spaces = snapshot.data!;
+           spaces = snapshot.data!;
 
           return ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 32),
@@ -48,7 +53,9 @@ class ConversationsScreen extends StatelessWidget {
 
               return ListTile(
                 onTap: () {
-                  pushScreen(ChatRoomScreen(room: item));
+                  pushScreen(ChatRoomScreen(room: item)).then((value) {
+                    setState(() {});
+                  });
                 },
                 leading: ProfileImage(imageUrl: image),
                 title: Text(
@@ -66,11 +73,26 @@ class ConversationsScreen extends StatelessWidget {
 
 class ProfileImage extends StatelessWidget {
   const ProfileImage({super.key, required this.imageUrl});
-  final String imageUrl;
+  final String? imageUrl;
   @override
   Widget build(BuildContext context) {
+    if (imageUrl == null) {
+      return Container(
+        height: 60,
+        width: 60,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.purpleAccent),
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: Icon(
+          Icons.person,
+          color: Colors.purple,
+        ),
+      );
+    }
     try {
-      if (imageUrl.startsWith('https://')) {
+      if (imageUrl!.startsWith('https://')) {
         return Container(
           height: 60,
           width: 60,
@@ -79,7 +101,7 @@ class ProfileImage extends StatelessWidget {
             shape: BoxShape.circle,
             image: DecorationImage(
               image: NetworkImage(
-                imageUrl,
+                imageUrl!,
               ),
               fit: BoxFit.cover,
             ),
@@ -87,7 +109,7 @@ class ProfileImage extends StatelessWidget {
         );
       }
 
-      final UriData? data = Uri.parse(imageUrl).data;
+      final UriData? data = Uri.parse(imageUrl!).data;
 
       Uint8List myImage = data!.contentAsBytes();
 

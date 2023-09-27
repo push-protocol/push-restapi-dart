@@ -17,8 +17,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
-          primaryColor: Colors.purple,
-          appBarTheme: AppBarTheme(backgroundColor: Colors.purple)),
+        primaryColor: Colors.purple,
+        appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
+        tabBarTheme: TabBarTheme(
+            labelColor: Colors.white,
+            indicatorColor: Colors.purple,
+            unselectedLabelColor: Colors.purple,
+            indicator: BoxDecoration(
+              color: Colors.purple,
+            )),
+      ),
       home: HomeScreen(),
     );
   }
