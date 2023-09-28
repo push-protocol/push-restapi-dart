@@ -9,23 +9,35 @@ class ChatSendOptions {
   String receiverAddress;
   String? accountAddress;
   String? pgpPrivateKey;
-  String? senderPgpPubicKey;
 
-  ChatSendOptions({
-    this.message,
-    this.messageContent,
-    this.messageType = MessageType.TEXT,
-    required this.receiverAddress,
-    this.accountAddress,
-    this.pgpPrivateKey,
-    this.senderPgpPubicKey,
-  }) {
+  ChatSendOptions(
+      {this.message,
+      this.messageContent,
+      this.messageType = MessageType.TEXT,
+      required this.receiverAddress,
+      this.accountAddress,
+      this.pgpPrivateKey}) {
     assert(MessageType.isValidMessageType(messageType));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message?.toJson(),
+      'messageContent': messageContent,
+      'messageType': messageType,
+      'receiverAddress': receiverAddress,
+      'accountAddress': accountAddress,
+      'pgpPrivateKey': pgpPrivateKey
+    };
   }
 }
 
 Future<MessageWithCID?> send(ChatSendOptions options) async {
+  log('SEND - OPTIONS ${options.toJson()}');
+
   ComputedOptions computedOptions = computeOptions(options);
+
+  log('SEND - COMPUTED OPTIONS ${computedOptions.toJson()}');
 
   computedOptions.accountAddress ??= getCachedWallet()?.address;
   if (computedOptions.accountAddress == null) {
@@ -63,7 +75,7 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
         await getUser(address: computedOptions.accountAddress!);
 
     if (senderAcount == null) {
-      throw Exception('Cannot get sender account address .');
+      throw Exception('Cannot get sender account.');
     }
     // check if user exists
     User? receiverAccount;
@@ -83,25 +95,24 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
     final messageContent = computedOptions.messageObj?.content;
 
     final sendMessagePayload = await getSendMessagePayload(
+        receiverAddress: computedOptions.to,
         senderPublicKey: getPublicKeyFromString(senderAcount.publicKey!),
-        options: CustomComputedOptions(
-          messageContent: messageContent,
-          messageType: computedOptions.messageType,
-          to: computedOptions.to,
-          messageObj: computedOptions.messageObj,
-          accountAddress: computedOptions.accountAddress,
-          pgpPrivateKey: computedOptions.pgpPrivateKey,
-          senderPgpPubicKey: computedOptions.senderPgpPubicKey,
-        ),
+        senderPgpPrivateKey: computedOptions.pgpPrivateKey,
+        senderAddress: computedOptions.accountAddress,
         publicKeys: isValidGroup
             ? groupReciverAccounts
             : [
                 getPublicKeyFromString(senderAcount.publicKey!),
                 getPublicKeyFromString(receiverAccount!.publicKey!)
               ],
+        messageType: computedOptions.messageType,
+        messageContent: messageContent,
+        messageObj: computedOptions.messageObj,
         group: group,
-        isValidGroup: isValidGroup,
-        shouldEncrypt: false);
+        isValidGroup: isValidGroup);
+
+    log('sendMessagePayload $sendMessagePayload');
+
     return sendMessageService(sendMessagePayload, isIntent);
   } catch (e) {
     log('[Push SDK] - API  - Error - API $e');
@@ -158,83 +169,73 @@ validateSendOptions(ComputedOptions options) async {
   }
 }
 
-class CustomComputedOptions extends ComputedOptions {
-  String messageContent;
+Future<SendMessagePayload> getSendMessagePayload({
+  required String receiverAddress,
+  String? senderAddress,
+  String? senderPgpPrivateKey,
+  required String senderPublicKey,
+  required String messageType,
+  required String messageContent,
+  dynamic messageObj,
+  List<String> publicKeys = const [],
+  GroupDTO? group,
+  required bool isValidGroup,
+}) async {
+  log('encryptedMessageContentData --> getSendMessagePayload - receiverAddress: $receiverAddress, message: $messageContent, isGroup: $isValidGroup');
 
-  CustomComputedOptions({
-    required String messageType,
-    required String to,
-    dynamic messageObj,
-    String? accountAddress,
-    String? pgpPrivateKey,
-    String? senderPgpPubicKey,
-    required this.messageContent,
-  }) : super(
-          messageType: messageType,
-          to: to,
-          messageObj: messageObj,
-          accountAddress: accountAddress,
-          pgpPrivateKey: pgpPrivateKey,
-          senderPgpPubicKey: senderPgpPubicKey,
-        );
-}
+  final secretKey = generateRandomSecret(15);
 
-Future<SendMessagePayload> getSendMessagePayload(
-    {required CustomComputedOptions options,
-    required String senderPublicKey,
-    List<String> publicKeys = const [],
-    bool shouldEncrypt = true,
-    GroupDTO? group,
-    bool isValidGroup = false}) async {
-  String encType = shouldEncrypt ? 'pgp' : 'PlainText';
-  String messageContent = options.messageContent;
-
-  final encryptedMessageContentData = await encryptAndSign(
-    plainText: messageContent,
-    keys: publicKeys,
-    senderPgpPrivateKey: options.pgpPrivateKey!,
-    publicKey: senderPublicKey,
-  );
-  final encryptedMessageContent =
-      encryptedMessageContentData['cipherText'] as String;
+  final encryptedMessageContentData = await getEncryptedRequest(
+      receiverAddress: receiverAddress,
+      senderPublicKey: senderPublicKey,
+      senderPgpPrivateKey: senderPgpPrivateKey!,
+      message: messageContent,
+      isGroup: isValidGroup,
+      group: group,
+      secretKey: secretKey);
+  final encryptedMessageContent = encryptedMessageContentData.message;
   final deprecatedSignature =
-      removeVersionFromPublicKey(encryptedMessageContentData['signature']!);
+      removeVersionFromPublicKey(encryptedMessageContentData.signature);
 
-  final encryptedMessageObjData = await encryptAndSign(
-      plainText: jsonEncode(options.messageObj?.toJson()),
-      keys: publicKeys,
-      senderPgpPrivateKey: options.pgpPrivateKey!,
-      publicKey: senderPublicKey);
-  final encryptedMessageObj = encryptedMessageObjData['cipherText'] as String;
+  final encryptedMessageObjData = await getEncryptedRequest(
+      receiverAddress: receiverAddress,
+      senderPublicKey: senderPublicKey,
+      senderPgpPrivateKey: senderPgpPrivateKey,
+      message: jsonEncode(messageObj?.toJson()),
+      isGroup: isValidGroup,
+      group: group,
+      secretKey: secretKey);
+  final encryptedMessageObj = encryptedMessageObjData.message;
+  final encryptionType = encryptedMessageObjData.encryptionType;
   final encryptedMessageObjSecret =
-      encryptedMessageObjData['encryptedSecret'] as String;
+      removeVersionFromPublicKey(encryptedMessageObjData.aesEncryptedSecret);
 
   return SendMessagePayload(
-      fromDID: validateCAIP(options.accountAddress!)
-          ? options.accountAddress!
-          : walletToPCAIP10(options.accountAddress!),
+      fromDID: validateCAIP(senderAddress!)
+          ? senderAddress
+          : walletToPCAIP10(senderAddress),
       toDID: !isValidGroup
-          ? validateCAIP(options.to)
-              ? options.to
-              : walletToPCAIP10(options.to)
+          ? validateCAIP(receiverAddress)
+              ? receiverAddress
+              : walletToPCAIP10(receiverAddress)
           : group?.chatId ?? '',
-      fromCAIP10: validateCAIP(options.accountAddress!)
-          ? options.accountAddress!
-          : walletToPCAIP10(options.accountAddress!),
+      fromCAIP10: validateCAIP(senderAddress)
+          ? senderAddress
+          : walletToPCAIP10(senderAddress),
       toCAIP10: !isValidGroup
-          ? validateCAIP(options.to)
-              ? options.to
-              : walletToPCAIP10(options.to)
+          ? validateCAIP(receiverAddress)
+              ? receiverAddress
+              : walletToPCAIP10(receiverAddress)
           : group?.chatId ?? '',
       messageContent: encryptedMessageContent,
-      messageObj: encType == 'PlainText'
-          ? options.messageObj?.toJson()
+      messageObj: encryptionType == 'PlainText'
+          ? messageObj?.toJson()
           : encryptedMessageObj,
-      messageType: options.messageType,
+      messageType: messageType,
       signature: deprecatedSignature,
       verificationProof: "pgp:$deprecatedSignature",
-      encType: encType,
-      encryptedSecret: removeVersionFromPublicKey(encryptedMessageObjSecret),
+      encType: encryptionType,
+      encryptedSecret: encryptedMessageObjSecret,
       sigType: "pgp");
 }
 
@@ -244,16 +245,23 @@ class ComputedOptions {
   String to;
   String? accountAddress;
   String? pgpPrivateKey;
-  String? senderPgpPubicKey;
 
-  ComputedOptions({
-    required this.messageType,
-    required this.to,
-    this.messageObj,
-    this.accountAddress,
-    this.pgpPrivateKey,
-    this.senderPgpPubicKey,
-  });
+  ComputedOptions(
+      {required this.messageType,
+      required this.to,
+      this.messageObj,
+      this.accountAddress,
+      this.pgpPrivateKey});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'messageType': messageType,
+      'messageObj': messageObj,
+      'to': to,
+      'accountAddress': accountAddress,
+      'pgpPrivateKey': pgpPrivateKey
+    };
+  }
 }
 
 ComputedOptions computeOptions(ChatSendOptions options) {
@@ -284,11 +292,9 @@ ComputedOptions computeOptions(ChatSendOptions options) {
   }
 
   return ComputedOptions(
-    messageType: messageType,
-    messageObj: messageObj,
-    to: to,
-    accountAddress: options.accountAddress,
-    pgpPrivateKey: options.pgpPrivateKey,
-    senderPgpPubicKey: options.senderPgpPubicKey,
-  );
+      messageType: messageType,
+      messageObj: messageObj,
+      to: to,
+      accountAddress: options.accountAddress,
+      pgpPrivateKey: options.pgpPrivateKey);
 }
