@@ -4,9 +4,8 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:ethers/signers/wallet.dart' as ethers;
 
 void testSend() async {
-  const mnemonic =
-      'indoor observe crack rocket sea abstract mixed novel angry alone away pass';
-  final ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
+  final ethersWallet = ethers.Wallet.fromMnemonic(
+      'label mobile gas salt service gravity nose bomb marine online say twice');
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
@@ -33,7 +32,7 @@ void testSend() async {
   final options = ChatSendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    messageContent: 'Hey again!!!!!7',
+    messageContent: 'Testing send() from Dart SDK for w2w chat',
     receiverAddress: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
   );
 

@@ -7,6 +7,7 @@ export 'fetch_requests.dart';
 export 'ipfs.dart';
 export 'send.dart';
 export 'approve_intent.dart';
-export 'create_group.dart';
+export 'create_group_public.dart';
+export 'create_group_private.dart';
 export 'send_group.dart';
 export 'send_group_meta.dart';

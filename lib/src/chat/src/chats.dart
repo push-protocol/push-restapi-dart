@@ -45,6 +45,7 @@ Future<List<Feeds>?> chats({
         (result['chats'] as List).map((e) => Feeds.fromJson(e)).toList();
     final updatedChats = chatList;
     addDeprecatedInfo(chatList);
+    
     final feedWithInbox = await getInboxList(
       feedsList: updatedChats,
       accountAddress: userDID,

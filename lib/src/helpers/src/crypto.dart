@@ -237,49 +237,104 @@ List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
 }
 
-Future<String> decryptMessage({
-  required String privateKeyArmored,
+Future<Message> decryptAndVerifyMessage({
   required Message message,
+  required String privateKeyArmored,
 }) async {
-  if (message.encType != "pgp") {
-    return message.messageContent;
-  }
+  // log('decryptAndVerifyMessage - message ${message.toJson()} \n privateKeyArmored $privateKeyArmored');
 
+  // TODO: Complete message verification
+  // if (message.verificationProof != null &&
+  //     message.verificationProof.split(':')[0] == 'pgpv2') {
+  //   Map<String, dynamic> bodyToBeHashed = {
+  //     'fromDID': message.fromDID,
+  //     'toDID': message.fromDID,
+  //     'fromCAIP10': message.fromCAIP10,
+  //     'toCAIP10': message.toCAIP10,
+  //     'messageObj': message.messageObj,
+  //     'messageType': message.messageType,
+  //     'encType': message.encType,
+  //     'encryptedSecret': message.encryptedSecret,
+  //   };
+  //   String hash = sha256.convert(utf8.encode(jsonEncode(bodyToBeHashed))).toString();
+  //   String signature = message.verificationProof.split(':')[1];
+  //   try {
+  //     await verifySignature(
+  //       messageContent: hash,
+  //       signatureArmored: signature,
+  //       publicKeyArmored: pgpPublicKey,
+  //     );
+  //   } catch (err) {
+  //     // Handle the verification error as needed.
+  //   }
+  // } else {
+  //   if (message.link == null) {
+  //     Map<String, dynamic> bodyToBeHashed = {
+  //       'fromDID': message.fromDID,
+  //       'toDID': message.toDID,
+  //       'messageContent': message.messageContent,
+  //       'messageType': message.messageType,
+  //     };
+  //     String hash = sha256.convert(utf8.encode(jsonEncode(bodyToBeHashed))).toString();
+  //     try {
+  //       await verifySignature(
+  //         messageContent: hash,
+  //         signatureArmored: message.signature,
+  //         publicKeyArmored: pgpPublicKey,
+  //       );
+  //     } catch (err) {
+  //       await verifySignature(
+  //         messageContent: message.messageContent,
+  //         signatureArmored: message.signature,
+  //         publicKeyArmored: pgpPublicKey,
+  //       );
+  //     }
+  //   } else {
+  //     try {
+  //       await verifySignature(
+  //         messageContent: message.messageContent,
+  //         signatureArmored: message.signature,
+  //         publicKeyArmored: pgpPublicKey,
+  //       );
+  //     } catch (err) {
+  //       // Handle the verification error as needed.
+  //     }
+  //   }
+  // }
+
+  /**
+   * DECRYPTION
+   * 1. Decrypt AES Key
+   * 2. Decrypt messageObj.message, messageObj.meta , messageContent
+   */
   try {
-    return decryptMessageContent(
-      message: message.messageContent,
-      encryptedSecret: message.encryptedSecret,
+    String secretKey = await pgpDecrypt(
+      cipherText: message.encryptedSecret,
       privateKeyArmored: privateKeyArmored,
     );
-  } catch (err) {
-    if (isGroupChatId(message.toCAIP10)) {
-      return "message encrypted before you join";
+
+    if (message.messageObj != null) {
+      message.messageObj = json.decode(
+        aesDecrypt(
+          // messageObj is a string as its encrypted
+          cipherText: message.messageObj,
+          secretKey: secretKey,
+        ),
+      );
     }
-    return 'Unable to decrypt message';
+
+    message.messageContent =
+        aesDecrypt(cipherText: message.messageContent, secretKey: secretKey);
+  } catch (err) {
+    message.messageContent = message.messageObj = 'Unable to Decrypt Message';
   }
+
+  // log('decryptAndVerifyMessage - decrypted message - ${message.toJson()}');
+  return message;
 }
 
 bool isGroupChatId(String id) {
   return id.length == 64;
-}
-
-Future<String> decryptMessageContent({
-  required String message,
-  required String encryptedSecret,
-  required String privateKeyArmored,
-}) async {
-  try {
-    final secretKey = await pgpDecrypt(
-      cipherText: encryptedSecret,
-      privateKeyArmored: privateKeyArmored,
-    );
-
-    final userMessage = aesDecrypt(cipherText: message, secretKey: secretKey);
-    return userMessage;
-  } catch (e) {
-    log('decryptMessageContent Error: $e');
-    rethrow;
-  }
 }
 
 Uint8List hexToBytesInternal(String hex) {
