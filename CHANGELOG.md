@@ -1,3 +1,8 @@
+### 0.2.6-alpha
+### Update
+- Fix bug in encryption/decryption of messages for group chat
+
+---
 ### 0.2.5-alpha
 
 ### Update
