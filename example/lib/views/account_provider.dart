@@ -166,7 +166,6 @@ class AccountProvider extends ChangeNotifier {
         }
       },
     );
-
     pushSDKSocket.on(
       EVENTS.DISCONNECT,
       (data) {

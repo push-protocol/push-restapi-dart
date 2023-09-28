@@ -234,6 +234,7 @@ List<Message> addDeprecatedInfoToMessages(List<Message> chats) {
   return chats;
 }
 
+// TODO: Remove this
 Future<List<Message>> decryptConversation({
   required List<Message> messages,
   required User? connectedUser,
@@ -241,18 +242,14 @@ Future<List<Message>> decryptConversation({
 }) async {
   final updatedMessages = <Message>[];
 
-  for (var item in messages) {
-    final msg = item;
-
+  for (var msg in messages) {
     if (msg.encType == 'pgp') {
-      msg.messageContent = await decryptMessage(
+      msg = await decryptAndVerifyMessage(
         privateKeyArmored: pgpPrivateKey,
         message: msg,
       );
-      updatedMessages.add(msg);
-    } else {
-      updatedMessages.add(msg);
     }
+    updatedMessages.add(msg);
   }
 
   return updatedMessages;

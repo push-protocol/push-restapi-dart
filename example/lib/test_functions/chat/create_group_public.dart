@@ -4,7 +4,7 @@ import 'package:ethers/signers/wallet.dart' as ether;
 
 import '../../models/signer.dart';
 
-void testCreateGroup() async {
+void testCreateGroupPublic() async {
   final ethersWallet = ether.Wallet.fromPrivateKey(
       "c41b72d56258e50595baa969eb0949c5cee9926ac55f7bad21fe327236772e0c");
 
@@ -15,9 +15,8 @@ void testCreateGroup() async {
 
   final result = await push.createGroup(
       signer: signer,
-      groupName: "Testing dart - 123",
+      groupName: "Test Flutter SDK Public group",
       groupDescription: "Testing dart",
-      groupImage: "asdads",
       members: ["0x9960D6B63B113303B9910A03ca5341B83CC52723"],
       admins: ["0xffa1af9e558b68bbc09ad74058331c100c135280"],
       isPublic: true);

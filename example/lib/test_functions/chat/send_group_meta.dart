@@ -1,10 +1,10 @@
 import 'package:example/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import 'package:ethers/signers/wallet.dart' as ether;
+import 'package:ethers/signers/wallet.dart' as ethers;
 
 Future<void> testSendToGroupMeta() async {
-  final ethersWallet = ether.Wallet.fromMnemonic(
+  final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
 
   final signer = EthersSigner(
