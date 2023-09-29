@@ -6,3 +6,5 @@ export 'conversations/conversations_provider.dart';
 
 export 'create_group_screen.dart';
 export 'requests_screen.dart';
+export 'group_members_dialog.dart';
+export 'add_group_member.dart';

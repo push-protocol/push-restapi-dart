@@ -70,11 +70,26 @@ class ConversationsScreen extends StatelessWidget {
 
 class ProfileImage extends StatelessWidget {
   const ProfileImage({super.key, required this.imageUrl});
-  final String imageUrl;
+  final String? imageUrl;
   @override
   Widget build(BuildContext context) {
+    if (imageUrl == null) {
+      return Container(
+        height: 60,
+        width: 60,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.purpleAccent),
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: Icon(
+          Icons.person,
+          color: Colors.purple,
+        ),
+      );
+    }
     try {
-      if (imageUrl.startsWith('https://')) {
+      if (imageUrl!.startsWith('https://')) {
         return Container(
           height: 60,
           width: 60,
@@ -83,7 +98,7 @@ class ProfileImage extends StatelessWidget {
             shape: BoxShape.circle,
             image: DecorationImage(
               image: NetworkImage(
-                imageUrl,
+                imageUrl!,
               ),
               fit: BoxFit.cover,
             ),
@@ -91,7 +106,7 @@ class ProfileImage extends StatelessWidget {
         );
       }
 
-      final UriData? data = Uri.parse(imageUrl).data;
+      final UriData? data = Uri.parse(imageUrl!).data;
 
       Uint8List myImage = data!.contentAsBytes();
 

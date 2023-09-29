@@ -25,6 +25,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     super.initState();
   }
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final myAddress = ref.read(accountProvider).pushWallet?.address;
@@ -32,7 +33,26 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     final messageList = roomVm.messageList;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
+        actions: [
+          if (room.groupInformation != null)
+            InkWell(
+              onTap: () {
+                _scaffoldKey.currentState!
+                    .showBottomSheet((context) => GroupMembersDialog(
+                          groupInformation: room.groupInformation!,
+                        ));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.people,
+                  color: Colors.white,
+                ),
+              ),
+            )
+        ],
         title: Text('${room.groupInformation?.groupName ?? room.intentSentBy}'),
       ),
       body: SafeArea(
