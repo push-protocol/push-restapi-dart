@@ -1,4 +1,4 @@
-import 'package:example/__lib.dart';
+import '../__lib.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
@@ -68,9 +68,8 @@ class AccountProvider extends ChangeNotifier {
         NavItem(
           title: 'Conversations',
           onPressed: () {
-            pushScreen(
-              ConversationsScreen(),
-            );
+            ref.read(conversationsProvider).loadChats();
+            pushScreen(ConversationsScreen());
           },
         ),
         NavItem(
@@ -124,6 +123,7 @@ class AccountProvider extends ChangeNotifier {
         env: ENV.staging,
       );
       creatSocketConnection();
+      ref.read(conversationsProvider).reset();
     } catch (e) {
       pop();
     }
@@ -153,6 +153,17 @@ class AccountProvider extends ChangeNotifier {
         print(' NOTIFICATION EVENTS.CONNECT: $data');
       },
     );
+    // To get messages in realtime
+    pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
+      print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
+      ref.read(conversationsProvider).onRecieveSocket(message);
+    });
+
+    // To get group creation or updation events
+    pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
+      print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
+      ref.read(conversationsProvider).onRecieveSocket(groupInfo);
+    });
     pushSDKSocket.on(
       EVENTS.SPACES_MESSAGES,
       (data) async {

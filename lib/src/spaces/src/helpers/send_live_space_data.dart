@@ -6,7 +6,6 @@ Future sendLiveSpaceData({
   required List<String> affectedAddresses,
   required String spaceId,
 }) async {
-
   final content = '${action.toString()} $affectedAddresses';
   final metaMessage = MetaMessage(
     action: action,

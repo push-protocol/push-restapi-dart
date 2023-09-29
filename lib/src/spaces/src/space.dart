@@ -216,7 +216,7 @@ class SpaceStateNotifier extends ChangeNotifier {
         // TODO: Replace this with setMicrophoneState() call once we have the queue
         _isMicOn = false;
         await _room?.localParticipant?.setMicrophoneEnabled(false);
-        
+
         // disconnect from the room
         _room!.disconnect();
 
@@ -224,11 +224,13 @@ class SpaceStateNotifier extends ChangeNotifier {
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        META_ACTION action = META_ACTION.DEMOTE_FROM_SPEAKER; // TODO: Need a better action for speaker leaving
+        META_ACTION action = META_ACTION
+            .DEMOTE_FROM_SPEAKER; // TODO: Need a better action for speaker leaving
 
         if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
           spaceData.liveSpaceData.host = AdminPeer();
-          action = META_ACTION.DEMOTE_FROM_ADMIN; // TODO: Need a better action for host leaving
+          action = META_ACTION
+              .DEMOTE_FROM_ADMIN; // TODO: Need a better action for host leaving
         } else {
           final speakers = <AdminPeer>[];
           for (var speaker in spaceData.liveSpaceData.speakers) {

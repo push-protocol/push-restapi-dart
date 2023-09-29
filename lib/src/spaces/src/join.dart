@@ -76,7 +76,6 @@ Future<SpaceData?> joinSpace({
         )
       ];
 
-
       sendLiveSpaceData(
         updatedLiveSpaceData: spaceData.liveSpaceData,
         action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Need a better action

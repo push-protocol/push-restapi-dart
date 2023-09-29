@@ -221,8 +221,8 @@ pop([BuildContext? context]) {
   Navigator.pop(context ?? Get.context!);
 }
 
-pushScreen(Widget screen) {
-  Navigator.push(
+Future pushScreen(Widget screen) async {
+  return await Navigator.push(
       Get.context!,
       MaterialPageRoute(
         builder: (context) => screen,
