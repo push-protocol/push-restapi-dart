@@ -86,8 +86,12 @@ class ChatRoomProvider extends ChangeNotifier {
   TextEditingController controller = TextEditingController();
   onSendMessage() async {
     try {
-      final currentUser = ref.read(accountProvider).pushWallet;
       final content = controller.text.trim();
+      if (content.isEmpty) {
+        return;
+      }
+
+      final currentUser = ref.read(accountProvider).pushWallet;
       final options = ChatSendOptions(
           messageContent: content, receiverAddress: currentChatId);
       _messageList.insert(

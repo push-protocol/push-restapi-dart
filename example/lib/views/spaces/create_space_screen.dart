@@ -193,11 +193,13 @@ class InputField extends StatelessWidget {
   final String label;
   final String? hintText;
   final Widget? suffixIcon;
+  final TextInputType? keyboardType;
 
   const InputField({
     super.key,
     this.controller,
     this.hintText,
+    this.keyboardType,
     required this.label,
     this.suffixIcon,
   });
@@ -206,6 +208,7 @@ class InputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
           hintText: hintText,
           border: OutlineInputBorder(),

@@ -11,7 +11,7 @@ class GroupMembersDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext contex, ref) {
     final currentUser = ref.read(accountProvider).pushWallet?.address;
-    print(currentUser);
+
     final admins = groupInformation.members
         .where((element) => element.isAdmin == true)
         .toList();
@@ -97,42 +97,14 @@ class GroupAdminsView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = admins[index];
                     return ListTile(
-                      leading: ProfileImage(imageUrl: item.image),
-                      title: Text('${item.wallet}'),
-                      trailing: isUserAdmin
-                          ? TextButton(
-                              onPressed: () {
-                                showLoadingDialog();
-                                removeAdmins(
-                                  chatId: chatId!,
-                                  admins: [item.wallet],
-                                ).then((value) {
-                                  pop();
-
-                                  showMyDialog(
-                                    context: context,
-                                    title: 'Remove User',
-                                    message: value == null
-                                        ? 'Cannot remove admin'
-                                        : 'Admin removed successfully',
-                                    onClose: () {
-                                      if (value == null) {
-                                        pop();
-                                      } else {
-                                        pop();
-                                        pop();
-                                        pop();
-                                      }
-                                    },
-                                  );
-                                });
-                              },
-                              child: Text(
-                                'Remove',
-                                style: TextStyle(color: Colors.red),
-                              ))
-                          : null,
-                    );
+                        leading: ProfileImage(imageUrl: item.image),
+                        title: Text('${item.wallet}'),
+                        trailing: MemberActionWidget(
+                          item: item,
+                          isRemoveAdmin: true,
+                          isUserAdmin: isUserAdmin,
+                          chatId: chatId,
+                        ));
                   },
                 ),
         ),
@@ -189,39 +161,12 @@ class GroupMembersView extends StatelessWidget {
                       return ListTile(
                         leading: ProfileImage(imageUrl: item.image),
                         title: Text('${item.wallet}'),
-                        trailing: isUserAdmin
-                            ? TextButton(
-                                onPressed: () {
-                                  showLoadingDialog();
-                                  removeMembers(
-                                    chatId: chatId!,
-                                    members: [item.wallet],
-                                  ).then((value) {
-                                    pop();
-
-                                    showMyDialog(
-                                      context: context,
-                                      title: 'Remove User',
-                                      message: value == null
-                                          ? 'Cannot remove member'
-                                          : 'member removed successfully',
-                                      onClose: () {
-                                        if (value == null) {
-                                          pop();
-                                        } else {
-                                          pop();
-                                          pop();
-                                          pop();
-                                        }
-                                      },
-                                    );
-                                  });
-                                },
-                                child: Text(
-                                  'Remove',
-                                  style: TextStyle(color: Colors.red),
-                                ))
-                            : null,
+                        trailing: MemberActionWidget(
+                          item: item,
+                          isRemoveAdmin: false,
+                          isUserAdmin: isUserAdmin,
+                          chatId: chatId,
+                        ),
                       );
                     },
                   ),
@@ -246,6 +191,112 @@ class GroupMembersView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class MemberActionWidget extends ConsumerStatefulWidget {
+  const MemberActionWidget({
+    super.key,
+    required this.item,
+    required this.isUserAdmin,
+    required this.isRemoveAdmin,
+    required this.chatId,
+  });
+
+  final MemberDTO item;
+  final bool isUserAdmin;
+  final bool isRemoveAdmin;
+  final String? chatId;
+
+  @override
+  ConsumerState<MemberActionWidget> createState() => _MemberActionWidgetState();
+}
+
+class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = ref.read(accountProvider).pushWallet?.address;
+    if (widget.item.wallet == walletToPCAIP10(currentUser!)) {
+      return Container(
+        padding: EdgeInsets.all(6),
+        decoration: BoxDecoration(
+            color: Colors.deepPurple, borderRadius: BorderRadius.circular(8)),
+        child: Text(
+          'You',
+          style: TextStyle(fontSize: 10, color: Colors.white),
+        ),
+      );
+    }
+    if (widget.isUserAdmin) {
+      return TextButton(
+        onPressed: () {
+          if (widget.isRemoveAdmin) {
+            _removeAdmin();
+          } else {
+            _removeMember();
+          }
+        },
+        child: Text(
+          'Remove',
+          style: TextStyle(color: Colors.red, fontSize: 14),
+        ),
+      );
+    }
+    return SizedBox.shrink();
+  }
+
+  _removeMember() {
+    showLoadingDialog();
+    removeMembers(
+      chatId: widget.chatId!,
+      members: [widget.item.wallet],
+    ).then((value) {
+      pop();
+
+      showMyDialog(
+        context: context,
+        title: 'Remove User',
+        message: value == null
+            ? 'Cannot remove member'
+            : 'Member removed successfully',
+        onClose: () {
+          if (value == null) {
+            pop();
+          } else {
+            pop();
+            pop();
+            pop();
+          }
+        },
+      );
+    });
+  }
+
+  _removeAdmin() {
+    showLoadingDialog();
+    removeAdmins(
+      chatId: widget.chatId!,
+      admins: [widget.item.wallet],
+    ).then((value) {
+      pop();
+
+      showMyDialog(
+        context: context,
+        title: 'Remove User',
+        message: value == null
+            ? 'Cannot remove admin'
+            : 'Admin removed successfully',
+        onClose: () {
+          if (value == null) {
+            pop();
+          } else {
+            pop();
+            pop();
+            pop();
+          }
+        },
+      );
+    });
   }
 }
 
