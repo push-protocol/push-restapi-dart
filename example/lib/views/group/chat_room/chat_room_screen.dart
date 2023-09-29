@@ -17,73 +17,19 @@ class ChatRoomScreen extends ConsumerStatefulWidget {
 
 class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
   late Feeds room;
-  List<Message> messageList = <Message>[];
+
   @override
   void initState() {
     room = widget.room;
-    getRoomMessages();
+
     super.initState();
-  }
-
-  bool isLoading = false;
-  updateLoading(bool state) {
-    setState(() {
-      isLoading = state;
-    });
-  }
-
-  bool isSending = false;
-  updateSending(bool state) {
-    setState(() {
-      isSending = state;
-    });
-  }
-
-  getRoomMessages() async {
-    updateLoading(true);
-    final hash = await conversationHash(conversationId: room.chatId!);
-
-    final messages = hash != null
-        ? await history(
-            limit: FetchLimit.MAX,
-            threadhash: hash,
-            toDecrypt: true,
-          )
-        : null;
-
-    updateLoading(false);
-
-    if (messages != null) {
-      messageList = messages;
-      setState(() {});
-    }
-  }
-
-  TextEditingController controller = TextEditingController();
-  onSendMessage() async {
-    try {
-      updateSending(true);
-      final options = ChatSendOptions(
-          messageContent: controller.text.trim(),
-          receiverAddress: room.chatId!);
-      final message = await send(options);
-      updateSending(false);
-
-      if (message != null) {
-        controller.clear();
-        getRoomMessages();
-        setState(() {});
-      }
-    } catch (e) {
-      updateLoading(false);
-      rethrow;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final myAddress = ref.read(accountProvider).pushWallet?.address;
-    final texts = messageList.toList();
+    final roomVm = ref.watch(chatRoomProvider);
+    final messageList = roomVm.messageList;
 
     return Scaffold(
       appBar: AppBar(
@@ -95,7 +41,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
           child: Column(
             children: [
               Expanded(
-                  child: isLoading && messageList.isEmpty
+                  child: roomVm.isLoading && messageList.isEmpty
                       ? Center(child: CircularProgressIndicator())
                       : messageList.isEmpty
                           ? Center(
@@ -104,10 +50,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                           : ListView.separated(
                               separatorBuilder: (context, index) =>
                                   SizedBox(height: 4),
-                              itemCount: texts.length,
+                              itemCount: messageList.length,
                               reverse: true,
                               itemBuilder: (context, index) {
-                                final item = texts[index];
+                                final item = messageList[index];
                                 bool isSender =
                                     'eip155:$myAddress' == item.fromDID;
 
@@ -154,15 +100,15 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                 height: 24,
               ),
               InputField(
-                controller: controller,
+                controller: roomVm.controller,
                 label: '',
                 suffixIcon: InkWell(
                     onTap: () {
-                      if (!isSending) {
-                        onSendMessage();
+                      if (!roomVm.isSending) {
+                        roomVm.onSendMessage();
                       }
                     },
-                    child: isSending
+                    child: roomVm.isSending
                         ? CupertinoActivityIndicator()
                         : Icon(
                             Icons.send,

@@ -1,13 +1,16 @@
 import 'dart:typed_data';
 
-import '../../__lib.dart';
-import 'package:push_restapi_dart/push_restapi_dart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../__lib.dart';
 
 class ConversationsScreen extends StatelessWidget {
   const ConversationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       // floatingActionButton: MaterialButton(
       //   height: 64,
@@ -23,18 +26,18 @@ class ConversationsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Conversations'),
       ),
-      body: FutureBuilder<List<Feeds>?>(
-        future: chats(toDecrypt: true),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer(
+        builder: (context, ref, child) {
+          final vm = ref.watch(conversationsProvider);
+          final spaces = vm.conversations;
+          if (vm.isBusy && spaces.isEmpty) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (snapshot.data == null) {
-            return Center(child: Text('Cannot load Conversations'));
-          }
-          final spaces = snapshot.data!;
+          // if (snapshot.data == null) {
+          //   return Center(child: Text('Cannot load Conversations'));
+          // }
 
           return ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 32),
@@ -48,6 +51,7 @@ class ConversationsScreen extends StatelessWidget {
 
               return ListTile(
                 onTap: () {
+                  ref.read(chatRoomProvider).setCurrentChatId(item.chatId!);
                   pushScreen(ChatRoomScreen(room: item));
                 },
                 leading: ProfileImage(imageUrl: image),

@@ -105,7 +105,6 @@ class VideoCallStateNotifier extends ChangeNotifier {
 
     for (final recipientAddress in recipientAddresses) {
       try {
-        
         RTCPeerConnection peer = await createPeerConnection({
           'iceServers':
               // replace the below array with decrypted turn server API result
