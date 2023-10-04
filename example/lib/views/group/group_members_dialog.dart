@@ -106,7 +106,6 @@ class GroupAdminsView extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onPressed: () {
-        
               pushScreen(AddGroupMember(
                 chatId: chatId,
                 isAdmin: true,
@@ -244,7 +243,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     ).then((value) {
       pop();
 
-      ref.read(chatRoomProvider).onRefreshRoom(value);
+      ref.read(chatRoomProvider).onRefreshRoom(groupData: value);
       showMyDialog(
         context: context,
         title: 'Remove User',
@@ -263,7 +262,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     ).then((value) {
       pop();
 
-      ref.read(chatRoomProvider).onRefreshRoom(value);
+      ref.read(chatRoomProvider).onRefreshRoom(groupData: value);
       showMyDialog(
         context: context,
         title: 'Remove User',

@@ -42,7 +42,7 @@ class ConversationsProvider extends ChangeNotifier {
       final chatId = (message as Map<String, dynamic>)['chatId'];
       final currentChatid = ref.read(chatRoomProvider).currentChatId;
       if (chatId == currentChatid) {
-        ref.read(chatRoomProvider).onRefreshRoom(GroupDTO.fromJson(message));
+        ref.read(chatRoomProvider).onRefreshRoom();
       }
     } catch (e) {
       print(e);

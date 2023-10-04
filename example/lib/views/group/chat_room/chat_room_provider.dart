@@ -39,9 +39,12 @@ class ChatRoomProvider extends ChangeNotifier {
     }
   }
 
-  onRefreshRoom([GroupDTO? data]) async {
-    if (data?.chatId == _currentChatid) {
-      _room.groupInformation = data;
+  onRefreshRoom({
+    GroupDTO? groupData,
+    
+  }) async {
+    if (groupData?.chatId == _currentChatid) {
+      _room.groupInformation = groupData;
       notifyListeners();
     }
 
@@ -84,7 +87,7 @@ class ChatRoomProvider extends ChangeNotifier {
     if (_messageList.length >= 90) {
       return;
     }
-    
+
     final hash = _messageList.last.link;
     if (hash != null) {
       final messages = await history(
