@@ -11,3 +11,6 @@ export 'create_group_public.dart';
 export 'create_group_private.dart';
 export 'send_group.dart';
 export 'send_group_meta.dart';
+export 'send_image.dart';
+export 'send_media_embed.dart';
+export 'send_file.dart';

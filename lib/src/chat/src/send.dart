@@ -5,7 +5,7 @@ import '../../../push_restapi_dart.dart';
 class ChatSendOptions {
   SendMessage? message;
   String? messageContent;
-  String messageType;
+  String? messageType;
   String receiverAddress;
   String? accountAddress;
   String? pgpPrivateKey;
@@ -13,11 +13,12 @@ class ChatSendOptions {
   ChatSendOptions(
       {this.message,
       this.messageContent,
-      this.messageType = MessageType.TEXT,
+      this.messageType,
       required this.receiverAddress,
       this.accountAddress,
       this.pgpPrivateKey}) {
-    assert(MessageType.isValidMessageType(messageType));
+    assert(MessageType.isValidMessageType(
+        message?.type ?? messageType ?? MessageType.TEXT));
   }
 
   Map<String, dynamic> toJson() {
@@ -266,7 +267,8 @@ class ComputedOptions {
 
 ComputedOptions computeOptions(ChatSendOptions options) {
   log('computeOptions method - options $options');
-  String messageType = options.messageType;
+  String messageType =
+      options.message?.type ?? options.messageType ?? MessageType.TEXT;
   var messageObj = options.message;
   if (messageObj == null) {
     if (![
