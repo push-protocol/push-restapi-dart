@@ -5,25 +5,17 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import '../../__lib.dart';
 
 class GroupMembersDialog extends ConsumerWidget {
-  const GroupMembersDialog({super.key, required this.groupInformation});
-  final GroupDTO groupInformation;
-
   @override
   Widget build(BuildContext contex, ref) {
-    final currentUser = ref.read(accountProvider).pushWallet?.address;
+    final room = ref.watch(chatRoomProvider);
 
-    final admins = groupInformation.members
-        .where((element) => element.isAdmin == true)
-        .toList();
+    final admins = room.admins;
 
-    final isUserAdmin =
-        admins.map((e) => e.wallet).contains(walletToPCAIP10(currentUser!));
+    final isUserAdmin = room.isUserAdmin;
 
-    final member = groupInformation.members
-        .where((element) => element.isAdmin != true)
-        .toList();
-    final pending = groupInformation.pendingMembers;
-    final chatId = groupInformation.chatId;
+    final members = room.members;
+    final pending = room.pendingMembers;
+    final chatId = room.currentChatId;
 
     return Container(
       height: 640,
@@ -56,7 +48,7 @@ class GroupMembersDialog extends ConsumerWidget {
               GroupAdminsView(
                   admins: admins, isUserAdmin: isUserAdmin, chatId: chatId),
               GroupMembersView(
-                  members: member, isUserAdmin: isUserAdmin, chatId: chatId),
+                  members: members, isUserAdmin: isUserAdmin, chatId: chatId),
               GroupPendingMembersView(
                   pendingMembers: pending,
                   isUserAdmin: isUserAdmin,
@@ -114,7 +106,7 @@ class GroupAdminsView extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onPressed: () {
-              pop();
+        
               pushScreen(AddGroupMember(
                 chatId: chatId,
                 isAdmin: true,
@@ -177,7 +169,6 @@ class GroupMembersView extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: () {
-                pop();
                 pushScreen(AddGroupMember(
                   chatId: chatId,
                   isAdmin: false,
@@ -253,21 +244,13 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     ).then((value) {
       pop();
 
+      ref.read(chatRoomProvider).onRefreshRoom(value);
       showMyDialog(
         context: context,
         title: 'Remove User',
         message: value == null
             ? 'Cannot remove member'
             : 'Member removed successfully',
-        onClose: () {
-          if (value == null) {
-            pop();
-          } else {
-            pop();
-            pop();
-            pop();
-          }
-        },
       );
     });
   }
@@ -280,21 +263,13 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     ).then((value) {
       pop();
 
+      ref.read(chatRoomProvider).onRefreshRoom(value);
       showMyDialog(
         context: context,
         title: 'Remove User',
         message: value == null
             ? 'Cannot remove admin'
             : 'Admin removed successfully',
-        onClose: () {
-          if (value == null) {
-            pop();
-          } else {
-            pop();
-            pop();
-            pop();
-          }
-        },
       );
     });
   }

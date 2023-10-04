@@ -24,14 +24,33 @@ class ChatRoomProvider extends ChangeNotifier {
   String _currentChatid = '';
 
   String get currentChatId => _currentChatid;
-  setCurrentChatId(String chatId) {
+  Feeds _room = Feeds();
+  Feeds get room => _room;
+  setCurrentChat(Feeds room) {
+    final chatId = room.chatId!;
+    _room = room;
     _messageList = _localMessagesCache[chatId] ?? [];
     _currentChatid = chatId;
     notifyListeners();
     getRoomMessages();
+
+    if (room.groupInformation != null) {
+      getLatesGroupInfo();
+    }
   }
 
-  getRoomMessages() async {
+  onRefreshRoom([GroupDTO? data]) async {
+    if (data?.chatId == _currentChatid) {
+      _room.groupInformation = data;
+      notifyListeners();
+    }
+
+    getRoomMessages();
+
+    getLatesGroupInfo();
+  }
+
+  Future getRoomMessages() async {
     updateLoading(true);
     String? hash = await conversationHash(conversationId: currentChatId);
 
@@ -60,6 +79,12 @@ class ChatRoomProvider extends ChangeNotifier {
     if (currentChatId != messageList.last.toCAIP10) {
       return;
     }
+
+    ///limit to 90
+    if (_messageList.length >= 90) {
+      return;
+    }
+    
     final hash = _messageList.last.link;
     if (hash != null) {
       final messages = await history(
@@ -122,4 +147,34 @@ class ChatRoomProvider extends ChangeNotifier {
       updateSending(false);
     }
   }
+
+  Future getLatesGroupInfo() async {
+    final result = await getGroup(chatId: _currentChatid);
+    if (result != null) {
+      _room.groupInformation = result;
+      notifyListeners();
+    }
+  }
+
+  GroupDTO? get groupInformation => _room.groupInformation;
+
+  List<MemberDTO> get admins {
+    return groupInformation?.members
+            .where((element) => element.isAdmin == true)
+            .toList() ??
+        [];
+  }
+
+  List<MemberDTO> get members =>
+      groupInformation?.members
+          .where((element) => element.isAdmin != true)
+          .toList() ??
+      [];
+
+  List<MemberDTO> get pendingMembers => groupInformation?.pendingMembers ?? [];
+
+  String get currentUser => ref.read(accountProvider).pushWallet?.address ?? '';
+
+  bool get isUserAdmin =>
+      admins.map((e) => e.wallet).contains(walletToPCAIP10(currentUser));
 }

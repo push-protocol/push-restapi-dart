@@ -23,6 +23,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     room = widget.room;
 
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatRoomProvider).setCurrentChat(room);
+    });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -40,9 +44,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
             InkWell(
               onTap: () {
                 _scaffoldKey.currentState!
-                    .showBottomSheet((context) => GroupMembersDialog(
-                          groupInformation: room.groupInformation!,
-                        ));
+                    .showBottomSheet((context) => GroupMembersDialog());
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

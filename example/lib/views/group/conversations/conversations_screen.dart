@@ -51,7 +51,7 @@ class ConversationsScreen extends StatelessWidget {
 
               return ListTile(
                 onTap: () {
-                  ref.read(chatRoomProvider).setCurrentChatId(item.chatId!);
+                  // ref.read(chatRoomProvider).setCurrentChat(item.chatId!);
                   pushScreen(ChatRoomScreen(room: item));
                 },
                 leading: ProfileImage(imageUrl: image),
