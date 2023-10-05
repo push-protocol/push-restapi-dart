@@ -13,6 +13,8 @@ class AccountProvider extends ChangeNotifier {
 
   Wallet? pushWallet;
 
+  final mnemonic1 =
+      'glory science timber unknown happy doctor walnut grain question float coffee trip';
   final mnemonic2 =
       'label mobile gas salt service gravity nose bomb marine online say twice';
   final mnemonic3 =
@@ -27,6 +29,7 @@ class AccountProvider extends ChangeNotifier {
         mnemonic3,
         mnemonic4,
         mnemonic5,
+        mnemonic1,
       ];
 
   List<NavItem> get spaceActions => [
@@ -162,8 +165,14 @@ class AccountProvider extends ChangeNotifier {
     // To get group creation or updation events
     pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
       print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
+      final type = (groupInfo as Map)['eventType'];
+
+      if (type == 'request') {
+        ref.read(requestsProvider).loadRequests();
+      }
       ref.read(conversationsProvider).onRecieveSocket(groupInfo);
     });
+
     pushSDKSocket.on(
       EVENTS.SPACES_MESSAGES,
       (data) async {
@@ -177,6 +186,7 @@ class AccountProvider extends ChangeNotifier {
         }
       },
     );
+
     pushSDKSocket.on(
       EVENTS.DISCONNECT,
       (data) {

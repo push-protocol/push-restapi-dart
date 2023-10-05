@@ -4,8 +4,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../__lib.dart';
 
-class ConversationsScreen extends StatelessWidget {
+class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
+
+  @override
+  ConsumerState<ConversationsScreen> createState() =>
+      _ConversationsScreenState();
+}
+
+class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(conversationsProvider).loadChats();
+    });
+  }
 
   @override
   Widget build(
