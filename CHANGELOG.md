@@ -1,3 +1,8 @@
+### 0.2.8-alpha
+### Update
+- Optimize send method
+
+---
 ### 0.2.7-alpha
 ### Update
 - Add support for image, file, gif message types
