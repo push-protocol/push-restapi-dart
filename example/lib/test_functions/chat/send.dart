@@ -3,6 +3,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ethers;
 
+// send a message in a wallet to wallet chat
 void testSend() async {
   final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
