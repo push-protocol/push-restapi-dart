@@ -1,3 +1,8 @@
+### 0.2.7-alpha
+### Update
+- Add support for image, file, gif message types
+
+---
 ### 0.2.6-alpha
 ### Update
 - Fix bug in encryption/decryption of messages for group chat
