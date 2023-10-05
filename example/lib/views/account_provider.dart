@@ -59,31 +59,6 @@ class AccountProvider extends ChangeNotifier {
         ),
       ];
 
-  List<NavItem> get chatActions => [
-        NavItem(
-          title: 'Create Group',
-          onPressed: () {
-            pushScreen(
-              CreateGroupScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'Conversations',
-          onPressed: () {
-            ref.read(conversationsProvider).loadChats();
-            pushScreen(ConversationsScreen());
-          },
-        ),
-        NavItem(
-          title: 'Pending Requests',
-          onPressed: () {
-            pushScreen(
-              ChatRequestScreen(),
-            );
-          },
-        ),
-      ];
   connectWallet(String mnemonic) async {
     try {
       showLoadingDialog();
@@ -133,66 +108,70 @@ class AccountProvider extends ChangeNotifier {
   }
 
   Future<void> creatSocketConnection() async {
-    final options = SocketInputOptions(
-      user: pushWallet!.address!,
-      env: ENV.staging,
-      socketType: SOCKETTYPES.CHAT,
-      socketOptions: SocketOptions(
-        autoConnect: true,
-        reconnectionAttempts: 3,
-      ),
-    );
+    try {
+      final options = SocketInputOptions(
+        user: pushWallet!.address!,
+        env: ENV.staging,
+        socketType: SOCKETTYPES.CHAT,
+        socketOptions: SocketOptions(
+          autoConnect: true,
+          reconnectionAttempts: 3,
+        ),
+      );
 
-    final pushSDKSocket = await createSocketConnection(options);
-    if (pushSDKSocket == null) {
-      throw Exception('PushSDKSocket Connection Failed');
-    }
-
-    pushSDKSocket.connect();
-
-    pushSDKSocket.on(
-      EVENTS.CONNECT,
-      (data) async {
-        print(' NOTIFICATION EVENTS.CONNECT: $data');
-      },
-    );
-    // To get messages in realtime
-    pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
-      print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
-      ref.read(conversationsProvider).onRecieveSocket(message);
-    });
-
-    // To get group creation or updation events
-    pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
-      print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
-      final type = (groupInfo as Map)['eventType'];
-
-      if (type == 'request') {
-        ref.read(requestsProvider).loadRequests();
+      final pushSDKSocket = await createSocketConnection(options);
+      if (pushSDKSocket == null) {
+        throw Exception('PushSDKSocket Connection Failed');
       }
-      ref.read(conversationsProvider).onRecieveSocket(groupInfo);
-    });
 
-    pushSDKSocket.on(
-      EVENTS.SPACES_MESSAGES,
-      (data) async {
-        print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+      pushSDKSocket.connect();
 
-        final metaMessage = data as Map<String, dynamic>;
+      pushSDKSocket.on(
+        EVENTS.CONNECT,
+        (data) async {
+          print(' NOTIFICATION EVENTS.CONNECT: $data');
+        },
+      );
+      // To get messages in realtime
+      pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
+        print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
+        ref.read(conversationsProvider).onRecieveSocket(message);
+      });
 
-        if (metaMessage['messageCategory'] == 'Chat' &&
-            metaMessage['messageType'] == 'Meta') {
-          ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+      // To get group creation or updation events
+      pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
+        print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
+        final type = (groupInfo as Map)['eventType'];
+
+        if (type == 'request') {
+          ref.read(requestsProvider).loadRequests();
         }
-      },
-    );
+        ref.read(conversationsProvider).onRecieveSocket(groupInfo);
+      });
 
-    pushSDKSocket.on(
-      EVENTS.DISCONNECT,
-      (data) {
-        print(' NOTIFICATION EVENTS.DISCONNECT: $data');
-      },
-    );
+      pushSDKSocket.on(
+        EVENTS.SPACES_MESSAGES,
+        (data) async {
+          print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+
+          final metaMessage = data as Map<String, dynamic>;
+
+          if (metaMessage['messageCategory'] == 'Chat' &&
+              metaMessage['messageType'] == 'Meta') {
+            ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+          }
+        },
+      );
+
+      pushSDKSocket.on(
+        EVENTS.DISCONNECT,
+        (data) {
+          print(' NOTIFICATION EVENTS.DISCONNECT: $data');
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   logOut() {
