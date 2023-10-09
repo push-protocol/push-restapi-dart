@@ -60,8 +60,10 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
                 leading: ProfileImage(imageUrl: image),
                 title: Text(
                     '${item.groupInformation?.groupName ?? item.intentSentBy}'),
-                subtitle:
-                    Text(item.msg?.messageContent ?? 'Send first message'),
+                subtitle: Text(
+                  item.msg?.messageContent ?? 'Send first message',
+                  maxLines: 1,
+                ),
               );
             },
           );

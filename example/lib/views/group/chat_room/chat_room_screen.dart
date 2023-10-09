@@ -1,5 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:example/__lib.dart';
-import 'package:example/views/account_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,7 @@ class ChatRoomScreen extends ConsumerStatefulWidget {
 
 class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
   late Feeds room;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -120,11 +123,26 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                             crossAxisAlignment:
                                                 WrapCrossAlignment.end,
                                             children: [
-                                              Text(
-                                                '${item.messageContent}',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                              Builder(builder: (context) {
+                                                if (item.messageType ==
+                                                    MessageType.IMAGE) {
+                                                  final content = jsonDecode(
+                                                      item.messageContent);
+                                                  final imgUrl =
+                                                      content['content'];
+                                                  print(imgUrl);
+                                                  return _ChatImage(
+                                                    imageUrl:
+                                                        content['content'],
+                                                  );
+                                                } else {
+                                                  return Text(
+                                                    '${item.messageContent}',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  );
+                                                }
+                                              }),
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 8.0),
@@ -148,23 +166,64 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                   );
                                 },
                               )),
-                SizedBox(
-                  height: 24,
-                ),
+                SizedBox(height: 24),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: roomVm.controller,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: 5,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                      ),
+                      child: roomVm.selectedFile != null
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Image.file(
+                                        roomVm.selectedFile!,
+                                        width: 78,
+                                        height: 78,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      left: 8,
+                                      child: InkWell(
+                                        onTap: roomVm.clearSelectedFile,
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    '${roomVm.selectedFile?.uri.pathSegments.last}',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : TextField(
+                              controller: roomVm.controller,
+                              keyboardType: TextInputType.multiline,
+                              minLines: 1,
+                              maxLines: 5,
+                              readOnly: roomVm.selectedFile == null,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                suffixIcon: InkWell(
+                                  onTap: roomVm.onSelectFile,
+                                  child: Icon(Icons.attachment),
+                                ),
+                              ),
+                            ),
                     ),
                     SizedBox(width: 8),
                     InkWell(
@@ -204,4 +263,46 @@ String formatDateTime(DateTime date, [String? format]) {
   final DateFormat dateFormat = DateFormat(format ?? 'dd MMM @ hh:mm');
 
   return dateFormat.format(date);
+}
+
+class _ChatImage extends StatelessWidget {
+  const _ChatImage({
+    required this.imageUrl,
+  });
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 300,
+      width: 300,
+      child: Builder(builder: (context) {
+        if (imageUrl == null) {
+          return Image.asset(
+            AppAssets.ASSETS_EPNSLOGO_PNG,
+            fit: BoxFit.fill,
+          );
+        }
+        try {
+          if (imageUrl!.startsWith('https://')) {
+            return Image.network(imageUrl!);
+          }
+
+          return Image.memory(
+            dataFromBase64String(imageUrl!),
+            fit: BoxFit.fill,
+          );
+        } catch (e) {
+          return Image.asset(
+            AppAssets.ASSETS_EPNSLOGO_PNG,
+            color: Colors.red,
+          );
+        }
+      }),
+    );
+  }
+}
+
+Uint8List dataFromBase64String(String base64String) {
+  return base64Decode(base64String);
 }

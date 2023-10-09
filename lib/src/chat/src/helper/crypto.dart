@@ -108,7 +108,7 @@ Future<IEncryptedRequest> getEncryptedRequest({
   if (!isGroup) {
     User? receiverCreatedUser = await getUser(address: receiverAddress);
     receiverCreatedUser ??=
-          await createUserEmpty(accountAddress: receiverAddress);
+        await createUserEmpty(accountAddress: receiverAddress);
 
     if (receiverCreatedUser != null || receiverCreatedUser?.publicKey != null) {
       if (!isValidETHAddress(receiverAddress)) {

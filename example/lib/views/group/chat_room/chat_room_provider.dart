@@ -1,15 +1,24 @@
-import 'package:example/views/account_provider.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 
 import '../../../__lib.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
+
+import '../../../util/app_file_picker.dart';
 
 final chatRoomProvider = ChangeNotifierProvider((ref) => ChatRoomProvider(ref));
 
 class ChatRoomProvider extends ChangeNotifier {
   final Ref ref;
 
-  ChatRoomProvider(this.ref);
+  ChatRoomProvider(this.ref) {
+    controller.addListener(() {
+      notifyListeners();
+    });
+  }
 
   bool isLoading = false;
   updateLoading(bool state) {
@@ -26,11 +35,14 @@ class ChatRoomProvider extends ChangeNotifier {
   String get currentChatId => _currentChatid;
   Feeds _room = Feeds();
   Feeds get room => _room;
+
   setCurrentChat(Feeds room) {
     final chatId = room.chatId!;
     _room = room;
     _messageList = _localMessagesCache[chatId] ?? [];
     _currentChatid = chatId;
+    controller.clear();
+
     notifyListeners();
     getRoomMessages();
 
@@ -113,30 +125,50 @@ class ChatRoomProvider extends ChangeNotifier {
   TextEditingController controller = TextEditingController();
   onSendMessage() async {
     try {
-      final content = controller.text.trim();
-      if (content.isEmpty) {
+      String content = controller.text.trim();
+      if (content.isEmpty && selectedFile == null) {
         return;
       }
 
       final currentUser = ref.read(accountProvider).pushWallet;
+
+      SendMessage? messageAttachment;
+      String? attachmentContent;
+      String messageType = MessageType.TEXT;
+
+      if (selectedFile != null) {
+        final img = base64Encode(selectedFile!.readAsBytesSync());
+        attachmentContent = jsonEncode({'content': img});
+
+        messageType = MessageType.IMAGE;
+        messageAttachment = ImageMessage(
+          content: img,
+          name: selectedFile?.uri.pathSegments.last,
+        );
+      }
       final options = ChatSendOptions(
-          messageContent: content, receiverAddress: currentChatId);
+        message: messageAttachment,
+        messageContent: content,
+        receiverAddress: currentChatId,
+      );
+
       _messageList.insert(
         0,
         Message(
-            fromCAIP10: '',
-            toCAIP10: '',
-            fromDID: walletToPCAIP10('${currentUser?.address}'),
-            toDID: '',
-            messageType: '',
-            messageContent: content,
-            signature: '',
-            sigType: '',
-            encType: '',
-            encryptedSecret: '',
-            timestamp: DateTime.now().microsecondsSinceEpoch),
+          fromCAIP10: '',
+          toCAIP10: '',
+          fromDID: walletToPCAIP10('${currentUser?.address}'),
+          toDID: '',
+          messageType: messageType,
+          messageContent: attachmentContent ?? content,
+          signature: '',
+          sigType: '',
+          encType: '',
+          encryptedSecret: '',
+          timestamp: DateTime.now().microsecondsSinceEpoch,
+        ),
       );
-      controller.clear();
+      clearFields();
 
       updateSending(true);
       final message = await send(options);
@@ -179,4 +211,26 @@ class ChatRoomProvider extends ChangeNotifier {
 
   bool get isUserAdmin =>
       admins.map((e) => e.wallet).contains(walletToPCAIP10(currentUser));
+
+  File? _selectedFile;
+  File? get selectedFile => _selectedFile;
+  Future onSelectFile() async {
+    final file = await AppFilePicker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      _selectedFile = file;
+      controller.clear();
+      notifyListeners();
+    }
+  }
+
+  clearSelectedFile() async {
+    _selectedFile = null;
+    notifyListeners();
+  }
+
+  clearFields() {
+    _selectedFile = null;
+    controller.clear();
+    notifyListeners();
+  }
 }
