@@ -9,7 +9,7 @@ class RequestsProvider extends ChangeNotifier {
   RequestsProvider(this.ref);
 
   List<Feeds>? _requests;
-  List<Feeds>? get requestsList => _requests ;
+  List<Feeds>? get requestsList => _requests;
 
   bool isBusy = false;
   setBusy(bool state) {
@@ -22,5 +22,14 @@ class RequestsProvider extends ChangeNotifier {
     _requests = await requests(toDecrypt: true);
 
     setBusy(false);
+  }
+
+  addReqestFromSocket(Feeds req) {
+    if (_requests != null) {
+      _requests!.add(req);
+    } else {
+      _requests = [req];
+    }
+    notifyListeners();
   }
 }

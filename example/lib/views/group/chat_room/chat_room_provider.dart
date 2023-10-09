@@ -41,7 +41,6 @@ class ChatRoomProvider extends ChangeNotifier {
 
   onRefreshRoom({
     GroupDTO? groupData,
-    
   }) async {
     if (groupData?.chatId == _currentChatid) {
       _room.groupInformation = groupData;

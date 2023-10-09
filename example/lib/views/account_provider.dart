@@ -141,10 +141,16 @@ class AccountProvider extends ChangeNotifier {
       // To get group creation or updation events
       pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
         print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
-        final type = (groupInfo as Map)['eventType'];
+        final type = (groupInfo as Map<String, dynamic>)['eventType'];
 
         if (type == 'request') {
-          ref.read(requestsProvider).loadRequests();
+          ref.read(requestsProvider).addReqestFromSocket(
+                Feeds(
+                  chatId: groupInfo['chatId'],
+                  intentSentBy: groupInfo['from'],
+                ),
+              );
+          return;
         }
         ref.read(conversationsProvider).onRecieveSocket(groupInfo);
       });

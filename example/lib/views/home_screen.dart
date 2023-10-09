@@ -50,7 +50,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         ),
       ];
-
     }
     Wallet? pushWallet = vm.pushWallet;
     return pushWallet == null

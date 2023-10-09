@@ -50,9 +50,6 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
               child: CircularProgressIndicator(),
             );
           }
-          // if (snapshot.data == null) {
-          //   return Center(child: Text('Cannot load Conversations'));
-          // }
 
           return ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 32),
@@ -60,13 +57,11 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
             itemCount: spaces.length,
             itemBuilder: (context, index) {
               final item = spaces[index];
-              final image = item.groupInformation?.groupImage ??
-                  item.profilePicture ??
-                  '';
+              final image =
+                  item.groupInformation?.groupImage ?? item.profilePicture;
 
               return ListTile(
                 onTap: () {
-                  // ref.read(chatRoomProvider).setCurrentChat(item.chatId!);
                   pushScreen(ChatRoomScreen(room: item));
                 },
                 leading: ProfileImage(imageUrl: image),
