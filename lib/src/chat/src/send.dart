@@ -5,7 +5,7 @@ import '../../../push_restapi_dart.dart';
 class ChatSendOptions {
   SendMessage? message;
   String? messageContent;
-  String messageType;
+  String? messageType;
   String receiverAddress;
   String? accountAddress;
   String? pgpPrivateKey;
@@ -13,11 +13,12 @@ class ChatSendOptions {
   ChatSendOptions(
       {this.message,
       this.messageContent,
-      this.messageType = MessageType.TEXT,
+      this.messageType,
       required this.receiverAddress,
       this.accountAddress,
       this.pgpPrivateKey}) {
-    assert(MessageType.isValidMessageType(messageType));
+    assert(MessageType.isValidMessageType(
+        message?.type ?? messageType ?? MessageType.TEXT));
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +49,11 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
   final group =
       isValidGroup ? await getGroup(chatId: computedOptions.to) : null;
 
+  if (isValidGroup && group == null) {
+    throw Exception(
+        'Invalid receiver. Please ensure \'receiver\' is a valid DID or ChatId in case of Group.');
+  }
+
   if (computedOptions.messageType == MessageType.REACTION) {
     computedOptions.messageObj?.content =
         REACTION_SYMBOL[computedOptions.messageObj?.action];
@@ -77,34 +83,16 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
     if (senderAcount == null) {
       throw Exception('Cannot get sender account.');
     }
-    // check if user exists
-    User? receiverAccount;
-    List<String> groupReciverAccounts = [];
-    if (!isValidGroup) {
-      receiverAccount = await getUser(address: computedOptions.to);
-      // else create the user frist and send unencrypted intent message
-      receiverAccount ??=
-          await createUserEmpty(accountAddress: computedOptions.to);
-    } else {
-      for (int i = 0; i < (group?.members.length ?? 0); i++) {
-        groupReciverAccounts.add(group!.members[i].publicKey!);
-      }
-      groupReciverAccounts.add(getPublicKeyFromString(senderAcount.publicKey!));
-    }
+
+    final senderPublicKey = getPublicKeyFromString(senderAcount.publicKey!);
 
     final messageContent = computedOptions.messageObj?.content;
 
     final sendMessagePayload = await getSendMessagePayload(
         receiverAddress: computedOptions.to,
-        senderPublicKey: getPublicKeyFromString(senderAcount.publicKey!),
+        senderPublicKey: senderPublicKey,
         senderPgpPrivateKey: computedOptions.pgpPrivateKey,
         senderAddress: computedOptions.accountAddress,
-        publicKeys: isValidGroup
-            ? groupReciverAccounts
-            : [
-                getPublicKeyFromString(senderAcount.publicKey!),
-                getPublicKeyFromString(receiverAccount!.publicKey!)
-              ],
         messageType: computedOptions.messageType,
         messageContent: messageContent,
         messageObj: computedOptions.messageObj,
@@ -130,7 +118,6 @@ Future<MessageWithCID?> sendMessageService(
       apiRoute = '/v1/chat/message';
     }
     final result = await http.post(path: apiRoute, data: payload.toJson());
-    print(result);
     if (result == null || result is String) {
       return null;
     }
@@ -154,16 +141,6 @@ validateSendOptions(ComputedOptions options) async {
     throw Exception('Private Key is required.');
   }
 
-  final isGroup = isValidETHAddress(options.to) ? false : true;
-
-  if (isGroup) {
-    final group = await getGroup(chatId: options.to);
-    if (group == null) {
-      throw Exception(
-          'Invalid receiver. Please ensure \'receiver\' is a valid DID or ChatId in case of Group.');
-    }
-  }
-
   if (options.messageObj?.content.isEmpty) {
     throw Exception('Cannot send empty message');
   }
@@ -177,12 +154,9 @@ Future<SendMessagePayload> getSendMessagePayload({
   required String messageType,
   required String messageContent,
   dynamic messageObj,
-  List<String> publicKeys = const [],
   GroupDTO? group,
   required bool isValidGroup,
 }) async {
-  log('encryptedMessageContentData --> getSendMessagePayload - receiverAddress: $receiverAddress, message: $messageContent, isGroup: $isValidGroup');
-
   final secretKey = generateRandomSecret(15);
 
   final encryptedMessageContentData = await getEncryptedRequest(
@@ -211,21 +185,13 @@ Future<SendMessagePayload> getSendMessagePayload({
       removeVersionFromPublicKey(encryptedMessageObjData.aesEncryptedSecret);
 
   return SendMessagePayload(
-      fromDID: validateCAIP(senderAddress!)
-          ? senderAddress
-          : walletToPCAIP10(senderAddress),
+      fromDID: walletToPCAIP10(senderAddress!),
       toDID: !isValidGroup
-          ? validateCAIP(receiverAddress)
-              ? receiverAddress
-              : walletToPCAIP10(receiverAddress)
+          ? walletToPCAIP10(receiverAddress)
           : group?.chatId ?? '',
-      fromCAIP10: validateCAIP(senderAddress)
-          ? senderAddress
-          : walletToPCAIP10(senderAddress),
+      fromCAIP10: walletToPCAIP10(senderAddress),
       toCAIP10: !isValidGroup
-          ? validateCAIP(receiverAddress)
-              ? receiverAddress
-              : walletToPCAIP10(receiverAddress)
+          ? walletToPCAIP10(receiverAddress)
           : group?.chatId ?? '',
       messageContent: encryptedMessageContent,
       messageObj: encryptionType == 'PlainText'
@@ -266,7 +232,8 @@ class ComputedOptions {
 
 ComputedOptions computeOptions(ChatSendOptions options) {
   log('computeOptions method - options $options');
-  String messageType = options.messageType;
+  String messageType =
+      options.message?.type ?? options.messageType ?? MessageType.TEXT;
   var messageObj = options.message;
   if (messageObj == null) {
     if (![

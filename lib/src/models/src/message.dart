@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 class Message {
@@ -265,6 +267,7 @@ class MetaMessage extends SendMessage {
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+    data['type'] = type;
     data['action'] = action?.index;
     data['info'] = info?.toJson();
     data['content'] = content;
@@ -294,9 +297,87 @@ class ReactionMessage extends SendMessage {
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+    data['type'] = type;
     data['action'] = action;
     data['reference'] = reference;
     data['content'] = content;
     return data;
+  }
+}
+
+/// Represents a message containing an image.
+///
+/// The image is represented by its data, name, and size.
+class ImageMessage extends SendMessage {
+  /// Creates a new instance of [ImageMessage].
+  ///
+  /// [content] is the actual data content of the image encoded in base64 format.
+  ///
+  /// [name] is the name of the image file.
+  ///
+  /// [size] is the size of the image file
+  ImageMessage({
+    required String content,
+    String? name,
+    String? size,
+  }) : super(
+          type: MessageType.IMAGE,
+          content: jsonEncode({
+            'content': content,
+            'name': name,
+            'size': size,
+          }),
+        );
+
+  /// Creates a new instance of [ImageMessage] from a JSON map.
+  ///
+  /// [json] is the JSON map to create the instance from.
+  factory ImageMessage.fromJson(Map<String, dynamic> json) {
+    return ImageMessage(
+      content: json['content'],
+      name: json['name'],
+      size: json['size'],
+    );
+  }
+}
+
+/// Represents a message containing a file.
+///
+/// The file is represented by its data, name, type, and size.
+class FileMessage extends SendMessage {
+  /// Creates a new instance of [FileMessage].
+  ///
+  /// [content] is the actual data content of the file encoded in base64 format.
+  ///
+  /// [name] is the name of the file.
+  ///
+  /// [type] is the MIME type or content type of the file (e.g., text/plain).
+  ///
+  /// [size] is the size of the file, represented as a string.
+  FileMessage({
+    required String content,
+    String? name,
+    String? type,
+    String? size,
+  }) : super(
+          type: MessageType.FILE,
+          content: jsonEncode({
+            'content': content,
+            'name': name,
+            'type': type,
+            'size': size,
+          }),
+        );
+
+  /// Creates a new instance of [FileMessage] from a JSON map.
+  ///
+  /// [json] is the JSON map to create the instance from.
+  factory FileMessage.fromJson(Map<String, dynamic> json) {
+    return FileMessage(
+      content: json['content'],
+      name: json['name'],
+      type: json['type'],
+      size: json['size'],
+    );
   }
 }

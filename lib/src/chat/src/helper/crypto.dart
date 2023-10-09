@@ -106,7 +106,9 @@ Future<IEncryptedRequest> getEncryptedRequest({
   GroupDTO? group,
 }) async {
   if (!isGroup) {
-    final User? receiverCreatedUser = await getUser(address: receiverAddress);
+    User? receiverCreatedUser = await getUser(address: receiverAddress);
+    receiverCreatedUser ??=
+          await createUserEmpty(accountAddress: receiverAddress);
 
     if (receiverCreatedUser != null || receiverCreatedUser?.publicKey != null) {
       if (!isValidETHAddress(receiverAddress)) {
@@ -194,7 +196,7 @@ Future<IEncryptedRequest> getEncryptedRequest({
           signature: response['signature']!);
     }
   } else {
-    throw Exception('Unable to find Group Data');
+    throw Exception('Error in encryption');
   }
 }
 
