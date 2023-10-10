@@ -261,16 +261,14 @@ class AttachmentDialog extends StatelessWidget {
       NavItem(
         icon: Icons.gif_box_rounded,
         title: MessageType.GIF,
-        onPressed: () {
-          
-        },
+        onPressed: () {},
       ),
       NavItem(
         icon: Icons.camera_alt_rounded,
         title: '${MessageType.IMAGE} (Camera)',
         onPressed: () async {
           final file =
-              await AppFilePicker.pickImage(source: ImageSource.gallery);
+              await AppFilePicker.pickImage(source: ImageSource.camera);
           onSelect(file, MessageType.IMAGE);
         },
       ),
