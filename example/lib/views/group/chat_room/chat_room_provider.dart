@@ -36,6 +36,8 @@ class ChatRoomProvider extends ChangeNotifier {
   Feeds _room = Feeds();
   Feeds get room => _room;
 
+  String messageType = MessageType.TEXT;
+
   setCurrentChat(Feeds room) {
     final chatId = room.chatId!;
     _room = room;
@@ -134,13 +136,11 @@ class ChatRoomProvider extends ChangeNotifier {
 
       SendMessage? messageAttachment;
       String? attachmentContent;
-      String messageType = MessageType.TEXT;
 
-      if (selectedFile != null) {
+      if (selectedFile != null && messageType == MessageType.IMAGE) {
         final img = base64Encode(selectedFile!.readAsBytesSync());
         attachmentContent = jsonEncode({'content': img});
 
-        messageType = MessageType.IMAGE;
         messageAttachment = ImageMessage(
           content: img,
           name: selectedFile?.uri.pathSegments.last,
@@ -215,22 +215,109 @@ class ChatRoomProvider extends ChangeNotifier {
   File? _selectedFile;
   File? get selectedFile => _selectedFile;
   Future onSelectFile() async {
-    final file = await AppFilePicker.pickImage(source: ImageSource.gallery);
-    if (file != null) {
-      _selectedFile = file;
-      controller.clear();
-      notifyListeners();
-    }
+    Get.bottomSheet(AttachmentDialog(
+      onSelect: (File? file, String type) async {
+        pop();
+        if (file != null) {
+          _selectedFile = file;
+          controller.clear();
+          messageType = type;
+          notifyListeners();
+        }
+      },
+    ));
   }
 
   clearSelectedFile() async {
     _selectedFile = null;
+    messageType = MessageType.TEXT;
     notifyListeners();
   }
 
   clearFields() {
     _selectedFile = null;
     controller.clear();
+    messageType = MessageType.TEXT;
     notifyListeners();
+  }
+}
+
+class AttachmentDialog extends StatelessWidget {
+  const AttachmentDialog({
+    super.key,
+    required this.onSelect,
+  });
+
+  final Function(File?, String) onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final options = [
+      NavItem(
+        icon: Icons.file_present_rounded,
+        title: MessageType.FILE,
+        onPressed: () {},
+      ),
+      NavItem(
+        icon: Icons.gif_box_rounded,
+        title: MessageType.GIF,
+        onPressed: () {
+          
+        },
+      ),
+      NavItem(
+        icon: Icons.camera_alt_rounded,
+        title: '${MessageType.IMAGE} (Camera)',
+        onPressed: () async {
+          final file =
+              await AppFilePicker.pickImage(source: ImageSource.gallery);
+          onSelect(file, MessageType.IMAGE);
+        },
+      ),
+      NavItem(
+        icon: Icons.photo_library_rounded,
+        title: '${MessageType.IMAGE} (Gallery)',
+        onPressed: () async {
+          final file =
+              await AppFilePicker.pickImage(source: ImageSource.gallery);
+          onSelect(file, MessageType.IMAGE);
+        },
+      ),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 24),
+          Text(
+            'Select Attachment',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(height: 16),
+          ...options.map(
+            (e) => InkWell(
+              onTap: e.onPressed,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom:
+                            BorderSide(color: Colors.grey.withOpacity(.5)))),
+                child: Row(
+                  children: [
+                    Icon(e.icon),
+                    SizedBox(width: 16),
+                    Text(e.title),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -172,10 +172,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                   children: [
                     Expanded(
                       child: roomVm.selectedFile != null
-                          ? Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                          ? Stack(
                               children: [
-                                Stack(
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
@@ -185,27 +185,33 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                         height: 78,
                                       ),
                                     ),
-                                    Positioned(
-                                      top: 8,
-                                      left: 8,
-                                      child: InkWell(
-                                        onTap: roomVm.clearSelectedFile,
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        '${roomVm.selectedFile?.uri.pathSegments.last}',
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: InkWell(
+                                      onTap: roomVm.clearSelectedFile,
+                                      child: Container(
+                                        padding: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: Icon(
                                           Icons.close,
-                                          color: Colors.grey,
+                                          color: Colors.white,
                                           size: 16,
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    '${roomVm.selectedFile?.uri.pathSegments.last}',
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
+                                    ))
                               ],
                             )
                           : TextField(
@@ -213,7 +219,6 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                               keyboardType: TextInputType.multiline,
                               minLines: 1,
                               maxLines: 5,
-                              readOnly: roomVm.selectedFile == null,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),

@@ -279,12 +279,16 @@ Future pushScreen(Widget screen) async {
 
 class NavItem {
   final String title;
+  final String type;
   final int count;
+  final dynamic icon;
   final Function() onPressed;
 
   NavItem({
     required this.title,
     required this.onPressed,
     this.count = 0,
+    this.type = '',
+    this.icon,
   });
 }
