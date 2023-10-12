@@ -34,11 +34,7 @@ class ChatSendOptions {
 }
 
 Future<MessageWithCID?> send(ChatSendOptions options) async {
-  log('SEND - OPTIONS ${options.toJson()}');
-
   ComputedOptions computedOptions = computeOptions(options);
-
-  log('SEND - COMPUTED OPTIONS ${computedOptions.toJson()}');
 
   computedOptions.accountAddress ??= getCachedWallet()?.address;
   if (computedOptions.accountAddress == null) {
@@ -98,8 +94,6 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
         messageObj: computedOptions.messageObj,
         group: group,
         isValidGroup: isValidGroup);
-
-    log('sendMessagePayload $sendMessagePayload');
 
     return sendMessageService(sendMessagePayload, isIntent);
   } catch (e) {

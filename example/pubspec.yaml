@@ -33,15 +33,6 @@ dependencies:
   video_player: ^2.7.1
   flutter_chat_bubble: ^2.0.2
 
-
-
-  # better_player: 
-  #   git:
-  #     url: https://github.com/gbogboadePush/better_player.git
-  #     ref: main
-
-  
-
   ethers: 
     git:
       url: https://github.com/gbogboadePush/ethers.git

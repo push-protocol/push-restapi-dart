@@ -7,16 +7,6 @@ String getQueryParams(Map<dynamic, dynamic> data) {
 }
 
 class Api {
-  int getLimit([int? passedLimit]) {
-    if (passedLimit == null) return Constants.PAGINATION['LIMIT'];
-
-// if (passedLimit > Constants.PAGINATION['LIMIT_MAX']) {
-// return Constants.PAGINATION['LIMIT_MAX'];
-// }
-
-    return passedLimit;
-  }
-
   static String getAPIBaseUrls([ENV? env]) {
     env ??= providerContainer.read(envProvider);
     return Api._apiBaseUrlMap[env] ?? 'http://localhost:4000/apis';
