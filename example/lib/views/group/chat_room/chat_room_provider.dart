@@ -254,16 +254,6 @@ class AttachmentDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final options = [
       NavItem(
-        icon: Icons.file_present_rounded,
-        title: MessageType.FILE,
-        onPressed: () {},
-      ),
-      NavItem(
-        icon: Icons.gif_box_rounded,
-        title: MessageType.GIF,
-        onPressed: () {},
-      ),
-      NavItem(
         icon: Icons.camera_alt_rounded,
         title: '${MessageType.IMAGE} (Camera)',
         onPressed: () async {

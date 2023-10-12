@@ -26,7 +26,7 @@ class RequestsProvider extends ChangeNotifier {
 
   addReqestFromSocket(Feeds req) {
     if (_requests != null) {
-      _requests!.add(req);
+      _requests!.insert(0, req);
     } else {
       _requests = [req];
     }
