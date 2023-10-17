@@ -35,7 +35,7 @@ Future<void> testSendToGroup() async {
     pgpPrivateKey: pgpPrivateKey,
     messageContent: 'Testing send() from Dart SDK for group chat',
     receiverAddress:
-        '60d2bbcb9e2f75651f33e0d2b4930a1bbd8aa36a55f9af41639e8340b8cf6d37',
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);

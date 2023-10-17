@@ -34,11 +34,7 @@ class ChatSendOptions {
 }
 
 Future<MessageWithCID?> send(ChatSendOptions options) async {
-  log('SEND - OPTIONS ${options.toJson()}');
-
   ComputedOptions computedOptions = computeOptions(options);
-
-  log('SEND - COMPUTED OPTIONS ${computedOptions.toJson()}');
 
   computedOptions.accountAddress ??= getCachedWallet()?.address;
   if (computedOptions.accountAddress == null) {
@@ -52,11 +48,6 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
   if (isValidGroup && group == null) {
     throw Exception(
         'Invalid receiver. Please ensure \'receiver\' is a valid DID or ChatId in case of Group.');
-  }
-
-  if (computedOptions.messageType == MessageType.REACTION) {
-    computedOptions.messageObj?.content =
-        REACTION_SYMBOL[computedOptions.messageObj?.action];
   }
 
   final conversationHashResponse = await conversationHash(
@@ -86,7 +77,14 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
 
     final senderPublicKey = getPublicKeyFromString(senderAcount.publicKey!);
 
-    final messageContent = computedOptions.messageObj?.content;
+    String messageContent;
+    if (computedOptions.messageType == MessageType.REPLY ||
+        computedOptions.messageType == MessageType.COMPOSITE) {
+      messageContent =
+          'MessageType Not Supported by this sdk version. Plz upgrade !!!';
+    } else {
+      messageContent = computedOptions.messageObj?.content;
+    }
 
     final sendMessagePayload = await getSendMessagePayload(
         receiverAddress: computedOptions.to,
@@ -141,9 +139,13 @@ validateSendOptions(ComputedOptions options) async {
     throw Exception('Private Key is required.');
   }
 
-  if (options.messageObj?.content.isEmpty) {
+  if (options.messageType != MessageType.COMPOSITE &&
+      options.messageType != MessageType.REPLY &&
+      options.messageObj?.content.isEmpty) {
     throw Exception('Cannot send empty message');
   }
+
+  // TODO: Validate message object
 }
 
 Future<SendMessagePayload> getSendMessagePayload({
@@ -230,11 +232,62 @@ class ComputedOptions {
   }
 }
 
+class _Content {
+  String content;
+
+  _Content({
+    required this.content,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['content'] = content;
+    return data;
+  }
+
+  static _Content fromJson(Map<String, dynamic> json) {
+    return _Content(
+      content: json['content'],
+    );
+  }
+}
+
+class _NestedContent {
+  String messageType;
+  _Content messageObj;
+
+  _NestedContent({
+    required this.messageType,
+    required this.messageObj,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['messageType'] = messageType;
+    data['messageObj'] = messageObj.toJson();
+    return data;
+  }
+
+  static _NestedContent fromJson(Map<String, dynamic> json) {
+    return _NestedContent(
+      messageType: json['messageType'],
+      messageObj: _Content.fromJson(json['messageObj']),
+    );
+  }
+
+  static _NestedContent fromNestedContent(NestedContent nestedContent) {
+    return _NestedContent(
+        messageType: nestedContent.type,
+        messageObj: _Content(content: nestedContent.content));
+  }
+}
+
 ComputedOptions computeOptions(ChatSendOptions options) {
   log('computeOptions method - options $options');
   String messageType =
       options.message?.type ?? options.messageType ?? MessageType.TEXT;
-  var messageObj = options.message;
+  dynamic messageObj = options.message;
+  
   if (messageObj == null) {
     if (![
       MessageType.TEXT,
@@ -256,6 +309,29 @@ ComputedOptions computeOptions(ChatSendOptions options) {
   String to = options.receiverAddress;
   if (to.isEmpty) {
     throw Exception('Options.to is required');
+  }
+
+  // Parse Reply Message
+  if (messageType == MessageType.REPLY) {
+    if (messageObj?.replyContent != null) {
+      messageObj?.replyContent =
+          _NestedContent.fromNestedContent(messageObj.replyContent);
+    } else {
+      throw Exception('Options.message is not properly defined for Reply');
+    }
+  }
+
+  // Parse Composite Message
+  if (messageType == MessageType.COMPOSITE) {
+    if (messageObj?.compositeContent != null) {
+      messageObj?.compositeContent =
+          messageObj?.compositeContent?.map((nestedContent) {
+        log("FROM NESTED CONTENT ${_NestedContent.fromNestedContent(nestedContent)}");
+        return _NestedContent.fromNestedContent(nestedContent);
+      });
+    } else {
+      throw Exception('Options.message is not properly defined for Composite');
+    }
   }
 
   return ComputedOptions(

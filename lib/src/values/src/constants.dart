@@ -46,105 +46,115 @@ class Constants {
 
 class MessageType {
   static const TEXT = 'Text';
+  static const VIDEO = 'Video';
+  static const AUDIO = 'Audio';
   static const IMAGE = 'Image';
   static const FILE = 'File';
   static const MEDIA_EMBED = 'MediaEmbed';
   static const META = 'Meta';
   static const REACTION = 'Reaction';
+  static const COMPOSITE = 'Composite';
+  static const REPLY = 'Reply';
+  static const RECEIPT = 'Receipt';
+  static const USER_ACTIVITY = 'UserActivity';
+  static const INTENT = 'Intent';
+  static const PAYMENT = 'Payment';
 
   /// @deprecated - Use MediaEmbed Instead
   static const GIF = 'GIF';
 
   static isValidMessageType(String type) {
-    return [TEXT, IMAGE, FILE, MEDIA_EMBED, META, REACTION].contains(type);
+    return [
+      TEXT,
+      VIDEO,
+      AUDIO,
+      IMAGE,
+      FILE,
+      MEDIA_EMBED,
+      META,
+      REACTION,
+      COMPOSITE,
+      REPLY,
+      USER_ACTIVITY,
+      PAYMENT,
+      INTENT,
+      RECEIPT
+    ].contains(type);
   }
 }
 
-enum META_ACTION {
-  /// DEFAULT GROUP ACTIONS
-  CREATE_GROUP,
-  ADD_MEMBER,
-  REMOVE_MEMBER,
-  PROMOTE_TO_ADMIN,
-  DEMOTE_FROM_ADMIN,
-
-  /// SHARED ACTIONS
-  CHANGE_IMAGE_OR_DESC,
-  CHANGE_META,
-
-  /// SPACES ACTIONS
-  CREATE_SPACE,
-  ADD_LISTENER,
-  REMOVE_LISTENER,
-  PROMOTE_TO_SPEAKER,
-  DEMOTE_FROM_SPEAKER,
-  PROMOTE_TO_COHOST,
-  DEMOTE_FROM_COHOST,
-  USER_INTERACTION, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
-}
-
-META_ACTION getMetaActionValue(int index) {
-  switch (index) {
-    case 0:
-      return META_ACTION.CREATE_GROUP;
-    case 1:
-      return META_ACTION.ADD_MEMBER;
-    case 2:
-      return META_ACTION.REMOVE_MEMBER;
-    case 3:
-      return META_ACTION.PROMOTE_TO_ADMIN;
-    case 4:
-      return META_ACTION.DEMOTE_FROM_ADMIN;
-    case 5:
-      return META_ACTION.CHANGE_IMAGE_OR_DESC;
-    case 6:
-      return META_ACTION.CHANGE_META;
-    case 7:
-      return META_ACTION.CREATE_SPACE;
-    case 8:
-      return META_ACTION.ADD_LISTENER;
-    case 9:
-      return META_ACTION.REMOVE_LISTENER;
-    case 10:
-      return META_ACTION.PROMOTE_TO_SPEAKER;
-    case 11:
-      return META_ACTION.DEMOTE_FROM_SPEAKER;
-    case 12:
-      return META_ACTION.PROMOTE_TO_COHOST;
-    case 13:
-      return META_ACTION.DEMOTE_FROM_COHOST;
-    case 14:
-      return META_ACTION.USER_INTERACTION;
-    default:
-      throw ArgumentError('Invalid index: $index');
-  }
-}
-
-enum REACTION_TYPE {
-  THUMBS_UP,
-  THUMBS_DOWN,
-  HEART,
-  CLAP,
-  LAUGHING_FACE,
-  SAD_FACE,
-  ANGRY_FACE,
-  SURPRISED_FACE,
-  CLAPPING_HANDS,
-  FIRE,
-}
-
-// Create a mapping object that associates reaction types with their Unicode escape sequences
-const Map<REACTION_TYPE, String> REACTION_SYMBOL = {
-  REACTION_TYPE.THUMBS_UP: '\u{1F44D}',
-  REACTION_TYPE.THUMBS_DOWN: '\u{1F44E}',
-  REACTION_TYPE.HEART: '\u{2764}\u{FE0F}',
-  REACTION_TYPE.CLAP: '\u{1F44F}',
-  REACTION_TYPE.LAUGHING_FACE: '\u{1F602}',
-  REACTION_TYPE.SAD_FACE: '\u{1F622}',
-  REACTION_TYPE.ANGRY_FACE: '\u{1F621}',
-  REACTION_TYPE.SURPRISED_FACE: '\u{1F632}',
-  REACTION_TYPE.CLAPPING_HANDS: '\u{1F44F}\u{1F44F}',
-  REACTION_TYPE.FIRE: '\u{1F525}',
+final Map<String, dynamic> CHAT = {
+  'META': {
+    'GROUP': {
+      'CREATE': 'CREATE_GROUP',
+      'MEMBER': {
+        'ADD': 'ADD_MEMBER',
+        'REMOVE': 'REMOVE_MEMBER',
+        'PRIVILEGE': 'ASSIGN_MEMBER_PRIVILEGE',
+      },
+      'ADMIN': {
+        'PRIVILEGE': 'ASSIGN_ADMIN_PRIVILEGE',
+      },
+      'UPDATE': 'UPDATE_GROUP',
+      'PROFILE': {
+        'UPDATE': 'UPDATE_GROUP_PROFILE',
+      },
+      'META': {
+        'UPDATE': 'UPDATE_GROUP_META',
+      },
+      'USER': {
+        'INTERACTION': 'USER_INTERACTION',
+      },
+    },
+    'SPACE': {
+      'CREATE': 'CREATE_SPACE',
+      'START': "START_SPACE", //
+      'LISTENER': {
+        'ADD': 'ADD_LISTENER',
+        'REMOVE': 'REMOVE_LISTENER',
+        'PRIVILEGE': 'ASSIGN_LISTENER_PRIVILEGE',
+      },
+      'SPEAKER': {
+        'PRIVILEGE': 'ASSIGN_SPEAKER_PRIVILEGE',
+      },
+      'COHOST': {
+        'PRIVILEGE': 'ASSIGN_COHOST_PRIVILEGE',
+      },
+    },
+  },
+  'REACTION': {
+    'THUMBSUP': '\u{1F44D}',
+    'THUMBSDOWN': '\u{1F44E}',
+    'HEART': '\u{2764}\u{FE0F}',
+    'CLAP': '\u{1F44F}',
+    'LAUGH': '\u{1F602}',
+    'SAD': '\u{1F622}',
+    'ANGRY': '\u{1F621}',
+    'SURPRISE': '\u{1F632}',
+    'FIRE': '\u{1F525}',
+  },
+  'RECEIPT': {
+    'READ': 'READ_RECEIPT',
+  },
+  'UA': {
+    'LISTENER': {
+      'JOIN': 'LISTENER_JOIN',
+      'LEAVE': 'LISTENER_LEAVE',
+      'MICREQUEST': 'LISTENER_REQUEST_MIC',
+    },
+    'SPEAKER': {
+      'JOIN': 'SPEAKER_JOIN', //
+      'LEAVE': 'SPEAKER_LEAVE', //
+      'MIC_ON': 'SPEAKER_MIC_ON',
+      'MIC_OFF': 'SPEAKER_MIC_OFF',
+    }
+  },
+  'INTENT': {
+    'ACCEPT': 'ACCEPT_INTENT',
+    'REJECT': 'REJECT_INTENT',
+    'JOIN': 'JOIN_GROUP',
+    'LEAVE': 'LEAVE_GROUP',
+  },
 };
 
 class AdditionalMetaType {

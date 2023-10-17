@@ -75,14 +75,6 @@ Future<SpaceData?> joinSpace({
           emojiReactions: EmojiReaction(),
         )
       ];
-
-      sendLiveSpaceData(
-        updatedLiveSpaceData: spaceData.liveSpaceData,
-        action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Need a better action
-        affectedAddresses: [localAddress],
-        spaceId: spaceId,
-      );
-      return spaceData;
     } else {
       if (space.meta == null) {
         throw Exception('Space meta not updated');
@@ -93,6 +85,7 @@ Future<SpaceData?> joinSpace({
       final String? playbackUrl = await getPlaybackUrl(playbackId: playbackId);
 
       updatePlaybackUrl(playbackUrl);
+      
       spaceData.liveSpaceData.listeners = [
         ...spaceData.liveSpaceData.listeners,
         ListenerPeer(
@@ -101,6 +94,18 @@ Future<SpaceData?> joinSpace({
         )
       ];
     }
+
+    String metaMessageContent = isSpeaker || isSpeakerPending
+        ? CHAT['UA']['SPEAKER']['JOIN']
+        : CHAT['UA']['LISTENER']['JOIN'];
+
+    sendLiveSpaceData(
+      messageType: MessageType.USER_ACTIVITY,
+      updatedLiveSpaceData: spaceData.liveSpaceData,
+      content: metaMessageContent,
+      affectedAddresses: [localAddress],
+      spaceId: spaceId,
+    );
 
     return spaceData;
   } catch (err) {

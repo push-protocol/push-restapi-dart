@@ -76,10 +76,12 @@ Future<SpaceData?> startSpace({
         listeners: [],
       );
 
+      String metaMessageContent = CHAT['META']['SPACE']['START'];
+
       sendLiveSpaceData(
+        messageType: MessageType.META,
         updatedLiveSpaceData: liveSpaceData,
-        action: META_ACTION
-            .CREATE_SPACE, // TODO: Need a better action for starting space
+        content: metaMessageContent,
         affectedAddresses: [accountAddress ?? signer!.getAddress()],
         spaceId: spaceId,
       );
