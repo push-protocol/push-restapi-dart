@@ -1,3 +1,4 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:example/__lib.dart';
 import 'package:example/views/account_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +37,18 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         actions: [
+          if (room.groupInformation != null)
+            InkWell(
+                onTap: () {
+                  FlutterClipboard.copy(room.groupInformation!.chatId!)
+                      .then((value) {
+                    showMyDialog(
+                        context: context,
+                        title: 'Address ',
+                        message: 'Group address copied successfully');
+                  });
+                },
+                child: Icon(Icons.copy)),
           if (room.groupInformation != null)
             InkWell(
               onTap: () {

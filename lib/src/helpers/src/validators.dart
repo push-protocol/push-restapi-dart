@@ -1,6 +1,6 @@
 import '../../../push_restapi_dart.dart';
 
-void validatePassword(String password) {
+bool validatePassword(String password) {
   if (password.length < 8) {
     throw Exception('Password must be at least 8 characters long!');
   }
@@ -16,6 +16,7 @@ void validatePassword(String password) {
   if (!RegExp('[!@#\$%^&*()_+\\-=[\\]{};\':"\\\\|,.<>/?]').hasMatch(password)) {
     throw Exception('Password must contain at least one special character!');
   }
+  return true;
 }
 
 bool isValidETHAddress(String address) {

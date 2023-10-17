@@ -12,6 +12,12 @@ void main() async {
       'eip155:0x8ca107e6845b095599FDc1A937E6f16677a90325',
     );
   });
+  test('getUserDID NFT', () async {
+    expect(
+      await getUserDID(address: 'nft:eip155:5:0x42af3147f17239341477113484752D5D3dda997B:2:1683058528'),
+      'nft:eip155:5:0x42af3147f17239341477113484752D5D3dda997B:2:1683058528',
+    );
+  });
 
   test('getCAIPAddress', () async {
     expect(

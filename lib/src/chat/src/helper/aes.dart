@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 String generateRandomSecret(int length) {
   final random = math.Random.secure();
@@ -66,7 +65,6 @@ String aesDecrypt({required String cipherText, required String secretKey}) {
         encrypter.decrypt64(base64.encode(encryptedBytes), iv: iv);
     return decrypted;
   } catch (error) {
-    log('decryptAESCryptoJS:error $error');
     rethrow;
   }
 }

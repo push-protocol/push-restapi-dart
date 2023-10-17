@@ -13,6 +13,7 @@ void main() async {
           'https://backend-staging.epns.io/apis');
       expect(Api.getAPIBaseUrls(ENV.dev), 'https://backend-dev.epns.io/apis');
       expect(Api.getAPIBaseUrls(ENV.prod), 'https://backend.epns.io/apis');
+      expect(Api.getAPIBaseUrls(ENV.local), 'http://localhost:4000/apis');
     });
 
     test('getSocketAPIBaseUrls', () {
@@ -21,6 +22,18 @@ void main() async {
           'https://backend-staging.epns.io');
       expect(Api.getSocketAPIBaseUrls(ENV.dev), 'https://backend-dev.epns.io');
       expect(Api.getSocketAPIBaseUrls(ENV.prod), 'https://backend.epns.io');
+      expect(Api.getSocketAPIBaseUrls(ENV.local), 'http://localhost:4000');
     });
+  });
+
+  test('.getQueryParams', () {
+    expect(getQueryParams({'date': 'today'}), 'date=today');
+    expect(
+        getQueryParams({
+          'page': 10,
+          'limit': 1,
+          'spam': 2,
+        }),
+        'page=10&limit=1&spam=2');
   });
 }

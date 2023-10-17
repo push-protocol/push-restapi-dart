@@ -9,6 +9,7 @@ void main() async {
         expect(walletToPCAIP10('0x8ca107e6845b095599FDc1A937E6f16677a90325'),
             'eip155:0x8ca107e6845b095599FDc1A937E6f16677a90325');
       });
+    
       test('pCAIP10ToWallet', () {
         expect(
             pCAIP10ToWallet(
