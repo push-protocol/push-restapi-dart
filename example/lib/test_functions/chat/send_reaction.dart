@@ -47,7 +47,7 @@ Future<void> testSendReaction() async {
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
     message: ReactionMessage(
-        content: CHAT['REACTION']['THUMBSUP'], reference: referenceLink),
+        content: CHAT.REACTION_THUMBSUP, reference: referenceLink),
     receiverAddress: groupId,
   );
 

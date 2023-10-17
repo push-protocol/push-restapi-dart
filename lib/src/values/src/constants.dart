@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names, camel_case_types, non_constant_identifier_names
+// ignore_for_file: constant_identifier_names, camel_case_types
 
 class ENCRYPTION_TYPE {
   static const PGP_V1 = 'x25519-xsalsa20-poly1305';
@@ -83,79 +83,45 @@ class MessageType {
   }
 }
 
-final Map<String, dynamic> CHAT = {
-  'META': {
-    'GROUP': {
-      'CREATE': 'CREATE_GROUP',
-      'MEMBER': {
-        'ADD': 'ADD_MEMBER',
-        'REMOVE': 'REMOVE_MEMBER',
-        'PRIVILEGE': 'ASSIGN_MEMBER_PRIVILEGE',
-      },
-      'ADMIN': {
-        'PRIVILEGE': 'ASSIGN_ADMIN_PRIVILEGE',
-      },
-      'UPDATE': 'UPDATE_GROUP',
-      'PROFILE': {
-        'UPDATE': 'UPDATE_GROUP_PROFILE',
-      },
-      'META': {
-        'UPDATE': 'UPDATE_GROUP_META',
-      },
-      'USER': {
-        'INTERACTION': 'USER_INTERACTION',
-      },
-    },
-    'SPACE': {
-      'CREATE': 'CREATE_SPACE',
-      'START': "START_SPACE", //
-      'LISTENER': {
-        'ADD': 'ADD_LISTENER',
-        'REMOVE': 'REMOVE_LISTENER',
-        'PRIVILEGE': 'ASSIGN_LISTENER_PRIVILEGE',
-      },
-      'SPEAKER': {
-        'PRIVILEGE': 'ASSIGN_SPEAKER_PRIVILEGE',
-      },
-      'COHOST': {
-        'PRIVILEGE': 'ASSIGN_COHOST_PRIVILEGE',
-      },
-    },
-  },
-  'REACTION': {
-    'THUMBSUP': '\u{1F44D}',
-    'THUMBSDOWN': '\u{1F44E}',
-    'HEART': '\u{2764}\u{FE0F}',
-    'CLAP': '\u{1F44F}',
-    'LAUGH': '\u{1F602}',
-    'SAD': '\u{1F622}',
-    'ANGRY': '\u{1F621}',
-    'SURPRISE': '\u{1F632}',
-    'FIRE': '\u{1F525}',
-  },
-  'RECEIPT': {
-    'READ': 'READ_RECEIPT',
-  },
-  'UA': {
-    'LISTENER': {
-      'JOIN': 'LISTENER_JOIN',
-      'LEAVE': 'LISTENER_LEAVE',
-      'MICREQUEST': 'LISTENER_REQUEST_MIC',
-    },
-    'SPEAKER': {
-      'JOIN': 'SPEAKER_JOIN', //
-      'LEAVE': 'SPEAKER_LEAVE', //
-      'MIC_ON': 'SPEAKER_MIC_ON',
-      'MIC_OFF': 'SPEAKER_MIC_OFF',
-    }
-  },
-  'INTENT': {
-    'ACCEPT': 'ACCEPT_INTENT',
-    'REJECT': 'REJECT_INTENT',
-    'JOIN': 'JOIN_GROUP',
-    'LEAVE': 'LEAVE_GROUP',
-  },
-};
+class CHAT {
+  static const String META_GROUP_CREATE = 'CREATE_GROUP';
+  static const String META_GROUP_MEMBER_ADD = 'ADD_MEMBER';
+  static const String META_GROUP_MEMBER_REMOVE = 'REMOVE_MEMBER';
+  static const String META_GROUP_MEMBER_PRIVILEGE = 'ASSIGN_MEMBER_PRIVILEGE';
+  static const String META_GROUP_ADMIN_PRIVILEGE = 'ASSIGN_ADMIN_PRIVILEGE';
+  static const String META_GROUP_UPDATE_GROUP = 'UPDATE_GROUP';
+  static const String META_GROUP_PROFILE_UPDATE = 'UPDATE_GROUP_PROFILE';
+  static const String META_GROUP_META_UPDATE = 'UPDATE_GROUP_META';
+  static const String META_GROUP_USER_INTERACTION = 'USER_INTERACTION';
+  static const String META_SPACE_CREATE = 'CREATE_SPACE';
+  static const String META_SPACE_START = 'START_SPACE';
+  static const String META_SPACE_LISTENER_ADD = 'ADD_LISTENER';
+  static const String META_SPACE_LISTENER_REMOVE = 'REMOVE_LISTENER';
+  static const String META_SPACE_LISTENER_PRIVILEGE = 'ASSIGN_LISTENER_PRIVILEGE';
+  static const String META_SPACE_SPEAKER_PRIVILEGE = 'ASSIGN_SPEAKER_PRIVILEGE';
+  static const String META_SPACE_COHOST_PRIVILEGE = 'ASSIGN_COHOST_PRIVILEGE';
+  static const String REACTION_THUMBSUP = '\u{1F44D}';
+  static const String REACTION_THUMBSDOWN = '\u{1F44E}';
+  static const String REACTION_HEART = '\u{2764}\u{FE0F}';
+  static const String REACTION_CLAP = '\u{1F44F}';
+  static const String REACTION_LAUGH = '\u{1F602}';
+  static const String REACTION_SAD = '\u{1F622}';
+  static const String REACTION_ANGRY = '\u{1F621}';
+  static const String REACTION_SURPRISE = '\u{1F632}';
+  static const String REACTION_FIRE = '\u{1F525}';
+  static const String RECEIPT_READ = 'READ_RECEIPT';
+  static const String UA_LISTENER_JOIN = 'LISTENER_JOIN';
+  static const String UA_LISTENER_LEAVE = 'LISTENER_LEAVE';
+  static const String UA_LISTENER_REQUEST_MIC = 'LISTENER_REQUEST_MIC';
+  static const String UA_SPEAKER_JOIN = 'SPEAKER_JOIN';
+  static const String UA_SPEAKER_LEAVE = 'SPEAKER_LEAVE';
+  static const String UA_SPEAKER_MIC_ON = 'SPEAKER_MIC_ON';
+  static const String UA_SPEAKER_MIC_OFF = 'SPEAKER_MIC_OFF';
+  static const String INTENT_ACCEPT = 'ACCEPT_INTENT';
+  static const String INTENT_REJECT = 'REJECT_INTENT';
+  static const String INTENT_JOIN_GROUP = 'JOIN_GROUP';
+  static const String INTENT_LEAVE_GROUP = 'LEAVE_GROUP';
+}
 
 class AdditionalMetaType {
   static const CUSTOM = 0;

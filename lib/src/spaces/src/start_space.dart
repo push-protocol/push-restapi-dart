@@ -76,7 +76,7 @@ Future<SpaceData?> startSpace({
         listeners: [],
       );
 
-      String metaMessageContent = CHAT['META']['SPACE']['START'];
+      String metaMessageContent = CHAT.META_SPACE_START;
 
       sendLiveSpaceData(
         messageType: MessageType.META,

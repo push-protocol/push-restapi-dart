@@ -96,8 +96,8 @@ Future<SpaceData?> joinSpace({
     }
 
     String metaMessageContent = isSpeaker || isSpeakerPending
-        ? CHAT['UA']['SPEAKER']['JOIN']
-        : CHAT['UA']['LISTENER']['JOIN'];
+        ? CHAT.UA_SPEAKER_JOIN
+        : CHAT.UA_LISTENER_JOIN;
 
     sendLiveSpaceData(
       messageType: MessageType.USER_ACTIVITY,

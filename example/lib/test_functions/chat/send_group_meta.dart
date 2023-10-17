@@ -33,7 +33,7 @@ Future<void> testSendToGroupMeta() async {
     message: MetaMessage(
         info: Info(
             affected: [ethersWallet.address!], arbitrary: {'key': 'value'}),
-        content: CHAT['META']['GROUP']['CREATE']),
+        content: CHAT.META_GROUP_CREATE),
     receiverAddress:
         '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );

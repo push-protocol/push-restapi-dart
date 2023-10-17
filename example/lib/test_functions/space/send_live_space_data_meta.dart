@@ -40,7 +40,7 @@ Future<void> testSendLiveSpaceDataMeta() async {
         ListenerPeer(address: '0x5C34b69f1ccb13691d8752AF740eaD6FB04B522e')
       ]);
 
-  final content = CHAT['META']['SPACE']['CREATE'];
+  final content = CHAT.META_SPACE_CREATE;
   final metaMessage = MetaMessage(
       info: Info(
           affected: affectedAddresses,

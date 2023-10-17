@@ -192,8 +192,8 @@ class SpaceStateNotifier extends ChangeNotifier {
       spaceData.liveSpaceData.speakers = speakers;
 
       String metaMessageContent = isOn == true
-          ? CHAT['UA']['SPEAKER']['MIC_ON']
-          : CHAT['UA']['SPEAKER']['MIC_OFF'];
+          ? CHAT.UA_SPEAKER_MIC_ON
+          : CHAT.UA_SPEAKER_MIC_OFF;
 
       sendLiveSpaceData(
         messageType: MessageType.USER_ACTIVITY,
@@ -228,7 +228,7 @@ class SpaceStateNotifier extends ChangeNotifier {
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        String metaMessageContent = CHAT['UA']['SPEAKER']['LEAVE'];
+        String metaMessageContent = CHAT.UA_SPEAKER_LEAVE;
 
         if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
           spaceData.liveSpaceData.host = AdminPeer();

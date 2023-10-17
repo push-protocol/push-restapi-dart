@@ -40,7 +40,7 @@ Future<void> testSendLiveSpaceDataUA() async {
         ListenerPeer(address: '0x5C34b69f1ccb13691d8752AF740eaD6FB04B522e')
       ]);
 
-  final content = CHAT['UA']['LISTENER']['JOIN'];
+  final content = CHAT.UA_LISTENER_JOIN;
   final userActivityMessage = UserActivityMessage(
       info: Info(
           affected: affectedAddresses,
