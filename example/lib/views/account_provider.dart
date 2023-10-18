@@ -164,16 +164,21 @@ class AccountProvider extends ChangeNotifier {
       print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
       ref.read(conversationsProvider).onRecieveSocket(groupInfo);
     });
+
+    // To get realtime updates for spaces
     pushSDKSocket.on(
       EVENTS.SPACES_MESSAGES,
       (data) async {
-        print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+        final message = data as Map<String, dynamic>;
 
-        final metaMessage = data as Map<String, dynamic>;
+        print(
+            'SPACES NOTIFICATION EVENTS.SPACES_MESSAGES messageCategory ${message['messageCategory']} messageType ${message['messageType']}');
 
-        if (metaMessage['messageCategory'] == 'Chat' &&
-            metaMessage['messageType'] == 'Meta') {
-          ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+        // Check if the message is a chat meta message or chat user activity message
+        if (message['messageCategory'] == 'Chat' &&
+            (message['messageType'] == MessageType.META ||
+                message['messageType'] == MessageType.USER_ACTIVITY)) {
+          ref.read(PushSpaceProvider).onReceiveMetaMessage(message);
         }
       },
     );
