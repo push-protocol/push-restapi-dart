@@ -87,15 +87,41 @@ class GroupAdminsView extends StatelessWidget {
                   itemCount: admins.length,
                   itemBuilder: (context, index) {
                     final item = admins[index];
-                    return ListTile(
-                        leading: ProfileImage(imageUrl: item.image),
-                        title: Text('${item.wallet}'),
-                        trailing: MemberActionWidget(
-                          item: item,
-                          isRemoveAdmin: true,
-                          isUserAdmin: isUserAdmin,
-                          chatId: chatId,
-                        ));
+                    return Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(.5)),
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileImage(
+                            imageUrl: item.image,
+                            size: 48,
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('${item.wallet}'),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: MemberActionWidget(
+                                    item: item,
+                                    isRemoveAdmin: true,
+                                    isUserAdmin: isUserAdmin,
+                                    chatId: chatId,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
         ),
@@ -148,14 +174,36 @@ class GroupMembersView extends StatelessWidget {
                     itemCount: members.length,
                     itemBuilder: (context, index) {
                       final item = members[index];
-                      return ListTile(
-                        leading: ProfileImage(imageUrl: item.image),
-                        title: Text('${item.wallet}'),
-                        trailing: MemberActionWidget(
-                          item: item,
-                          isRemoveAdmin: false,
-                          isUserAdmin: isUserAdmin,
-                          chatId: chatId,
+                      return Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(color: Colors.grey.withOpacity(.5)),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ProfileImage(
+                              imageUrl: item.image,
+                              size: 48,
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('${item.wallet}'),
+                                  MemberActionWidget(
+                                    item: item,
+                                    isRemoveAdmin: false,
+                                    isUserAdmin: isUserAdmin,
+                                    chatId: chatId,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -217,17 +265,38 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
       );
     }
     if (widget.isUserAdmin) {
-      return TextButton(
-        onPressed: () {
-          if (widget.isRemoveAdmin) {
-            _removeAdmin();
-          } else {
-            _removeMember();
-          }
-        },
-        child: Text(
-          'Remove',
-          style: TextStyle(color: Colors.red, fontSize: 14),
+      return Align(
+        alignment: Alignment.topRight,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              onPressed: () {
+                if (widget.isRemoveAdmin) {
+                  _demoteToMember();
+                } else {
+                  _promoteToAdmin();
+                }
+              },
+              child: Text(
+                widget.isRemoveAdmin ? "Demote to Member" : "Promote to Admin",
+                style: TextStyle(color: Colors.blue, fontSize: 14),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (widget.isRemoveAdmin) {
+                  _removeAdmin();
+                } else {
+                  _removeMember();
+                }
+              },
+              child: Text(
+                'Remove',
+                style: TextStyle(color: Colors.red, fontSize: 14),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -269,6 +338,51 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
             ? 'Cannot remove admin'
             : 'Admin removed successfully',
       );
+    });
+  }
+
+  _demoteToMember() async {
+    showLoadingDialog();
+    removeAdmins(
+      chatId: widget.chatId!,
+      admins: [widget.item.wallet],
+    ).then((value) {
+      addMembers(
+        chatId: widget.chatId!,
+        members: [widget.item.wallet],
+      ).then((value) {
+        pop();
+
+        ref.read(chatRoomProvider).onRefreshRoom(groupData: value);
+        showMyDialog(
+          context: context,
+          title: 'Demote to member',
+          message: value == null
+              ? 'Cannot remove admin'
+              : 'Admin demoted successfully',
+        );
+      });
+    });
+  }
+
+  _promoteToAdmin() {
+    showLoadingDialog();
+    removeMembers(
+      chatId: widget.chatId!,
+      members: [widget.item.wallet],
+    ).then((value) {
+      addAdmins(chatId: widget.chatId!, admins: [widget.item.wallet])
+          .then((value) {
+        ref.read(chatRoomProvider).onRefreshRoom(groupData: value);
+        pop();
+        showMyDialog(
+          context: context,
+          title: 'Remove User',
+          message: value == null
+              ? 'Cannot promote user'
+              : 'Member promoted successfully',
+        );
+      });
     });
   }
 }

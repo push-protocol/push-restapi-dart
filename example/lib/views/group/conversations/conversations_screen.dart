@@ -92,15 +92,17 @@ class ProfileImage extends StatelessWidget {
   const ProfileImage({
     super.key,
     required this.imageUrl,
+    this.size = 60,
   });
   final String? imageUrl;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     if (imageUrl == null) {
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
@@ -115,8 +117,8 @@ class ProfileImage extends StatelessWidget {
     try {
       if (imageUrl!.startsWith('https://')) {
         return Container(
-          height: 60,
-          width: 60,
+          height: size,
+          width: size,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.purpleAccent),
             shape: BoxShape.circle,
@@ -135,8 +137,8 @@ class ProfileImage extends StatelessWidget {
       Uint8List myImage = data!.contentAsBytes();
 
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
@@ -150,8 +152,8 @@ class ProfileImage extends StatelessWidget {
       );
     } catch (e) {
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
