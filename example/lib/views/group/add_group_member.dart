@@ -1,8 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../__lib.dart';
 
-class AddGroupMember extends StatefulWidget {
+class AddGroupMember extends ConsumerStatefulWidget {
   const AddGroupMember({
     super.key,
     required this.chatId,
@@ -12,10 +13,10 @@ class AddGroupMember extends StatefulWidget {
   final bool isAdmin;
 
   @override
-  State<AddGroupMember> createState() => _AddGroupMemberState();
+  ConsumerState<AddGroupMember> createState() => _AddGroupMemberState();
 }
 
-class _AddGroupMemberState extends State<AddGroupMember> {
+class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
   TextEditingController controller = TextEditingController();
 
   String get type => widget.isAdmin ? 'Admin' : 'Member';
@@ -85,6 +86,7 @@ class _AddGroupMemberState extends State<AddGroupMember> {
           message: 'Failed to add $address to group',
         );
       } else {
+        ref.read(chatRoomProvider).onRefreshRoom(groupData: result);
         controller.clear();
         setState(() {});
         showMyDialog(

@@ -1,11 +1,27 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../../__lib.dart';
 
-class ConversationsScreen extends StatelessWidget {
+class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
+
+  @override
+  ConsumerState<ConversationsScreen> createState() =>
+      _ConversationsScreenState();
+}
+
+class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(conversationsProvider).loadChats();
+    });
+  }
 
   @override
   Widget build(
@@ -35,32 +51,36 @@ class ConversationsScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          // if (snapshot.data == null) {
-          //   return Center(child: Text('Cannot load Conversations'));
-          // }
 
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 32),
-            separatorBuilder: (context, index) => Divider(),
-            itemCount: spaces.length,
-            itemBuilder: (context, index) {
-              final item = spaces[index];
-              final image = item.groupInformation?.groupImage ??
-                  item.profilePicture ??
-                  '';
-
-              return ListTile(
-                onTap: () {
-                  ref.read(chatRoomProvider).setCurrentChatId(item.chatId!);
-                  pushScreen(ChatRoomScreen(room: item));
-                },
-                leading: ProfileImage(imageUrl: image),
-                title: Text(
-                    '${item.groupInformation?.groupName ?? item.intentSentBy}'),
-                subtitle:
-                    Text(item.msg?.messageContent ?? 'Send first message'),
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await vm.loadChats();
             },
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              separatorBuilder: (context, index) => Divider(),
+              itemCount: spaces.length,
+              itemBuilder: (context, index) {
+                final item = spaces[index];
+                final image =
+                    item.groupInformation?.groupImage ?? item.profilePicture;
+
+                return ListTile(
+                  onTap: () {
+                    pushScreen(ChatRoomScreen(room: item));
+                  },
+                  leading: ProfileImage(imageUrl: image),
+                  title: Text(
+                      '${item.groupInformation?.groupName ?? item.intentSentBy}'),
+                  subtitle: Text(
+                    item.msg?.messageType == MessageType.TEXT
+                        ? item.msg?.messageContent ?? 'Send first message'
+                        : '${item.msg?.messageType} was sent by ${item.msg?.fromDID}',
+                    maxLines: 1,
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
@@ -69,14 +89,20 @@ class ConversationsScreen extends StatelessWidget {
 }
 
 class ProfileImage extends StatelessWidget {
-  const ProfileImage({super.key, required this.imageUrl});
+  const ProfileImage({
+    super.key,
+    required this.imageUrl,
+    this.size = 60,
+  });
   final String? imageUrl;
+  final double size;
+
   @override
   Widget build(BuildContext context) {
     if (imageUrl == null) {
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
@@ -91,8 +117,8 @@ class ProfileImage extends StatelessWidget {
     try {
       if (imageUrl!.startsWith('https://')) {
         return Container(
-          height: 60,
-          width: 60,
+          height: size,
+          width: size,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.purpleAccent),
             shape: BoxShape.circle,
@@ -111,8 +137,8 @@ class ProfileImage extends StatelessWidget {
       Uint8List myImage = data!.contentAsBytes();
 
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
@@ -126,8 +152,8 @@ class ProfileImage extends StatelessWidget {
       );
     } catch (e) {
       return Container(
-        height: 60,
-        width: 60,
+        height: size,
+        width: size,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,

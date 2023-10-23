@@ -1,5 +1,4 @@
 import 'package:clipboard/clipboard.dart';
-import 'package:example/views/account_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
@@ -19,7 +18,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final vm = ref.watch(accountProvider);
     final accounts = vm.accounts;
-    final actions = currentIndex == 0 ? vm.spaceActions : vm.chatActions;
+    late List<NavItem> actions;
+    if (currentIndex == 0) {
+      actions = vm.spaceActions;
+    } else {
+      final reqVm = ref.watch(requestsProvider);
+      actions = [
+        NavItem(
+          title: 'Create Group',
+          onPressed: () {
+            pushScreen(
+              CreateGroupScreen(),
+            );
+          },
+        ),
+        NavItem(
+          title: 'Conversations',
+          onPressed: () {
+            ref.read(conversationsProvider).loadChats();
+            pushScreen(ConversationsScreen());
+          },
+        ),
+        NavItem(
+          title: 'Pending Requests',
+          count: reqVm.requestsList?.length ?? 0,
+          onPressed: () {
+            pushScreen(
+              ChatRequestScreen(),
+            );
+          },
+        ),
+      ];
+    }
     Wallet? pushWallet = vm.pushWallet;
     return pushWallet == null
         ? ConnectScreen(accounts: accounts, vm: vm)
@@ -109,7 +139,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   tileColor: Colors.white,
                                   title: Text(item.title),
                                   onTap: item.onPressed,
-                                  trailing: Icon(Icons.arrow_forward_ios),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (item.count > 0)
+                                        Container(
+                                          padding: EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red,
+                                          ),
+                                          child: Text(
+                                            item.count.toString(),
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      Icon(Icons.arrow_forward_ios),
+                                    ],
+                                  ),
                                 );
                               },
                               separatorBuilder: (context, index) =>
@@ -231,10 +279,16 @@ Future pushScreen(Widget screen) async {
 
 class NavItem {
   final String title;
+  final String type;
+  final int count;
+  final dynamic icon;
   final Function() onPressed;
 
   NavItem({
     required this.title,
     required this.onPressed,
+    this.count = 0,
+    this.type = '',
+    this.icon,
   });
 }
