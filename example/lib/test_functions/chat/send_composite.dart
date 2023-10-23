@@ -3,7 +3,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ethers;
 
-Future<void> testSendToGroupMeta() async {
+Future<void> testSendComposite() async {
   final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
 
@@ -11,7 +11,7 @@ Future<void> testSendToGroupMeta() async {
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
   );
-  
+
   final user = await getUser(address: ethersWallet.address!);
 
   if (user == null) {
@@ -30,10 +30,10 @@ Future<void> testSendToGroupMeta() async {
   final options = ChatSendOptions(
     accountAddress: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    message: MetaMessage(
-        info: Info(
-            affected: [ethersWallet.address!], arbitrary: {'key': 'value'}),
-        content: CHAT.META_GROUP_CREATE),
+    message: CompositeMessage(content: [
+      NestedContent(type: MessageType.TEXT, content: "inner message 1"),
+      NestedContent(type: MessageType.TEXT, content: "inner message 2")
+    ]),
     receiverAddress:
         '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );

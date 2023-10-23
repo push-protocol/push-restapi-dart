@@ -1,24 +1,36 @@
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 Future sendLiveSpaceData({
+  required String messageType,
   required LiveSpaceData updatedLiveSpaceData,
-  required META_ACTION action,
+  required String content,
   required List<String> affectedAddresses,
   required String spaceId,
 }) async {
-  final content = '${action.toString()} $affectedAddresses';
-  final metaMessage = MetaMessage(
-    action: action,
-    info: Info(
-      affected: affectedAddresses,
-      arbitrary: updatedLiveSpaceData.toJson(),
-    ),
-    content: content,
-  );
+  if (messageType != MessageType.META &&
+      messageType != MessageType.USER_ACTIVITY) {
+    throw Exception(
+        "Live space data supports only META, USER_ACTIVITY message types");
+  }
+
+  final message = messageType == MessageType.META
+      ? MetaMessage(
+          info: Info(
+            affected: affectedAddresses,
+            arbitrary: updatedLiveSpaceData.toJson(),
+          ),
+          content: content,
+        )
+      : UserActivityMessage(
+          info: Info(
+            affected: affectedAddresses,
+            arbitrary: updatedLiveSpaceData.toJson(),
+          ),
+          content: content,
+        );
 
   final options = ChatSendOptions(
-      messageType: MessageType.META,
-      message: metaMessage,
-      receiverAddress: spaceId);
+      messageType: messageType, message: message, receiverAddress: spaceId);
+
   return send(options);
 }

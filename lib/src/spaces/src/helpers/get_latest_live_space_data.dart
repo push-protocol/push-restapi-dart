@@ -22,7 +22,8 @@ Future<LiveSpaceData> getLatestLiveSpaceData({
 
     Message? latestMetaMessage;
     for (final message in messages) {
-      if (message.messageType == MessageType.META &&
+      if ((message.messageType == MessageType.META ||
+              message.messageType == MessageType.USER_ACTIVITY) &&
           message.messageObj != null) {
         latestMetaMessage = message;
         break;

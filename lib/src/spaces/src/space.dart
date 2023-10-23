@@ -191,10 +191,14 @@ class SpaceStateNotifier extends ChangeNotifier {
 
       spaceData.liveSpaceData.speakers = speakers;
 
+      String metaMessageContent = isOn == true
+          ? CHAT.UA_SPEAKER_MIC_ON
+          : CHAT.UA_SPEAKER_MIC_OFF;
+
       sendLiveSpaceData(
+        messageType: MessageType.USER_ACTIVITY,
         updatedLiveSpaceData: spaceData.liveSpaceData,
-        action: META_ACTION
-            .USER_INTERACTION, // TODO: Need a better action for mic toggle
+        content: metaMessageContent,
         affectedAddresses: [localAddress],
         spaceId: spaceData.spaceId,
       );
@@ -220,17 +224,14 @@ class SpaceStateNotifier extends ChangeNotifier {
         // disconnect from the room
         _room!.disconnect();
 
-        // fire a meta message signaling that the user has left the space
+        // fire a user activity message signaling that the user has left the space
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        META_ACTION action = META_ACTION
-            .DEMOTE_FROM_SPEAKER; // TODO: Need a better action for speaker leaving
+        String metaMessageContent = CHAT.UA_SPEAKER_LEAVE;
 
         if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
           spaceData.liveSpaceData.host = AdminPeer();
-          action = META_ACTION
-              .DEMOTE_FROM_ADMIN; // TODO: Need a better action for host leaving
         } else {
           final speakers = <AdminPeer>[];
           for (var speaker in spaceData.liveSpaceData.speakers) {
@@ -242,8 +243,9 @@ class SpaceStateNotifier extends ChangeNotifier {
         }
 
         sendLiveSpaceData(
+            messageType: MessageType.USER_ACTIVITY,
             updatedLiveSpaceData: spaceData.liveSpaceData,
-            action: action,
+            content: metaMessageContent,
             affectedAddresses: [localAddress],
             spaceId: spaceData.spaceId);
 
