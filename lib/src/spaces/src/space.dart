@@ -191,9 +191,8 @@ class SpaceStateNotifier extends ChangeNotifier {
 
       spaceData.liveSpaceData.speakers = speakers;
 
-      String metaMessageContent = isOn == true
-          ? CHAT.UA_SPEAKER_MIC_ON
-          : CHAT.UA_SPEAKER_MIC_OFF;
+      String metaMessageContent =
+          isOn == true ? CHAT.UA_SPEAKER_MIC_ON : CHAT.UA_SPEAKER_MIC_OFF;
 
       sendLiveSpaceData(
         messageType: MessageType.USER_ACTIVITY,
@@ -214,7 +213,36 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   Future leave() async {
     try {
-      _playbackUrl = null;
+      final localAddress = getCachedWallet()!.address!;
+
+      // update liveSpaceData by removing the current user
+      if (localAddress == pCAIP10ToWallet(data.spaceCreator)) {
+        // host
+        data.liveSpaceData.host = AdminPeer();
+      } else if (_room != null) {
+        // speaker
+        final speakers = <AdminPeer>[];
+        for (var speaker in data.liveSpaceData.speakers) {
+          if (speaker.address != localAddress) {
+            speakers.add(speaker);
+          }
+        }
+        data.liveSpaceData.speakers = speakers;
+      } else {
+        // listener
+        final listeners = <ListenerPeer>[];
+        for (var listener in data.liveSpaceData.listeners) {
+          if (listener.address != localAddress) {
+            listeners.add(listener);
+          }
+        }
+        data.liveSpaceData.listeners = listeners;
+      }
+
+      // prepare messageContent of the user activity message
+      String messageContent =
+          _room != null ? CHAT.UA_SPEAKER_LEAVE : CHAT.UA_LISTENER_LEAVE;
+
       if (_room != null) {
         // turn off mic
         // TODO: Replace this with setMicrophoneState() call once we have the queue
@@ -224,35 +252,20 @@ class SpaceStateNotifier extends ChangeNotifier {
         // disconnect from the room
         _room!.disconnect();
 
-        // fire a user activity message signaling that the user has left the space
-        final localAddress = getCachedWallet()!.address!;
-        final spaceData = data;
-
-        String metaMessageContent = CHAT.UA_SPEAKER_LEAVE;
-
-        if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
-          spaceData.liveSpaceData.host = AdminPeer();
-        } else {
-          final speakers = <AdminPeer>[];
-          for (var speaker in spaceData.liveSpaceData.speakers) {
-            if (speaker.address != localAddress) {
-              speakers.add(speaker);
-            }
-          }
-          spaceData.liveSpaceData.speakers = speakers;
-        }
-
-        sendLiveSpaceData(
-            messageType: MessageType.USER_ACTIVITY,
-            updatedLiveSpaceData: spaceData.liveSpaceData,
-            content: metaMessageContent,
-            affectedAddresses: [localAddress],
-            spaceId: spaceData.spaceId);
-
-        data = initSpaceData;
+        _room = null;
       }
 
-      _room = null;
+      if (_playbackUrl != null) {
+        _playbackUrl = null;
+      }
+
+      sendLiveSpaceData(
+          messageType: MessageType.USER_ACTIVITY,
+          updatedLiveSpaceData: data.liveSpaceData,
+          content: messageContent,
+          affectedAddresses: [localAddress],
+          spaceId: data.spaceId);
+      data = initSpaceData;
     } catch (e) {
       log('leave error $e');
     }
