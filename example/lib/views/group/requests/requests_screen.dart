@@ -1,40 +1,52 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-import '../../__lib.dart';
+import '../../../__lib.dart';
 
-class ChatRequestScreen extends StatefulWidget {
+class ChatRequestScreen extends ConsumerStatefulWidget {
   const ChatRequestScreen({super.key});
 
   @override
-  State<ChatRequestScreen> createState() => _ChatRequestScreenState();
+  ConsumerState<ChatRequestScreen> createState() => _ChatRequestScreenState();
 }
 
-class _ChatRequestScreenState extends State<ChatRequestScreen> {
+class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Requests'),
+        actions: [
+          InkWell(
+            onTap: () {
+              ref.read(requestsProvider).loadRequests();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.refresh),
+            ),
+          )
+        ],
       ),
-      body: FutureBuilder<List<Feeds>?>(
-        future: requests(toDecrypt: true),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer(
+        builder: (context, ref, child) {
+          final vm = ref.watch(requestsProvider);
+          final requestsList = vm.requestsList;
+          if (vm.isBusy && (requestsList ?? []).isEmpty) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (snapshot.data == null) {
+          if (requestsList == null) {
             return Center(child: Text('Cannot load Requests'));
           }
-          final spaces = snapshot.data!;
 
           return ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 32),
             separatorBuilder: (context, index) => Divider(),
-            itemCount: spaces.length,
+            itemCount: requestsList.length,
             itemBuilder: (context, index) {
-              final item = spaces[index];
+              final item = requestsList[index];
               final image = item.groupInformation?.groupImage ??
                   item.profilePicture ??
                   '';
@@ -42,14 +54,16 @@ class _ChatRequestScreenState extends State<ChatRequestScreen> {
               return ListTile(
                 onTap: () {
                   // pushScreen(ChatRoomScreen(room: item));
-                  onAccetRequests(item.groupInformation!.chatId!);
+                  onAccetRequests(item.chatId!);
                   // onAccetRequests(item.intentSentBy!);
                 },
                 leading: ProfileImage(imageUrl: image),
                 title: Text(
                     '${item.groupInformation?.groupName ?? item.intentSentBy}'),
-                subtitle:
-                    Text(item.msg?.messageContent ?? 'Send first message'),
+                subtitle: Text(
+                  item.msg?.messageContent ?? 'Send first message',
+                  maxLines: 1,
+                ),
               );
             },
           );
@@ -78,5 +92,7 @@ class _ChatRequestScreenState extends State<ChatRequestScreen> {
       );
       pop(context);
     }
+
+    ref.read(requestsProvider).loadRequests();
   }
 }

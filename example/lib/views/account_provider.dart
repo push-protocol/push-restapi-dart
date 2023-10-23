@@ -13,6 +13,8 @@ class AccountProvider extends ChangeNotifier {
 
   Wallet? pushWallet;
 
+  final mnemonic1 =
+      'glory science timber unknown happy doctor walnut grain question float coffee trip';
   final mnemonic2 =
       'label mobile gas salt service gravity nose bomb marine online say twice';
   final mnemonic3 =
@@ -27,6 +29,7 @@ class AccountProvider extends ChangeNotifier {
         mnemonic3,
         mnemonic4,
         mnemonic5,
+        mnemonic1,
       ];
 
   List<NavItem> get spaceActions => [
@@ -56,31 +59,6 @@ class AccountProvider extends ChangeNotifier {
         ),
       ];
 
-  List<NavItem> get chatActions => [
-        NavItem(
-          title: 'Create Group',
-          onPressed: () {
-            pushScreen(
-              CreateGroupScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'Conversations',
-          onPressed: () {
-            ref.read(conversationsProvider).loadChats();
-            pushScreen(ConversationsScreen());
-          },
-        ),
-        NavItem(
-          title: 'Pending Requests',
-          onPressed: () {
-            pushScreen(
-              ChatRequestScreen(),
-            );
-          },
-        ),
-      ];
   connectWallet(String mnemonic) async {
     try {
       showLoadingDialog();
@@ -123,6 +101,7 @@ class AccountProvider extends ChangeNotifier {
         env: ENV.staging,
       );
       creatSocketConnection();
+      ref.read(requestsProvider).loadRequests();
       ref.read(conversationsProvider).reset();
     } catch (e) {
       pop();
@@ -130,59 +109,80 @@ class AccountProvider extends ChangeNotifier {
   }
 
   Future<void> creatSocketConnection() async {
-    final options = SocketInputOptions(
-      user: pushWallet!.address!,
-      env: ENV.staging,
-      socketType: SOCKETTYPES.CHAT,
-      socketOptions: SocketOptions(
-        autoConnect: true,
-        reconnectionAttempts: 3,
-      ),
-    );
+    try {
+      final options = SocketInputOptions(
+        user: pushWallet!.address!,
+        env: ENV.staging,
+        socketType: SOCKETTYPES.CHAT,
+        socketOptions: SocketOptions(
+          autoConnect: true,
+          reconnectionAttempts: 3,
+        ),
+      );
 
-    final pushSDKSocket = await createSocketConnection(options);
-    if (pushSDKSocket == null) {
-      throw Exception('PushSDKSocket Connection Failed');
-    }
+      final pushSDKSocket = await createSocketConnection(options);
+      if (pushSDKSocket == null) {
+        throw Exception('PushSDKSocket Connection Failed');
+      }
 
-    pushSDKSocket.connect();
+      pushSDKSocket.connect();
 
-    pushSDKSocket.on(
-      EVENTS.CONNECT,
-      (data) async {
-        print(' NOTIFICATION EVENTS.CONNECT: $data');
-      },
-    );
-    // To get messages in realtime
-    pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
-      print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
-      ref.read(conversationsProvider).onRecieveSocket(message);
-    });
+      pushSDKSocket.on(
+        EVENTS.CONNECT,
+        (data) async {
+          print(' NOTIFICATION EVENTS.CONNECT: $data');
+        },
+      );
+      // To get messages in realtime
+      pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
+        print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
+        ref.read(conversationsProvider).onRecieveSocket(message);
+      });
 
-    // To get group creation or updation events
-    pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
-      print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
-      ref.read(conversationsProvider).onRecieveSocket(groupInfo);
-    });
-    pushSDKSocket.on(
-      EVENTS.SPACES_MESSAGES,
-      (data) async {
-        print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+      // To get group creation or updation events
+      pushSDKSocket.on(EVENTS.CHAT_GROUPS, (groupInfo) {
+        print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
 
-        final metaMessage = data as Map<String, dynamic>;
+        final type = (groupInfo as Map<String, dynamic>)['eventType'];
+        final recipients = (groupInfo['to'] as List?) ?? [];
 
-        if (metaMessage['messageCategory'] == 'Chat' &&
-            metaMessage['messageType'] == 'Meta') {
-          ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+        if (type == 'create' ||
+            (type == 'request' &&
+                recipients.contains(walletToPCAIP10(pushWallet!.address!)))) {
+          ref.read(requestsProvider).addReqestFromSocket(
+                Feeds(
+                  chatId: groupInfo['chatId'],
+                  intentSentBy: groupInfo['groupName'] ?? groupInfo['from'],
+                ),
+              );
+          return;
         }
-      },
-    );
-    pushSDKSocket.on(
-      EVENTS.DISCONNECT,
-      (data) {
-        print(' NOTIFICATION EVENTS.DISCONNECT: $data');
-      },
-    );
+        ref.read(conversationsProvider).onRecieveSocket(groupInfo);
+      });
+
+      pushSDKSocket.on(
+        EVENTS.SPACES_MESSAGES,
+        (data) async {
+          print(' NOTIFICATION EVENTS.SPACES_MESSAGES:r ${data['messageObj']}');
+
+          final metaMessage = data as Map<String, dynamic>;
+
+          if (metaMessage['messageCategory'] == 'Chat' &&
+              metaMessage['messageType'] == 'Meta') {
+            ref.read(PushSpaceProvider).onReceiveMetaMessage(metaMessage);
+          }
+        },
+      );
+
+      pushSDKSocket.on(
+        EVENTS.DISCONNECT,
+        (data) {
+          print(' NOTIFICATION EVENTS.DISCONNECT: $data');
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   logOut() {
