@@ -157,7 +157,8 @@ class SpaceStateNotifier extends ChangeNotifier {
     return result;
   }
 
-  Future<void> raiseHand() async {
+  /// To be called by a listener and is requesting to be promoted as a speaker
+  Future<void> requestToBePromoted() async {
     final localAddress = getCachedWallet()!.address!;
 
     // check is the caller is an active listener & modify listener data accordingly
@@ -189,6 +190,14 @@ class SpaceStateNotifier extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Promotion request is accepted by the host
+  Future<void> acceptPromotionRequest(
+      {required String promoteeAddress}) async {}
+
+  /// Promotion request is rejected by the host
+  Future<void> rejectPromotionRequest(
+      {required String promoteeAddress}) async {}
 
   _updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
