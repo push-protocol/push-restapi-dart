@@ -29,8 +29,8 @@ Future<void> testSendSpaceReaction() async {
 
   final content = CHAT.REACTION_CLAP;
   final reactionMessage = ReactionMessage(
-    // Note: For spaces a reaction is a general reaction, not referenced to a message
-    // This is not getting added to the idempotent state
+      // Note: For spaces a reaction is a general reaction, not referenced to a message
+      // This is not getting added to the idempotent state
       reference: '',
       content: content);
 

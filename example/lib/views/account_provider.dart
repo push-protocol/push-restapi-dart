@@ -173,7 +173,21 @@ class AccountProvider extends ChangeNotifier {
           if (message['messageCategory'] == 'Chat' &&
               (message['messageType'] == MessageType.META ||
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
-            ref.read(PushSpaceProvider).onReceiveMetaMessage(message);
+            ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
+          }
+          if (message['messageCategory'] == 'Chat' &&
+              (message['messageType'] == MessageType.REACTION)) {
+            try {
+              final reaction = data['messageObj']['content'];
+              final reactionFrom = data['fromDID'];
+              print(data);
+
+              ref
+                  .read(liveSpaceProvider)
+                  .onRecieveReaction(reaction, reactionFrom);
+            } catch (e) {
+              print(e);
+            }
           }
         },
       );
