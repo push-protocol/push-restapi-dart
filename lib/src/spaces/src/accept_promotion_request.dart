@@ -1,20 +1,26 @@
 import '../../../push_restapi_dart.dart';
 
-class AcceptPromotionRequestType {
-  final dynamic signalData;
-  final String promoteeAddress;
-  final SPACE_REQUEST_TYPE role;
-  final String spaceId;
+Future<SpaceData> acceptPromotionRequest_(
+    {required SpaceData data, required String promoteeAddress}) async {
+  final localAddress = getCachedWallet()!.address!;
+  if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
+    throw Exception("Only host is allowed to accept a promotion request");
+  }
 
-  AcceptPromotionRequestType({
-    required this.signalData,
-    required this.promoteeAddress,
-    required this.role,
-    required this.spaceId,
-  });
+  // elevate the member to a speaker
+  await addSpeakers(
+      spaceId: data.spaceId, speakers: [pCAIP10ToWallet(promoteeAddress)]);
+
+  data = setHandRaisedForListener(
+      handRaised: false, listenerAddress: promoteeAddress, spaceData: data);
+
+  // fire a meta message signaling that the 'affectedAddress' is now promoted
+  sendLiveSpaceData(
+      messageType: MessageType.META,
+      updatedLiveSpaceData: data.liveSpaceData,
+      content: CHAT.META_SPACE_SPEAKER_PRIVILEGE,
+      affectedAddresses: [promoteeAddress],
+      spaceId: data.spaceId);
+
+  return data;
 }
-
-acceptPromotionRequest({
-  required SpaceDTO space,
-  required AcceptPromotionRequestType options,
-}) {}
