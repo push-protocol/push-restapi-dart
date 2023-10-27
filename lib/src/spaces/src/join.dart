@@ -85,7 +85,7 @@ Future<SpaceData?> joinSpace({
       final String? playbackUrl = await getPlaybackUrl(playbackId: playbackId);
 
       updatePlaybackUrl(playbackUrl);
-      
+
       spaceData.liveSpaceData.listeners = [
         ...spaceData.liveSpaceData.listeners,
         ListenerPeer(

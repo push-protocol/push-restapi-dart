@@ -287,7 +287,7 @@ ComputedOptions computeOptions(ChatSendOptions options) {
   String messageType =
       options.message?.type ?? options.messageType ?? MessageType.TEXT;
   dynamic messageObj = options.message;
-  
+
   if (messageObj == null) {
     if (![
       MessageType.TEXT,

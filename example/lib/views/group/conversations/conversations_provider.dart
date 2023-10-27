@@ -35,7 +35,7 @@ class ConversationsProvider extends ChangeNotifier {
     loadChats();
   }
 
-  onRecieveSocket(dynamic message) {
+  onReceiveSocket(dynamic message) {
     try {
       loadChats();
 
