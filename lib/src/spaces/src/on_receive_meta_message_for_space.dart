@@ -1,9 +1,9 @@
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceData?> onReceiveMetaMessageForSpace({
-  required Map<String, dynamic> message,
-  required String spaceId,
-}) async {
+Future<SpaceData?> onReceiveMetaMessageForSpace(
+    {required Map<String, dynamic> message,
+    required String spaceId,
+    required Function() joinOnPromotion}) async {
   try {
     final localAddress = getCachedWallet()!.address!;
 
@@ -11,11 +11,15 @@ Future<SpaceData?> onReceiveMetaMessageForSpace({
 
     MetaMessage parsedMetaMessage = MetaMessage.fromJson(message['messageObj']);
 
+    // local address has been promoted to a speaker from a listener
     if (parsedMetaMessage.type == MessageType.META &&
-        parsedMetaMessage.content == CHAT.UA_LISTENER_REQUEST_MIC &&
+        parsedMetaMessage.content == CHAT.META_SPACE_SPEAKER_PRIVILEGE &&
         localAddress == parsedMetaMessage.info?.affected[0]) {
-      // local address has been promoted to a speaker from a listener
-      // TODO: Clear out the playbackURL and call join()
+      // join the room as a speaker
+      joinOnPromotion();
+
+      // dont update the space data on the class here, instead joinOnPromotion will handle it
+      return null;
     }
 
     return SpaceData.fromSpaceDTO(

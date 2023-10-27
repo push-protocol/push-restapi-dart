@@ -68,8 +68,13 @@ class SpaceStateNotifier extends ChangeNotifier {
     // when the space isnt joined we dont act on the recieved meta messages
     if (data.spaceId == '') return;
 
-    final result =
-        await onReceiveMetaMessageForSpace(message: message, spaceId: data.spaceId);
+    final result = await onReceiveMetaMessageForSpace(
+        message: message,
+        spaceId: data.spaceId,
+        joinOnPromotion: () {
+          _setPlaybackUrl(null);
+          join(spaceId: data.spaceId);
+        });
     if (result != null) {
       data = result;
       notifyListeners();
@@ -174,8 +179,8 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   /// Promotion request is rejected by the host
   rejectPromotionRequest({required String promoteeAddress}) {
-    final result = rejectPromotionRequest_(
-        data: data, promoteeAddress: promoteeAddress);
+    final result =
+        rejectPromotionRequest_(data: data, promoteeAddress: promoteeAddress);
     data = result;
     notifyListeners();
   }
