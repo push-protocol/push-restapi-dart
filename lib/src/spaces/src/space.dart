@@ -295,7 +295,7 @@ class PushSpaceNotifier extends ChangeNotifier {
           content: messageContent,
           affectedAddresses: [localAddress],
           spaceId: data.spaceId);
-      data = initSpaceData;
+      data = _initSpaceData;
     } catch (e) {
       log('leave error $e');
     }
