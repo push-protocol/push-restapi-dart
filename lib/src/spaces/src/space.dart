@@ -60,7 +60,7 @@ class PushSpaceNotifier extends ChangeNotifier {
   }
 
   onReceiveMetaMessage(Map<String, dynamic> metaMessage) async {
-    // when the space isnt joined we dont act on the recieved meta messages
+    // when the space isnt joined we dont act on the received meta messages
     if (data.spaceId == '') return;
 
     final result =

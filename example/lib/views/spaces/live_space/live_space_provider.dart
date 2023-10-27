@@ -18,7 +18,7 @@ class LiveSpaceProvider extends PushSpaceNotifier {
 
   List<String> reactions = [];
 
-  onRecieveReaction({required String reaction, required String from}) {
+  onReceiveReaction({required String reaction, required String from}) {
     reactions.insert(0, '$from   $reaction');
 
     notifyListeners();
