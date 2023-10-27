@@ -345,7 +345,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                                 onTap: () {
                                   ref
                                       .read(liveSpaceProvider)
-                                      .sendReaction(emoji);
+                                      .sendReaction(reaction: emoji);
                                 },
                                 child: Text(
                                   emoji,

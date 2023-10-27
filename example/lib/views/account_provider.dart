@@ -175,16 +175,16 @@ class AccountProvider extends ChangeNotifier {
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
             ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
           }
+          
           if (message['messageCategory'] == 'Chat' &&
               (message['messageType'] == MessageType.REACTION)) {
             try {
               final reaction = data['messageObj']['content'];
               final reactionFrom = data['fromDID'];
-              print(data);
 
               ref
                   .read(liveSpaceProvider)
-                  .onRecieveReaction(reaction, reactionFrom);
+                  .onRecieveReaction(reaction: reaction, from: reactionFrom);
             } catch (e) {
               print(e);
             }
