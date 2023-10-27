@@ -122,7 +122,7 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
 
     showLoadingDialog(context);
     ref
-        .read(PushSpaceProvider.notifier)
+        .read(liveSpaceProvider.notifier)
         .start(
           spaceId: item.spaceId!,
           progressHook: (p0) {},

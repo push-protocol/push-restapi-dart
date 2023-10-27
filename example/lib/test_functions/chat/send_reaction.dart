@@ -30,7 +30,9 @@ Future<void> testSendReaction() async {
   String groupId =
       '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298';
 
-  String hash = await conversationHash(conversationId: groupId, accountAddress: ethersWallet.address) ?? '';
+  String hash = await conversationHash(
+          conversationId: groupId, accountAddress: ethersWallet.address) ??
+      '';
 
   String referenceLink = '';
   if (hash != '') {

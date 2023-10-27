@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 import 'helpers/live_peer.dart';
@@ -12,10 +11,6 @@ import 'update_space_meta.dart';
 
 import '../../../push_restapi_dart.dart';
 
-final PushSpaceProvider = ChangeNotifierProvider<SpaceStateNotifier>((ref) {
-  return SpaceStateNotifier();
-});
-
 typedef SetDataFunction = SpaceData Function(SpaceData);
 
 LiveSpaceData initLiveSpaceData = LiveSpaceData(
@@ -24,7 +19,7 @@ LiveSpaceData initLiveSpaceData = LiveSpaceData(
   listeners: [],
 );
 
-SpaceData initSpaceData = SpaceData(
+SpaceData _initSpaceData = SpaceData(
   members: [],
   pendingMembers: [],
   numberOfERC20: -1,
@@ -38,9 +33,9 @@ SpaceData initSpaceData = SpaceData(
   liveSpaceData: initLiveSpaceData,
 );
 
-class SpaceStateNotifier extends ChangeNotifier {
-  SpaceStateNotifier() {
-    data = initSpaceData;
+class PushSpaceNotifier extends ChangeNotifier {
+  PushSpaceNotifier() {
+    data = _initSpaceData;
   }
   // to store the room data upon start/join
   Room? _room;
@@ -96,8 +91,15 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   updateMeta({
     required String meta,
-  }) {
-    updateSpaceMeta(meta: meta);
+  }) async {
+    final update = await updateSpaceMeta(
+      meta: meta,
+      spaceId: data.spaceId,
+    );
+
+    setData((p0) {
+      return SpaceData.fromSpaceDTO(update, data.liveSpaceData);
+    });
   }
 
   Future<SpaceDTO?> join({
@@ -302,4 +304,19 @@ class SpaceStateNotifier extends ChangeNotifier {
   }
 
   stop() {}
+
+  sendReaction({required String reaction}) async {
+    final reactionMessage = ReactionMessage(
+        // Note: For spaces a reaction is a general reaction, not referenced to a message
+        // This is not getting added to the idempotent state
+        reference: '',
+        content: reaction);
+
+    final options = ChatSendOptions(
+      message: reactionMessage,
+      receiverAddress: data.spaceId,
+    );
+
+    await send(options);
+  }
 }

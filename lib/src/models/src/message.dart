@@ -154,7 +154,6 @@ class MessageWithCID {
   }
 }
 
-
 class NestedContent {
   String type;
   String content;

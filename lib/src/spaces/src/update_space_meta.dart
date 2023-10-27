@@ -1,7 +1,8 @@
 import '../../../push_restapi_dart.dart'; // Replace with actual import
 
-Future<void> updateSpaceMeta({
+Future<SpaceDTO> updateSpaceMeta({
   required String meta,
+  required String spaceId,
   Signer? signer,
   String? pgpPrivateKey,
 }) async {
@@ -9,9 +10,7 @@ Future<void> updateSpaceMeta({
   pgpPrivateKey ??= getCachedWallet()?.pgpPrivateKey;
 
   try {
-    var data = providerContainer.read(PushSpaceProvider).data;
-
-    final space = await getSpaceById(spaceId: data.spaceId);
+    final space = await getSpaceById(spaceId: spaceId);
 
     final convertedMembers = getSpacesMembersList(
       space.members,
@@ -23,7 +22,7 @@ Future<void> updateSpaceMeta({
     );
 
     final group = await updateGroup(
-      chatId: data.spaceId,
+      chatId: spaceId,
       groupName: space.spaceName,
       groupImage: space.spaceImage,
       groupDescription: space.spaceDescription!,
@@ -35,10 +34,9 @@ Future<void> updateSpaceMeta({
       meta: meta,
     );
 
-    providerContainer.read(PushSpaceProvider.notifier).setData((oldData) {
-      return SpaceData.fromSpaceDTO(
-          groupDtoToSpaceDto(group!), data.liveSpaceData);
-    });
+    // return SpaceData.fromSpaceDTO(
+    //     groupDtoToSpaceDto(group!), data.liveSpaceData);
+    return groupDtoToSpaceDto(group!);
   } catch (err) {
     print('[Push SDK] - API  - Error - API update - : $err');
     rethrow;

@@ -136,7 +136,7 @@ class AccountProvider extends ChangeNotifier {
       // To get messages in realtime
       pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
         print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
-        ref.read(conversationsProvider).onRecieveSocket(message);
+        ref.read(conversationsProvider).onReceiveSocket(message);
       });
 
       // To get group creation or updation events
@@ -157,7 +157,7 @@ class AccountProvider extends ChangeNotifier {
               );
           return;
         }
-        ref.read(conversationsProvider).onRecieveSocket(groupInfo);
+        ref.read(conversationsProvider).onReceiveSocket(groupInfo);
       });
 
       // To get realtime updates for spaces
@@ -173,7 +173,21 @@ class AccountProvider extends ChangeNotifier {
           if (message['messageCategory'] == 'Chat' &&
               (message['messageType'] == MessageType.META ||
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
-            ref.read(PushSpaceProvider).onReceiveMetaMessage(message);
+            ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
+          }
+          
+          if (message['messageCategory'] == 'Chat' &&
+              (message['messageType'] == MessageType.REACTION)) {
+            try {
+              final reaction = data['messageObj']['content'];
+              final reactionFrom = data['fromDID'];
+
+              ref
+                  .read(liveSpaceProvider)
+                  .onReceiveReaction(reaction: reaction, from: reactionFrom);
+            } catch (e) {
+              print(e);
+            }
           }
         },
       );

@@ -96,7 +96,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
   onJoin(String spaceId) {
     showLoadingDialog(context);
     ref
-        .read(PushSpaceProvider.notifier)
+        .read(liveSpaceProvider.notifier)
         .join(
           spaceId: spaceId,
         )

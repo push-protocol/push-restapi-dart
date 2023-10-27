@@ -11,7 +11,7 @@ Future<GroupDTO?> getGroup({required String chatId}) async {
     return null;
   }
 
-  if(result is String){
+  if (result is String) {
     throw Exception(result);
   }
 

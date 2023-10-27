@@ -11,7 +11,7 @@ Future<void> testSendToGroupMeta() async {
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
   );
-  
+
   final user = await getUser(address: ethersWallet.address!);
 
   if (user == null) {
