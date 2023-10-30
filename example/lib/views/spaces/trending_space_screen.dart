@@ -105,6 +105,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
       if (value == null) {
         showMyDialog(context: context, title: 'Error', message: 'Cannot Join');
       } else {
+        
         pushScreen(
           LiveSpaceRoom(space: value),
         );

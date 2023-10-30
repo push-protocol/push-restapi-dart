@@ -27,9 +27,7 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
         spaceDescription: "Testing dart for description for $spaceName",
         listeners: ["eip155:0x9960D6B63B113303B9910A03ca5341B83CC52723"],
         speakers: [
-          "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280",
-          '0xB6E3Dc6b35A294f6Bc8de33969185A615e8596D3',
-          '0x8ca107e6845b095599FDc1A937E6f16677a90325',
+          '0x9e16C5B631C3328843fA7d2acc8edd100f21693a',
         ],
         isPublic: true,
         scheduleAt: DateTime.now().toUtc().add(
@@ -65,7 +63,7 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
         title: Text('My Spaces'),
       ),
       body: FutureBuilder<List<SpaceFeeds>?>(
-        future: spaceFeeds(toDecrypt: true),
+        future: spaceFeeds(toDecrypt: true, limit: 5),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
