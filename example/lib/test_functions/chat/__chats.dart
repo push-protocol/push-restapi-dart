@@ -14,3 +14,6 @@ export 'send_group_meta.dart';
 export 'send_image.dart';
 export 'send_media_embed.dart';
 export 'send_file.dart';
+export 'send_composite.dart';
+export 'send_reaction.dart';
+export 'send_reply.dart';

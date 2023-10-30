@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names, camel_case_types, non_constant_identifier_names
+// ignore_for_file: constant_identifier_names, camel_case_types
 
 class ENCRYPTION_TYPE {
   static const PGP_V1 = 'x25519-xsalsa20-poly1305';
@@ -40,106 +40,83 @@ class Constants {
 
 class MessageType {
   static const TEXT = 'Text';
+  static const VIDEO = 'Video';
+  static const AUDIO = 'Audio';
   static const IMAGE = 'Image';
   static const FILE = 'File';
   static const MEDIA_EMBED = 'MediaEmbed';
   static const META = 'Meta';
   static const REACTION = 'Reaction';
+  static const COMPOSITE = 'Composite';
+  static const REPLY = 'Reply';
+  static const RECEIPT = 'Receipt';
+  static const USER_ACTIVITY = 'UserActivity';
+  static const INTENT = 'Intent';
+  static const PAYMENT = 'Payment';
 
   /// @deprecated - Use MediaEmbed Instead
   static const GIF = 'GIF';
 
   static isValidMessageType(String type) {
-    return [TEXT, IMAGE, FILE, MEDIA_EMBED, META, REACTION].contains(type);
+    return [
+      TEXT,
+      VIDEO,
+      AUDIO,
+      IMAGE,
+      FILE,
+      MEDIA_EMBED,
+      META,
+      REACTION,
+      COMPOSITE,
+      REPLY,
+      USER_ACTIVITY,
+      PAYMENT,
+      INTENT,
+      RECEIPT
+    ].contains(type);
   }
 }
 
-enum META_ACTION {
-  /// DEFAULT GROUP ACTIONS
-  CREATE_GROUP,
-  ADD_MEMBER,
-  REMOVE_MEMBER,
-  PROMOTE_TO_ADMIN,
-  DEMOTE_FROM_ADMIN,
-
-  /// SHARED ACTIONS
-  CHANGE_IMAGE_OR_DESC,
-  CHANGE_META,
-
-  /// SPACES ACTIONS
-  CREATE_SPACE,
-  ADD_LISTENER,
-  REMOVE_LISTENER,
-  PROMOTE_TO_SPEAKER,
-  DEMOTE_FROM_SPEAKER,
-  PROMOTE_TO_COHOST,
-  DEMOTE_FROM_COHOST,
-  USER_INTERACTION, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
+class CHAT {
+  static const String META_GROUP_CREATE = 'CREATE_GROUP';
+  static const String META_GROUP_MEMBER_ADD = 'ADD_MEMBER';
+  static const String META_GROUP_MEMBER_REMOVE = 'REMOVE_MEMBER';
+  static const String META_GROUP_MEMBER_PRIVILEGE = 'ASSIGN_MEMBER_PRIVILEGE';
+  static const String META_GROUP_ADMIN_PRIVILEGE = 'ASSIGN_ADMIN_PRIVILEGE';
+  static const String META_GROUP_UPDATE_GROUP = 'UPDATE_GROUP';
+  static const String META_GROUP_PROFILE_UPDATE = 'UPDATE_GROUP_PROFILE';
+  static const String META_GROUP_META_UPDATE = 'UPDATE_GROUP_META';
+  static const String META_GROUP_USER_INTERACTION = 'USER_INTERACTION';
+  static const String META_SPACE_CREATE = 'CREATE_SPACE';
+  static const String META_SPACE_START = 'START_SPACE';
+  static const String META_SPACE_LISTENER_ADD = 'ADD_LISTENER';
+  static const String META_SPACE_LISTENER_REMOVE = 'REMOVE_LISTENER';
+  static const String META_SPACE_LISTENER_PRIVILEGE =
+      'ASSIGN_LISTENER_PRIVILEGE';
+  static const String META_SPACE_SPEAKER_PRIVILEGE = 'ASSIGN_SPEAKER_PRIVILEGE';
+  static const String META_SPACE_COHOST_PRIVILEGE = 'ASSIGN_COHOST_PRIVILEGE';
+  static const String REACTION_THUMBSUP = '\u{1F44D}';
+  static const String REACTION_THUMBSDOWN = '\u{1F44E}';
+  static const String REACTION_HEART = '\u{2764}\u{FE0F}';
+  static const String REACTION_CLAP = '\u{1F44F}';
+  static const String REACTION_LAUGH = '\u{1F602}';
+  static const String REACTION_SAD = '\u{1F622}';
+  static const String REACTION_ANGRY = '\u{1F621}';
+  static const String REACTION_SURPRISE = '\u{1F632}';
+  static const String REACTION_FIRE = '\u{1F525}';
+  static const String RECEIPT_READ = 'READ_RECEIPT';
+  static const String UA_LISTENER_JOIN = 'LISTENER_JOIN';
+  static const String UA_LISTENER_LEAVE = 'LISTENER_LEAVE';
+  static const String UA_LISTENER_REQUEST_MIC = 'LISTENER_REQUEST_MIC';
+  static const String UA_SPEAKER_JOIN = 'SPEAKER_JOIN';
+  static const String UA_SPEAKER_LEAVE = 'SPEAKER_LEAVE';
+  static const String UA_SPEAKER_MIC_ON = 'SPEAKER_MIC_ON';
+  static const String UA_SPEAKER_MIC_OFF = 'SPEAKER_MIC_OFF';
+  static const String INTENT_ACCEPT = 'ACCEPT_INTENT';
+  static const String INTENT_REJECT = 'REJECT_INTENT';
+  static const String INTENT_JOIN_GROUP = 'JOIN_GROUP';
+  static const String INTENT_LEAVE_GROUP = 'LEAVE_GROUP';
 }
-
-META_ACTION getMetaActionValue(int index) {
-  switch (index) {
-    case 0:
-      return META_ACTION.CREATE_GROUP;
-    case 1:
-      return META_ACTION.ADD_MEMBER;
-    case 2:
-      return META_ACTION.REMOVE_MEMBER;
-    case 3:
-      return META_ACTION.PROMOTE_TO_ADMIN;
-    case 4:
-      return META_ACTION.DEMOTE_FROM_ADMIN;
-    case 5:
-      return META_ACTION.CHANGE_IMAGE_OR_DESC;
-    case 6:
-      return META_ACTION.CHANGE_META;
-    case 7:
-      return META_ACTION.CREATE_SPACE;
-    case 8:
-      return META_ACTION.ADD_LISTENER;
-    case 9:
-      return META_ACTION.REMOVE_LISTENER;
-    case 10:
-      return META_ACTION.PROMOTE_TO_SPEAKER;
-    case 11:
-      return META_ACTION.DEMOTE_FROM_SPEAKER;
-    case 12:
-      return META_ACTION.PROMOTE_TO_COHOST;
-    case 13:
-      return META_ACTION.DEMOTE_FROM_COHOST;
-    case 14:
-      return META_ACTION.USER_INTERACTION;
-    default:
-      throw ArgumentError('Invalid index: $index');
-  }
-}
-
-enum REACTION_TYPE {
-  THUMBS_UP,
-  THUMBS_DOWN,
-  HEART,
-  CLAP,
-  LAUGHING_FACE,
-  SAD_FACE,
-  ANGRY_FACE,
-  SURPRISED_FACE,
-  CLAPPING_HANDS,
-  FIRE,
-}
-
-// Create a mapping object that associates reaction types with their Unicode escape sequences
-const Map<REACTION_TYPE, String> REACTION_SYMBOL = {
-  REACTION_TYPE.THUMBS_UP: '\u{1F44D}',
-  REACTION_TYPE.THUMBS_DOWN: '\u{1F44E}',
-  REACTION_TYPE.HEART: '\u{2764}\u{FE0F}',
-  REACTION_TYPE.CLAP: '\u{1F44F}',
-  REACTION_TYPE.LAUGHING_FACE: '\u{1F602}',
-  REACTION_TYPE.SAD_FACE: '\u{1F622}',
-  REACTION_TYPE.ANGRY_FACE: '\u{1F621}',
-  REACTION_TYPE.SURPRISED_FACE: '\u{1F632}',
-  REACTION_TYPE.CLAPPING_HANDS: '\u{1F44F}\u{1F44F}',
-  REACTION_TYPE.FIRE: '\u{1F525}',
-};
 
 class AdditionalMetaType {
   static const CUSTOM = 0;

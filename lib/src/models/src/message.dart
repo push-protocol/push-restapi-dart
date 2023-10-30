@@ -154,70 +154,27 @@ class MessageWithCID {
   }
 }
 
-class SendMessage {
+class NestedContent {
   String type;
   String content;
-  META_ACTION? action;
-  Info? info;
-  REACTION_TYPE? reactionAction;
-  String? reference;
 
-  SendMessage({
+  NestedContent({
     required this.type,
     required this.content,
-    this.action,
-    this.info,
-    this.reactionAction,
-    this.reference,
   });
 
-  factory SendMessage.fromMap(Map<String, dynamic> map) {
-    final messageType = map['type'] as String;
-    switch (messageType) {
-      case MessageType.TEXT:
-      case MessageType.IMAGE:
-      case MessageType.FILE:
-      case MessageType.MEDIA_EMBED:
-      case MessageType.GIF:
-        return SendMessage(
-          type: messageType,
-          content: map['content'] as String,
-        );
-      case MessageType.META:
-        return SendMessage(
-          type: messageType,
-          content: map['content'] as String,
-          action: map['action'] as META_ACTION,
-          info: Info.fromJson(map['info']),
-        );
-      case MessageType.REACTION:
-        return SendMessage(
-          type: messageType,
-          content: map['content'] as String,
-          reactionAction: map['action'] as REACTION_TYPE,
-          reference: map['reference'] as String?,
-        );
-      default:
-        throw ArgumentError('Invalid message type: $messageType');
-    }
-  }
-
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['type'] = type;
     data['content'] = content;
-
-    if (type == MessageType.META) {
-      data['action'] = action.toString();
-      data['info'] = info?.toJson();
-    }
-
-    if (type == MessageType.REACTION) {
-      data['reactionAction'] = reactionAction;
-      data['reference'] = reference;
-    }
-
     return data;
+  }
+
+  static NestedContent fromJson(Map<String, dynamic> json) {
+    return NestedContent(
+      type: json['type'],
+      content: json['content'],
+    );
   }
 }
 
@@ -245,20 +202,88 @@ class Info {
   }
 }
 
+class SendMessage {
+  String type;
+  String? content;
+
+  /* 
+    Note: replyContent, compositeContent are dynamic bcz their types need to change during runtime
+    replyContent change from NestedContent to _NestedContent
+  */
+
+  // for reply message
+  dynamic replyContent;
+
+  // for composite message
+  dynamic compositeContent;
+
+  // for meta & user activity message
+  Info? info;
+
+  String? reference;
+
+  SendMessage({
+    required this.type,
+    this.content,
+    this.replyContent,
+    this.compositeContent,
+    this.info,
+    this.reference,
+  });
+
+  factory SendMessage.fromMap(Map<String, dynamic> map) {
+    final messageType = map['type'] as String;
+    switch (messageType) {
+      case MessageType.TEXT:
+      case MessageType.IMAGE:
+      case MessageType.FILE:
+      case MessageType.MEDIA_EMBED:
+      case MessageType.GIF:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+        );
+      case MessageType.META:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+          info: Info.fromJson(map['info']),
+        );
+      case MessageType.REACTION:
+        return SendMessage(
+          type: messageType,
+          content: map['content'] as String,
+          reference: map['reference'] as String?,
+        );
+      default:
+        throw ArgumentError('Invalid message type: $messageType');
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['content'] = content;
+
+    if (type == MessageType.META) {
+      data['info'] = info?.toJson();
+    }
+
+    if (type == MessageType.REACTION) {
+      data['reference'] = reference;
+    }
+
+    return data;
+  }
+}
+
 class MetaMessage extends SendMessage {
   MetaMessage({
-    required META_ACTION action,
     required Info info,
     required String content,
-  }) : super(
-            type: MessageType.META,
-            content: content,
-            action: action,
-            info: info);
+  }) : super(type: MessageType.META, content: content, info: info);
 
   factory MetaMessage.fromJson(Map<String, dynamic> json) {
     return MetaMessage(
-      action: getMetaActionValue(json['action']),
       info: Info.fromJson(json['info']),
       content: json['content'] as String,
     );
@@ -267,8 +292,28 @@ class MetaMessage extends SendMessage {
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['type'] = type;
-    data['action'] = action?.index;
+    data['info'] = info?.toJson();
+    data['content'] = content;
+    return data;
+  }
+}
+
+class UserActivityMessage extends SendMessage {
+  UserActivityMessage({
+    required Info info,
+    required String content,
+  }) : super(type: MessageType.USER_ACTIVITY, content: content, info: info);
+
+  factory UserActivityMessage.fromJson(Map<String, dynamic> json) {
+    return UserActivityMessage(
+      info: Info.fromJson(json['info']),
+      content: json['content'] as String,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
     data['info'] = info?.toJson();
     data['content'] = content;
     return data;
@@ -277,30 +322,91 @@ class MetaMessage extends SendMessage {
 
 class ReactionMessage extends SendMessage {
   ReactionMessage({
-    required REACTION_TYPE action,
-    String? reference,
     required String content,
+    required String reference,
   }) : super(
-            type: MessageType.REACTION,
-            content: content,
-            reactionAction: action,
-            reference: reference);
+            type: MessageType.REACTION, content: content, reference: reference);
 
   factory ReactionMessage.fromJson(Map<String, dynamic> json) {
     return ReactionMessage(
-      action: json['action'] as REACTION_TYPE,
-      reference: json['reference'] as String?,
       content: json['content'] as String,
+      reference: json['reference'] as String,
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['type'] = type;
-    data['action'] = action;
-    data['reference'] = reference;
     data['content'] = content;
+    data['reference'] = reference;
+    return data;
+  }
+}
+
+class ReceiptMessage extends SendMessage {
+  ReceiptMessage({
+    required String content,
+    required String reference,
+  }) : super(type: MessageType.RECEIPT, content: content, reference: reference);
+
+  factory ReceiptMessage.fromJson(Map<String, dynamic> json) {
+    return ReceiptMessage(
+      content: json['content'] as String,
+      reference: json['reference'] as String,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['content'] = content;
+    data['reference'] = reference;
+    return data;
+  }
+}
+
+class ReplyMessage extends SendMessage {
+  ReplyMessage({
+    required NestedContent content,
+    required String reference,
+  }) : super(
+            type: MessageType.REPLY,
+            replyContent: content,
+            reference: reference);
+
+  factory ReplyMessage.fromJson(Map<String, dynamic> json) {
+    return ReplyMessage(
+      content: NestedContent.fromJson(json['content']),
+      reference: json['reference'] as String,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['content'] = replyContent.toJson();
+    data['reference'] = reference;
+    return data;
+  }
+}
+
+class CompositeMessage extends SendMessage {
+  CompositeMessage({
+    required List<NestedContent> content,
+  }) : super(type: MessageType.COMPOSITE, compositeContent: content);
+
+  factory CompositeMessage.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> contentJson = json['content'];
+    final List<NestedContent> content = contentJson
+        .map((dynamic e) => NestedContent.fromJson(e as Map<String, dynamic>))
+        .toList();
+    return CompositeMessage(content: content);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['content'] = compositeContent.map((e) => e.toJson()).toList();
     return data;
   }
 }

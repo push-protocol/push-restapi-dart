@@ -14,5 +14,9 @@ Future<User?> getUser({
     return null;
   }
 
+  if (result is String) {
+    throw Exception("Unable to get user");
+  }
+
   return User.fromJson(result);
 }

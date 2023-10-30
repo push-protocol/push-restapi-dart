@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 import 'helpers/live_peer.dart';
@@ -12,10 +11,6 @@ import 'update_space_meta.dart';
 
 import '../../../push_restapi_dart.dart';
 
-final PushSpaceProvider = ChangeNotifierProvider<SpaceStateNotifier>((ref) {
-  return SpaceStateNotifier();
-});
-
 typedef SetDataFunction = SpaceData Function(SpaceData);
 
 LiveSpaceData initLiveSpaceData = LiveSpaceData(
@@ -24,7 +19,7 @@ LiveSpaceData initLiveSpaceData = LiveSpaceData(
   listeners: [],
 );
 
-SpaceData initSpaceData = SpaceData(
+SpaceData _initSpaceData = SpaceData(
   members: [],
   pendingMembers: [],
   numberOfERC20: -1,
@@ -38,9 +33,9 @@ SpaceData initSpaceData = SpaceData(
   liveSpaceData: initLiveSpaceData,
 );
 
-class SpaceStateNotifier extends ChangeNotifier {
-  SpaceStateNotifier() {
-    data = initSpaceData;
+class PushSpaceNotifier extends ChangeNotifier {
+  PushSpaceNotifier() {
+    data = _initSpaceData;
   }
   // to store the room data upon start/join
   Room? _room;
@@ -65,7 +60,7 @@ class SpaceStateNotifier extends ChangeNotifier {
   }
 
   onReceiveMetaMessage(Map<String, dynamic> metaMessage) async {
-    // when the space isnt joined we dont act on the recieved meta messages
+    // when the space isnt joined we dont act on the received meta messages
     if (data.spaceId == '') return;
 
     final result =
@@ -91,8 +86,15 @@ class SpaceStateNotifier extends ChangeNotifier {
 
   updateMeta({
     required String meta,
-  }) {
-    updateSpaceMeta(meta: meta);
+  }) async {
+    final update = await updateSpaceMeta(
+      meta: meta,
+      spaceId: data.spaceId,
+    );
+
+    setData((p0) {
+      return SpaceData.fromSpaceDTO(update, data.liveSpaceData);
+    });
   }
 
   Future<SpaceDTO?> join({
@@ -191,10 +193,13 @@ class SpaceStateNotifier extends ChangeNotifier {
 
       spaceData.liveSpaceData.speakers = speakers;
 
+      String metaMessageContent =
+          isOn == true ? CHAT.UA_SPEAKER_MIC_ON : CHAT.UA_SPEAKER_MIC_OFF;
+
       sendLiveSpaceData(
+        messageType: MessageType.USER_ACTIVITY,
         updatedLiveSpaceData: spaceData.liveSpaceData,
-        action: META_ACTION
-            .USER_INTERACTION, // TODO: Need a better action for mic toggle
+        content: metaMessageContent,
         affectedAddresses: [localAddress],
         spaceId: spaceData.spaceId,
       );
@@ -220,17 +225,14 @@ class SpaceStateNotifier extends ChangeNotifier {
         // disconnect from the room
         _room!.disconnect();
 
-        // fire a meta message signaling that the user has left the space
+        // fire a user activity message signaling that the user has left the space
         final localAddress = getCachedWallet()!.address!;
         final spaceData = data;
 
-        META_ACTION action = META_ACTION
-            .DEMOTE_FROM_SPEAKER; // TODO: Need a better action for speaker leaving
+        String metaMessageContent = CHAT.UA_SPEAKER_LEAVE;
 
         if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
           spaceData.liveSpaceData.host = AdminPeer();
-          action = META_ACTION
-              .DEMOTE_FROM_ADMIN; // TODO: Need a better action for host leaving
         } else {
           final speakers = <AdminPeer>[];
           for (var speaker in spaceData.liveSpaceData.speakers) {
@@ -242,12 +244,13 @@ class SpaceStateNotifier extends ChangeNotifier {
         }
 
         sendLiveSpaceData(
+            messageType: MessageType.USER_ACTIVITY,
             updatedLiveSpaceData: spaceData.liveSpaceData,
-            action: action,
+            content: metaMessageContent,
             affectedAddresses: [localAddress],
             spaceId: spaceData.spaceId);
 
-        data = initSpaceData;
+        data = _initSpaceData;
       }
 
       _room = null;
@@ -259,4 +262,19 @@ class SpaceStateNotifier extends ChangeNotifier {
   }
 
   stop() {}
+
+  sendReaction({required String reaction}) async {
+    final reactionMessage = ReactionMessage(
+        // Note: For spaces a reaction is a general reaction, not referenced to a message
+        // This is not getting added to the idempotent state
+        reference: '',
+        content: reaction);
+
+    final options = ChatSendOptions(
+      message: reactionMessage,
+      receiverAddress: data.spaceId,
+    );
+
+    await send(options);
+  }
 }

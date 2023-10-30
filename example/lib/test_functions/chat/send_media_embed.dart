@@ -35,7 +35,7 @@ Future<void> testSendMediaEmbed() async {
         content:
             "https://media2.giphy.com/media/p0L1rezLH2Tja/giphy.gif?cid=c918c0ff667b3vbiu4i4e5d1t9sqssx8uvy10reprq8yds23&ep=v1_gifs_trending&rid=giphy.gif&ct=g"),
     receiverAddress:
-        '60d2bbcb9e2f75651f33e0d2b4930a1bbd8aa36a55f9af41639e8340b8cf6d37',
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);

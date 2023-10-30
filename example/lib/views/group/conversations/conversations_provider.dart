@@ -35,14 +35,14 @@ class ConversationsProvider extends ChangeNotifier {
     loadChats();
   }
 
-  onRecieveSocket(dynamic message) {
+  onReceiveSocket(dynamic message) {
     try {
       loadChats();
 
-      final chatId = (message as Map)['chatId'];
+      final chatId = (message as Map<String, dynamic>)['chatId'];
       final currentChatid = ref.read(chatRoomProvider).currentChatId;
       if (chatId == currentChatid) {
-        ref.read(chatRoomProvider).getRoomMessages();
+        ref.read(chatRoomProvider).onRefreshRoom();
       }
     } catch (e) {
       print(e);
