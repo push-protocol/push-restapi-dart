@@ -101,8 +101,10 @@ class AccountProvider extends ChangeNotifier {
         env: ENV.staging,
       );
       creatSocketConnection();
+
       ref.read(requestsProvider).loadRequests();
       ref.read(conversationsProvider).reset();
+      ref.read(mySpacesProvider.notifier).onRefresh();
     } catch (e) {
       pop();
     }
@@ -175,7 +177,7 @@ class AccountProvider extends ChangeNotifier {
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
             ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
           }
-          
+
           if (message['messageCategory'] == 'Chat' &&
               (message['messageType'] == MessageType.REACTION)) {
             try {

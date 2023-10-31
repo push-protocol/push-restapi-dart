@@ -1,7 +1,8 @@
+import 'package:example/views/spaces/my_spaces/my_spaces_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:unique_names_generator/unique_names_generator.dart';
-import '../../__lib.dart';
+import '../../../__lib.dart';
 
 class MySpacesScreen extends ConsumerStatefulWidget {
   const MySpacesScreen({super.key});
@@ -38,6 +39,8 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
         log('testCreateSpace response: spaceId = ${result.spaceId}');
         setState(() {});
       }
+
+      await ref.read(mySpacesProvider.notifier).onRefresh();
       Navigator.pop(context);
     } catch (e) {
       Navigator.pop(context);
@@ -45,7 +48,13 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final spaces = ref.watch(mySpacesProvider);
     return Scaffold(
       floatingActionButton: InkWell(
         onTap: createRandom,
@@ -62,49 +71,36 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
       appBar: AppBar(
         title: Text('My Spaces'),
       ),
-      body: FutureBuilder<List<SpaceFeeds>?>(
-        future: spaceFeeds(toDecrypt: true, limit: 5),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.data == null) {
-            return Center(child: Text('Cannot load Spaces'));
-          }
-          final spaces = snapshot.data!;
-
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 32),
-            separatorBuilder: (context, index) => SizedBox(),
-            itemCount: spaces.length,
-            itemBuilder: (context, index) {
-              final item = spaces[index];
-              return ListTile(
-                onTap: () => onStart(item),
-                title: Text('${item.spaceInformation?.spaceName}'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${item.spaceId}'),
-                    Text('${item.spaceInformation?.scheduleAt}'),
-                  ],
-                ),
-                trailing: item.spaceInformation?.status == ChatStatus.PENDING
-                    ? MaterialButton(
-                        shape: RoundedRectangleBorder(),
-                        color: Colors.purple,
-                        onPressed: () => onStart(item),
-                        child: Text('Start'),
-                        textColor: Colors.white,
-                      )
-                    : null,
-              );
-            },
-          );
-        },
-      ),
+      body: spaces.isEmpty
+          ? Center(child: Text('Cannot load Spaces'))
+          : ListView.separated(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              separatorBuilder: (context, index) => SizedBox(),
+              itemCount: spaces.length,
+              itemBuilder: (context, index) {
+                final item = spaces[index];
+                return ListTile(
+                  onTap: () => onStart(item),
+                  title: Text('${item.spaceInformation?.spaceName}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${item.spaceId}'),
+                      Text('${item.spaceInformation?.scheduleAt}'),
+                    ],
+                  ),
+                  trailing: item.spaceInformation?.status == ChatStatus.PENDING
+                      ? MaterialButton(
+                          shape: RoundedRectangleBorder(),
+                          color: Colors.purple,
+                          onPressed: () => onStart(item),
+                          child: Text('Start'),
+                          textColor: Colors.white,
+                        )
+                      : null,
+                );
+              },
+            ),
     );
   }
 
@@ -126,18 +122,22 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
           progressHook: (p0) {},
         )
         .then((value) {
+      ref.read(mySpacesProvider.notifier).onRefresh();
+      //Remove loading dialog
       Navigator.pop(context);
+
       if (value == null) {
         showMyDialog(
             context: context, title: 'Error', message: 'Space not created');
 
         return;
       }
-      pushScreen(LiveSpaceRoom(
-        space: value,
-      ));
+      pushScreen(LiveSpaceRoom(space: value));
     }).catchError(
       (err) {
+        ref.read(mySpacesProvider.notifier).onRefresh();
+
+        //Remove loading dialog
         Navigator.pop(context);
       },
     );

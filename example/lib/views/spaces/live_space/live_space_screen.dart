@@ -1,5 +1,3 @@
-// import 'package:better_player/better_player.dart';
-import 'package:blockies/blockies.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:example/__lib.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,11 +32,15 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
 
   @override
   Widget build(BuildContext context) {
+    final localAddress = ref.read(accountProvider).pushWallet?.address;
     final vm = ref.watch(liveSpaceProvider);
     final SpaceDTO data = widget.space;
     final liveSpaceData = vm.liveSpaceData;
     final host = liveSpaceData.host;
     final speakers = liveSpaceData.speakers;
+    final listerners = liveSpaceData.listeners;
+
+    bool isHost = localAddress == host.address;
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -90,10 +92,14 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                         spacing: 8,
                         runSpacing: 10,
                         children: [
-                          _HostCard(host: host),
+                          SpaceHostCard(host: host),
                           ...speakers.map(
-                            (speaker) => _SpeakerCard(speaker: speaker),
-                          )
+                            (speaker) => SpaceSpeakerCard(speaker: speaker),
+                          ),
+                          ...listerners.map(
+                            (listerner) =>
+                                SpaceListernerCard(listener: listerner),
+                          ),
                         ],
                       ),
                       SizedBox(height: 12),
@@ -122,55 +128,6 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                     ],
                   ),
                 ),
-                /*
-                Consumer(
-                  builder: (context, ref, child) {
-                    final vm = ref.watch(liveSpaceProvider);
-
-                    if (vm.spacePlaybackUrl != null) {
-                      if (_controller == null) {
-                        _controller = VideoPlayerController.networkUrl(
-                          Uri.parse(vm.spacePlaybackUrl!),
-                          formatHint: VideoFormat.hls,
-                          videoPlayerOptions: VideoPlayerOptions(
-                              allowBackgroundPlayback: true),
-                        )..initialize().then((_) {
-                            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-                            setState(() {});
-                          });
-                        return SizedBox.shrink();
-                      }
-
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 100,
-                            child: _controller!.value.isInitialized
-                                ? AspectRatio(
-                                    aspectRatio:
-                                        _controller!.value.aspectRatio,
-                                    child: VideoPlayer(_controller!),
-                                  )
-                                : SizedBox.shrink(),
-                          ),
-                          MaterialButton(
-                            padding: EdgeInsets.all(16),
-                            color: Colors.white,
-                            shape: CircleBorder(),
-                            child: Icon(
-                              Icons.play_arrow,
-                              size: 32,
-                            ),
-                            onPressed: () {
-                              _controller!.play();
-                            },
-                          ),
-                        ],
-                      );
-                    }
-                    return SizedBox.shrink();
-                  },
-                ),*/
               ],
             ),
             Positioned(
@@ -182,6 +139,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                 children: [
                   Consumer(builder: (context, ref, child) {
                     final vm = ref.watch(liveSpaceProvider);
+
                     bool isSpeaker = vm.isSpeakerConnected;
 
                     if (isSpeaker) {
@@ -227,12 +185,14 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                                 textColor: Colors.white,
                                 shape: CircleBorder(),
                                 child: Icon(
-                                  Icons.mic,
+                                  Icons.waving_hand,
                                   size: 32,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  vm.requestToBePromoted();
+                                },
                               ),
-                              Text('Request')
+                              Text('Raise Hand')
                             ],
                           ),
 
@@ -252,6 +212,16 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                     }
                     return SizedBox.shrink();
                   }),
+                  SizedBox(width: 24),
+                  if (isHost)
+                    InkWell(
+                      onTap: () {
+                        Get.bottomSheet(SpaceMicRequestsView());
+                      },
+                      child: Column(
+                        children: [Icon(Icons.waving_hand), Text('Requests')],
+                      ),
+                    ),
                   Spacer(),
                   InkWell(
                       onTap: () {
@@ -385,146 +355,6 @@ class DataView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _HostCard extends StatelessWidget {
-  const _HostCard({
-    required this.host,
-  });
-
-  final AdminPeer host;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.purple,
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  height: 64,
-                  width: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(64),
-                    child: Blockies(
-                      seed: '${host.address}',
-                      size: 4,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Host',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-              right: 8,
-              top: 8,
-              child: Container(
-                padding: EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: Icon(
-                  host.audio == true ? Icons.mic : Icons.mic_off,
-                ),
-              ))
-        ],
-      ),
-    );
-  }
-}
-
-class _SpeakerCard extends StatelessWidget {
-  const _SpeakerCard({
-    required this.speaker,
-  });
-
-  final AdminPeer speaker;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.purple[500],
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 64,
-                    width: 64,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(64),
-                      child: Blockies(
-                        seed: '${speaker.address}',
-                        size: 4,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Expanded(
-                    child: Text(
-                      '${speaker.address}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            right: 8,
-            top: 8,
-            child: Container(
-              padding: EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Icon(
-                speaker.audio == true ? Icons.mic : Icons.mic_off,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

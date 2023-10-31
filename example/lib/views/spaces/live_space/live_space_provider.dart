@@ -10,6 +10,9 @@ final liveSpaceProvider = ChangeNotifierProvider<LiveSpaceProvider>((ref) {
 });
 
 class LiveSpaceProvider extends PushSpaceNotifier {
+  List<ListenerPeer> get micRequests =>
+      data.liveSpaceData.listeners.where((e) => e.handRaised).toList();
+
   get random => m.Random();
   get tween => Tween<Offset>(
         begin: Offset(random.nextDouble() * .5, random.nextDouble()),
