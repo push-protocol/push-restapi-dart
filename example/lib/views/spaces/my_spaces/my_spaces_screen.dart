@@ -1,4 +1,3 @@
-import 'package:example/views/spaces/my_spaces/my_spaces_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:unique_names_generator/unique_names_generator.dart';
@@ -74,72 +73,13 @@ class _MySpacesScreenState extends ConsumerState<MySpacesScreen> {
       body: spaces.isEmpty
           ? Center(child: Text('Cannot load Spaces'))
           : ListView.separated(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              separatorBuilder: (context, index) => SizedBox(),
+              padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+              separatorBuilder: (context, index) => SizedBox(height: 12),
               itemCount: spaces.length,
               itemBuilder: (context, index) {
-                final item = spaces[index];
-                return ListTile(
-                  onTap: () => onStart(item),
-                  title: Text('${item.spaceInformation?.spaceName}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${item.spaceId}'),
-                      Text('${item.spaceInformation?.scheduleAt}'),
-                    ],
-                  ),
-                  trailing: item.spaceInformation?.status == ChatStatus.PENDING
-                      ? MaterialButton(
-                          shape: RoundedRectangleBorder(),
-                          color: Colors.purple,
-                          onPressed: () => onStart(item),
-                          child: Text('Start'),
-                          textColor: Colors.white,
-                        )
-                      : null,
-                );
+                return SpaceItemTile(item: spaces[index]);
               },
             ),
-    );
-  }
-
-  onStart(SpaceFeeds item) {
-    if (item.spaceInformation?.status != ChatStatus.PENDING) {
-      showMyDialog(
-          context: context,
-          title: 'Error',
-          message:
-              'Unable to start the space as it is not in the pending state');
-      return;
-    }
-
-    showLoadingDialog(context);
-    ref
-        .read(liveSpaceProvider.notifier)
-        .start(
-          spaceId: item.spaceId!,
-          progressHook: (p0) {},
-        )
-        .then((value) {
-      ref.read(mySpacesProvider.notifier).onRefresh();
-      //Remove loading dialog
-      Navigator.pop(context);
-
-      if (value == null) {
-        showMyDialog(
-            context: context, title: 'Error', message: 'Space not created');
-
-        return;
-      }
-      pushScreen(LiveSpaceRoom(space: value));
-    }).catchError(
-      (err) {
-        ref.read(mySpacesProvider.notifier).onRefresh();
-
-        //Remove loading dialog
-        Navigator.pop(context);
-      },
     );
   }
 }

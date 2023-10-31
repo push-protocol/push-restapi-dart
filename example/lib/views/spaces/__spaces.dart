@@ -8,3 +8,5 @@ export 'live_space/tiles.dart';
 
 export 'my_spaces/my_spaces_screen.dart';
 export 'my_spaces/my_spaces_provider.dart';
+
+export 'space_tile.dart';
