@@ -8,6 +8,10 @@ import 'on_receive_meta_message_for_space.dart';
 import 'initialize.dart';
 import 'join.dart';
 import 'update_space_meta.dart';
+import 'invite_to_promote.dart';
+import 'accept_promotion_invite.dart';
+import 'reject_promotion_invite.dart';
+import 'complete_promotion_invite.dart';
 
 import '../../../push_restapi_dart.dart';
 
@@ -278,11 +282,18 @@ class PushSpaceNotifier extends ChangeNotifier {
     await send(options);
   }
 
+  // Variables and methods for the functionality to promote listener to a speaker
+
   /// A list to store the addresses of listeners who have been invited by the host.
   List<String> pendingInvites = [];
 
   /// Invites a listener ie [inviteeAddress] to be promoted to a speaker.
   inviteToPromote({required String inviteeAddress}) {
+    final localAddress = getCachedWallet()!.address!;
+    if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
+      throw Exception("Only host is allowed to accept a promotion request");
+    }
+
     // Add the invitee address to the pending invites list
     pendingInvites.add(inviteeAddress);
 
@@ -292,5 +303,40 @@ class PushSpaceNotifier extends ChangeNotifier {
         spaceId: data.spaceId,
         inviteeAddress: inviteeAddress,
         role: SPACE_INVITE_ROLES.SPEAKER);
+  }
+
+  /// Accepts a promotion invite for the current user to become a speaker in a live space.
+  acceptPromotionInvite() {
+    acceptPromotionInvite_(
+      liveSpaceData: data.liveSpaceData,
+      spaceId: data.spaceId,
+    );
+  }
+
+  /// Rejects a promotion invite for the current user to become a speaker in a live space.
+  rejectPromotionInvite() {
+    rejectPromotionInvite_(
+      liveSpaceData: data.liveSpaceData,
+      spaceId: data.spaceId,
+    );
+  }
+
+  /// Completes an accepted promotion invite by elevating the corresponding listener to a speaker.
+  /// Note: This method is private as its only gonna be used inside from the onReceiveMetaMessage.
+  Future<void> _completePromotionInvite(
+      {required String promoteeAddress}) async {
+    final localAddress = getCachedWallet()!.address!;
+    if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
+      return;
+    }
+
+    await completePromotionInvite_(
+        liveSpaceData: data.liveSpaceData,
+        spaceId: data.spaceId,
+        promoteeAddress: promoteeAddress);
+
+    pendingInvites.removeWhere((pendingInviteAddress) {
+      return pendingInviteAddress == promoteeAddress;
+    });
   }
 }

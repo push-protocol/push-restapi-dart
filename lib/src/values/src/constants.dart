@@ -116,6 +116,10 @@ class CHAT {
   static const String UA_LISTENER_JOIN = 'LISTENER_JOIN';
   static const String UA_LISTENER_LEAVE = 'LISTENER_LEAVE';
   static const String UA_LISTENER_REQUEST_MIC = 'LISTENER_REQUEST_MIC';
+  static const String UA_LISTENER_ACCEPT_PROMOTION =
+      'LISTENER_ACCEPT_PROMOTION';
+  static const String UA_LISTENER_REJECT_PROMOTION =
+      'LISTENER_REJECT_PROMOTION';
   static const String UA_SPEAKER_JOIN = 'SPEAKER_JOIN';
   static const String UA_SPEAKER_LEAVE = 'SPEAKER_LEAVE';
   static const String UA_SPEAKER_MIC_ON = 'SPEAKER_MIC_ON';
