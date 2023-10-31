@@ -277,4 +277,20 @@ class PushSpaceNotifier extends ChangeNotifier {
 
     await send(options);
   }
+
+  /// A list to store the addresses of listeners who have been invited by the host.
+  List<String> pendingInvites = [];
+
+  /// Invites a listener ie [inviteeAddress] to be promoted to a speaker.
+  inviteToPromote({required String inviteeAddress}) {
+    // Add the invitee address to the pending invites list
+    pendingInvites.add(inviteeAddress);
+
+    // Call the inviteToPromote_ function with the necessary parameters
+    inviteToPromote_(
+        liveSpaceData: data.liveSpaceData,
+        spaceId: data.spaceId,
+        inviteeAddress: inviteeAddress,
+        role: SPACE_INVITE_ROLES.SPEAKER);
+  }
 }
