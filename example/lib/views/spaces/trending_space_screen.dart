@@ -28,10 +28,8 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
               label: 'Enter Space address ',
               hintText:
                   'eg. spaces:466beec0d0bc78d5ba362628a5607ece464eb723e1a2ba5fbb476202866657c5',
-              suffixIcon: MaterialButton(
-                color: Colors.purple,
-                child: Text('Join'),
-                textColor: Colors.white,
+              suffixIcon: TextButton(
+                child: KText('Join',color: Colors.purple,weight: FontWeight.w600,),
                 onPressed: () {
                   onJoin(controller.text);
                 },
@@ -53,36 +51,10 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
                   final spaces = snapshot.data!;
 
                   return ListView.separated(
-                    separatorBuilder: (context, index) => SizedBox(),
+                    separatorBuilder: (context, index) => SizedBox(height: 12),
                     itemCount: spaces.length,
-                    itemBuilder: (context, index) {
-                      final item = spaces[index];
-                      return ListTile(
-                        onTap: () {
-                          onJoin(item.spaceId!);
-                        },
-                        title: Text('${item.spaceInformation?.spaceName}'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('${item.spaceId}'),
-                            Text('${item.spaceInformation?.scheduleAt}'),
-                          ],
-                        ),
-                        trailing:
-                            item.spaceInformation?.status == ChatStatus.ACTIVE
-                                ? MaterialButton(
-                                    shape: RoundedRectangleBorder(),
-                                    color: Colors.purple,
-                                    onPressed: () {
-                                      onJoin(item.spaceId!);
-                                    },
-                                    child: Text('Join'),
-                                    textColor: Colors.white,
-                                  )
-                                : null,
-                      );
-                    },
+                    itemBuilder: (context, index) =>
+                        SpaceItemTile(item: spaces[index]),
                   );
                 },
               ),
@@ -105,9 +77,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
       if (value == null) {
         showMyDialog(context: context, title: 'Error', message: 'Cannot Join');
       } else {
-        pushScreen(
-          LiveSpaceRoom(space: value),
-        );
+        pushScreen(LiveSpaceRoom(space: value));
       }
     }).catchError((e) {
       Navigator.pop(context);
