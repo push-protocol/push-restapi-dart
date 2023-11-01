@@ -9,7 +9,7 @@ class MySpacesProvider extends StateNotifier<List<SpaceFeeds>> {
   MySpacesProvider(super.state);
 
   Future onRefresh() async {
-    final result = await spaceFeeds(toDecrypt: true, limit: 5);
+    final result = await spaces(toDecrypt: true, limit: 5);
     if (result != null) {
       state = result;
     }
