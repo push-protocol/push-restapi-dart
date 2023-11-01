@@ -12,7 +12,7 @@ Future<void> completePromotionInvite_(
   sendLiveSpaceData(
       messageType: MessageType.META,
       updatedLiveSpaceData: liveSpaceData,
-      content: CHAT.META_SPACE_LISTENER_PROMOTION_ACCEPT,
+      content: CHAT.META_SPACE_SPEAKER_PRIVILEGE,
       affectedAddresses: [promoteeAddress],
       spaceId: spaceId);
 }

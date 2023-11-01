@@ -13,7 +13,7 @@ Future<SpaceData?> onReceiveMetaMessageForSpace(
 
     // local address has been promoted to a speaker from a listener
     if (parsedMetaMessage.type == MessageType.META &&
-        parsedMetaMessage.content == CHAT.META_SPACE_LISTENER_PROMOTION_ACCEPT &&
+        parsedMetaMessage.content == CHAT.META_SPACE_SPEAKER_PRIVILEGE &&
         localAddress == parsedMetaMessage.info?.affected[0]) {
       // join the room as a speaker
       joinOnPromotion();

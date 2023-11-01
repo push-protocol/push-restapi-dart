@@ -18,7 +18,7 @@ Future<SpaceData> acceptPromotionRequest_(
   sendLiveSpaceData(
       messageType: MessageType.META,
       updatedLiveSpaceData: data.liveSpaceData,
-      content: CHAT.META_SPACE_LISTENER_PROMOTION_ACCEPT,
+      content: CHAT.META_SPACE_SPEAKER_PRIVILEGE,
       affectedAddresses: [promoteeAddress],
       spaceId: data.spaceId);
 
