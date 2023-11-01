@@ -1,14 +1,15 @@
 import 'package:example/__lib.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
-class CreateSpaceScreen extends StatefulWidget {
+class CreateSpaceScreen extends ConsumerStatefulWidget {
   const CreateSpaceScreen({super.key});
 
   @override
-  State<CreateSpaceScreen> createState() => _CreateSpaceScreenState();
+  ConsumerState<CreateSpaceScreen> createState() => _CreateSpaceScreenState();
 }
 
-class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
+class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController listenerController = TextEditingController();
@@ -126,6 +127,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
       showMyDialog(
           context: context, title: 'Error', message: 'Space not created');
     } else {
+      ref.read(mySpacesProvider.notifier).onRefresh();
       showMyDialog(
         context: context,
         title: 'Success',
