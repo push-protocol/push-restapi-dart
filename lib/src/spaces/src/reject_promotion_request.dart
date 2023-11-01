@@ -10,5 +10,13 @@ SpaceData rejectPromotionRequest_(
   data = setHandRaisedForListener(
       handRaised: false, listenerAddress: promoteeAddress, spaceData: data);
 
+  // fire a meta message signaling that the 'affectedAddress' is not promoted
+  sendLiveSpaceData(
+      messageType: MessageType.META,
+      updatedLiveSpaceData: data.liveSpaceData,
+      content: CHAT.META_SPACE_LISTENER_PROMOTION_REJECT,
+      affectedAddresses: [promoteeAddress],
+      spaceId: data.spaceId);
+
   return data;
 }
