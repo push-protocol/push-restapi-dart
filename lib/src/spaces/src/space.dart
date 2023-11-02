@@ -67,13 +67,20 @@ class PushSpaceNotifier extends ChangeNotifier {
     // when the space isnt joined we dont act on the recieved meta messages
     if (data.spaceId == '') return;
 
-    final result = await onReceiveMetaMessageForSpace(
+    final result = await onReceiveMetaMessage_(
         message: message,
         spaceId: data.spaceId,
-        joinOnPromotion: () {
+        handleJoinOnPromotion: () {
           _setPlaybackUrl(null);
           join(spaceId: data.spaceId);
+        },
+        handleCompletePromotionInvite: ({required String inviteeAddress}) {
+          _completePromotionInvite(inviteeAddress: inviteeAddress);
+        },
+        handleRemovePromotionInvite: ({required String inviteeAddress}) {
+          _pendingInvites.remove(inviteeAddress);
         });
+
     if (result != null) {
       data = result;
       notifyListeners();
@@ -326,59 +333,39 @@ class PushSpaceNotifier extends ChangeNotifier {
 
   // Variables and methods for the functionality to promote listener to a speaker
 
-  /// A list to store the addresses of listeners who have been invited by the host.
-  List<String> pendingInvites = [];
+  /// A set to store the addresses of listeners who have been invited by the host.
+  final Set<String> _pendingInvites = {};
 
   /// Invites a listener ie [inviteeAddress] to be promoted to a speaker.
   inviteToPromote({required String inviteeAddress}) {
-    final localAddress = getCachedWallet()!.address!;
-    if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
-      throw Exception("Only host is allowed to accept a promotion request");
-    }
-
-    // Add the invitee address to the pending invites list
-    pendingInvites.add(inviteeAddress);
-
-    // Call the inviteToPromote_ function with the necessary parameters
     inviteToPromote_(
-        liveSpaceData: data.liveSpaceData,
-        spaceId: data.spaceId,
+        spaceData: data,
         inviteeAddress: inviteeAddress,
-        role: SPACE_INVITE_ROLES.SPEAKER);
+        role: SPACE_INVITE_ROLES.SPEAKER,
+        pendingInvites: _pendingInvites);
   }
 
   /// Accepts a promotion invite for the current user to become a speaker in a live space.
   acceptPromotionInvite() {
     acceptPromotionInvite_(
-      liveSpaceData: data.liveSpaceData,
-      spaceId: data.spaceId,
+      spaceData: data,
     );
   }
 
   /// Rejects a promotion invite for the current user to become a speaker in a live space.
   rejectPromotionInvite() {
     rejectPromotionInvite_(
-      liveSpaceData: data.liveSpaceData,
-      spaceId: data.spaceId,
+      spaceData: data,
     );
   }
 
   /// Completes an accepted promotion invite by elevating the corresponding listener to a speaker.
   /// Note: This method is private as its only gonna be used inside from the onReceiveMetaMessage.
   Future<void> _completePromotionInvite(
-      {required String promoteeAddress}) async {
-    final localAddress = getCachedWallet()!.address!;
-    if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
-      return;
-    }
-
+      {required String inviteeAddress}) async {
     await completePromotionInvite_(
-        liveSpaceData: data.liveSpaceData,
-        spaceId: data.spaceId,
-        promoteeAddress: promoteeAddress);
-
-    pendingInvites.removeWhere((pendingInviteAddress) {
-      return pendingInviteAddress == promoteeAddress;
-    });
+        spaceData: data,
+        inviteeAddress: inviteeAddress,
+        pendingInvites: _pendingInvites);
   }
 }
