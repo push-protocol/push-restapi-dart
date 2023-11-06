@@ -17,7 +17,7 @@ class SpaceSpeakerCard extends StatelessWidget {
       width: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purple),
+        border: Border.all(color: pushColor),
       ),
       child: Stack(
         children: [
@@ -104,7 +104,7 @@ class SpaceListernerCard extends StatelessWidget {
       width: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purple),
+        border: Border.all(color: pushColor),
       ),
       child: Stack(
         children: [
@@ -186,7 +186,7 @@ class SpaceHostCard extends StatelessWidget {
       width: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purple),
+        border: Border.all(color: pushColor),
       ),
       child: Stack(
         children: [

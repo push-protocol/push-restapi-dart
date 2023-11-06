@@ -26,37 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final vm = ref.watch(accountProvider);
     final accounts = vm.accounts;
-    late List<NavItem> actions;
-    if (currentIndex == 0) {
-    } else {
-      final reqVm = ref.watch(requestsProvider);
-      actions = [
-        NavItem(
-          title: 'Create Group',
-          onPressed: () {
-            pushScreen(
-              CreateGroupScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'Conversations',
-          onPressed: () {
-            ref.read(conversationsProvider).loadChats();
-            pushScreen(ConversationsScreen());
-          },
-        ),
-        NavItem(
-          title: 'Pending Requests',
-          count: reqVm.requestsList?.length ?? 0,
-          onPressed: () {
-            pushScreen(
-              ChatRequestScreen(),
-            );
-          },
-        ),
-      ];
-    }
+
     Wallet? pushWallet = vm.pushWallet;
     return pushWallet == null
         ? ConnectScreen(accounts: accounts, vm: vm)
@@ -91,7 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.purple),
+                            border: Border.all(color: pushColor),
                             borderRadius: BorderRadius.circular(16)),
                         child: Row(
                           children: [
@@ -117,10 +87,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    Expanded(
-                      child: currentIndex == 0
-                          ? SpacesTab()
-                          : ListView.separated(
+                    Expanded(child: currentIndex == 0 ? SpacesTab() : ChatsTab()
+
+                        /* ListView.separated(
                               itemCount: actions.length,
                               itemBuilder: (context, index) {
                                 final item = actions[index];
@@ -151,8 +120,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               },
                               separatorBuilder: (context, index) =>
                                   SizedBox(height: 8),
-                            ),
-                    ),
+                            ),*/
+                        ),
                     InkWell(
                       onTap: () {
                         ref.read(accountProvider).logOut();

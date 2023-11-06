@@ -126,7 +126,7 @@ class GroupAdminsView extends StatelessWidget {
         ),
         if (isUserAdmin)
           MaterialButton(
-            color: Colors.purple,
+            color: pushColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onPressed: () {
@@ -210,7 +210,7 @@ class GroupMembersView extends StatelessWidget {
           ),
           if (isUserAdmin)
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: () {

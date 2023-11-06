@@ -108,7 +108,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               ),
             ),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onCreateGroup,

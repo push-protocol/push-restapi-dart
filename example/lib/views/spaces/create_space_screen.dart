@@ -96,7 +96,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
               ),
             ),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onCreateSpace,

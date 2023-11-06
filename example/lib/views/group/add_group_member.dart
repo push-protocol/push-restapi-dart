@@ -38,7 +38,7 @@ class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
             ),
             SizedBox(height: 24),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onAdd,

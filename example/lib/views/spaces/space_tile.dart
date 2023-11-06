@@ -77,7 +77,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
             onPressed: () => onStart(item),
             child: KText(
               'Start',
-              color: Colors.purple,
+              color: pushColor,
               size: 18,
               weight: FontWeight.w600,
             ));
@@ -86,7 +86,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
           onPressed: () {},
           icon: Icon(
             Icons.notification_add,
-            color: Colors.purple,
+            color: pushColor,
           ),
         );
       }

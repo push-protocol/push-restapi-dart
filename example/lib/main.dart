@@ -24,10 +24,8 @@ class MyApp extends StatelessWidget {
           indicatorColor: pushColor,
           unselectedLabelColor: pushColor,
           indicator: BoxDecoration(
-              border: Border.all(
-                color: pushColor,
-              ),
-              borderRadius: BorderRadius.circular(16)),
+            border: Border(bottom: BorderSide(color: pushColor, width: 2)),
+          ),
         ),
       ),
       home: HomeScreen(),

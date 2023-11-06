@@ -45,7 +45,7 @@ class _SpaceInvitesDailogState extends ConsumerState<SpaceInvitesDailog> {
               SizedBox(height: 16),
               KText(
                 'Space Invites',
-                color: Colors.purple,
+                color: pushColor,
                 size: 20,
                 weight: FontWeight.w600,
               ),

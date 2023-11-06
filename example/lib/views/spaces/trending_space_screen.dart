@@ -30,7 +30,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
               suffixIcon: TextButton(
                 child: KText(
                   'Join',
-                  color: Colors.purple,
+                  color: pushColor,
                   weight: FontWeight.w600,
                 ),
                 onPressed: () {
