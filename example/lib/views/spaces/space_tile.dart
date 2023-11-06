@@ -153,7 +153,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
           progressHook: (p0) {},
         )
         .then((value) {
-      ref.read(mySpacesProvider.notifier).onRefresh();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
       //Remove loading dialog
       Navigator.pop(context);
 
@@ -166,7 +166,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
       pushScreen(LiveSpaceRoom(space: value));
     }).catchError(
       (err) {
-        ref.read(mySpacesProvider.notifier).onRefresh();
+        ref.read(yourSpacesProvider.notifier).onRefresh();
 
         //Remove loading dialog
         Navigator.pop(context);

@@ -8,6 +8,8 @@ void main() async {
   );
 }
 
+final pushColor = Color(0xFFD43A94);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,15 +17,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.purple,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
+        primaryColor: pushColor,
+        appBarTheme: AppBarTheme(backgroundColor: pushColor),
         tabBarTheme: TabBarTheme(
-          labelColor: Colors.purple,
-          indicatorColor: Colors.purple,
-          unselectedLabelColor: Colors.purple,
+          labelColor: pushColor,
+          indicatorColor: pushColor,
+          unselectedLabelColor: pushColor,
           indicator: BoxDecoration(
               border: Border.all(
-                color: Colors.purple,
+                color: pushColor,
               ),
               borderRadius: BorderRadius.circular(16)),
         ),

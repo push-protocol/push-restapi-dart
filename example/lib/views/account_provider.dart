@@ -31,32 +31,6 @@ class AccountProvider extends ChangeNotifier {
         mnemonic1,
       ];
 
-  List<NavItem> get spaceActions => [
-        NavItem(
-          title: 'Create Space',
-          onPressed: () {
-            pushScreen(
-              CreateSpaceScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'My Spaces',
-          onPressed: () {
-            pushScreen(
-              MySpacesScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'Trending Spaces',
-          onPressed: () {
-            pushScreen(
-              TrendingSpaceScreen(),
-            );
-          },
-        ),
-      ];
 
   connectWallet(String mnemonic) async {
     try {
@@ -104,7 +78,7 @@ class AccountProvider extends ChangeNotifier {
       //Spaces
       ref.read(popularSpaceProvider).loadSpaces();
       ref.read(spaceRequestsProvider).loadRequests();
-      ref.read(mySpacesProvider.notifier).onRefresh();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
 
       //CHAT
       ref.read(requestsProvider).loadRequests();

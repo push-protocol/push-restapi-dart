@@ -28,7 +28,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final accounts = vm.accounts;
     late List<NavItem> actions;
     if (currentIndex == 0) {
-      actions = vm.spaceActions;
     } else {
       final reqVm = ref.watch(requestsProvider);
       actions = [
@@ -64,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         : Scaffold(
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: currentIndex,
-                selectedItemColor: Colors.purpleAccent,
+                selectedItemColor: pushColor,
                 onTap: (value) {
                   setState(() {
                     currentIndex = value;
@@ -117,7 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 32),
+                    SizedBox(height: 16),
                     Expanded(
                       child: currentIndex == 0
                           ? SpacesTab()

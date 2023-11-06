@@ -25,8 +25,7 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
               child: Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: buttonColor,
-                    borderRadius: BorderRadius.circular(16)),
+                    color: pushColor, borderRadius: BorderRadius.circular(16)),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -88,6 +87,7 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
                 child: Column(
                   children: [
                     TabBar(
+                      isScrollable: true,
                       tabs: [
                         Tab(
                           text: 'Popular',
@@ -104,8 +104,8 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
                       child: TabBarView(
                         children: [
                           PopularTab(),
-                          Container(),
-                          Container(),
+                          ForYouTab(),
+                          ByYouTab(),
                         ],
                       ),
                     ),
@@ -113,38 +113,6 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
                 )))
       ],
     );
-
-    /*  ListView.separated(
-      itemCount: actions.length,
-      itemBuilder: (context, index) {
-        final item = actions[index];
-        return ListTile(
-          tileColor: Colors.white,
-          title: Text(item.title),
-          onTap: item.onPressed,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (item.count > 0)
-                Container(
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: Text(
-                    item.count.toString(),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              Icon(Icons.arrow_forward_ios),
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) => SizedBox(height: 8),
-    );*/
   }
 }
 
-final buttonColor = Color(0xFFD43A94);

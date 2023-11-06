@@ -126,7 +126,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
       showMyDialog(
           context: context, title: 'Error', message: 'Space not created');
     } else {
-      ref.read(mySpacesProvider.notifier).onRefresh();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
       showMyDialog(
         context: context,
         title: 'Success',

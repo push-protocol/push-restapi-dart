@@ -1,21 +1,21 @@
 import '../../../__lib.dart';
 
-class PopularTab extends ConsumerStatefulWidget {
-  const PopularTab({
+class ByYouTab extends ConsumerStatefulWidget {
+  const ByYouTab({
     super.key,
   });
 
   @override
-  ConsumerState<PopularTab> createState() => _PopularTabState();
+  ConsumerState<ByYouTab> createState() => _PopularTabState();
 }
 
-class _PopularTabState extends ConsumerState<PopularTab> {
+class _PopularTabState extends ConsumerState<ByYouTab> {
   @override
   Widget build(BuildContext context) {
-    final vm = ref.watch(popularSpaceProvider);
+    final vm = ref.watch(yourSpacesProvider);
     final filter = vm.filterList;
     final currentFilter = vm.filterType;
-    final spaces = vm.spacesList;
+    final spaces = vm.byYou;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -46,13 +46,18 @@ class _PopularTabState extends ConsumerState<PopularTab> {
                   ? Center(child: Text('Cannot load Spaces'))
                   : spaces.isEmpty
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset('assets/space.svg'),
-                              SizedBox(height: 16),
-                              Text('No Spaces found'),
-                            ],
+                          child: InkWell(
+                            onTap: () {
+                              pushScreen(CreateSpaceScreen());
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/space.svg'),
+                                SizedBox(height: 16),
+                                Text('Create a space'),
+                              ],
+                            ),
                           ),
                         )
                       : ListView.separated(

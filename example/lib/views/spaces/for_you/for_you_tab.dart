@@ -1,21 +1,21 @@
 import '../../../__lib.dart';
 
-class PopularTab extends ConsumerStatefulWidget {
-  const PopularTab({
+class ForYouTab extends ConsumerStatefulWidget {
+  const ForYouTab({
     super.key,
   });
 
   @override
-  ConsumerState<PopularTab> createState() => _PopularTabState();
+  ConsumerState<ForYouTab> createState() => _PopularTabState();
 }
 
-class _PopularTabState extends ConsumerState<PopularTab> {
+class _PopularTabState extends ConsumerState<ForYouTab> {
   @override
   Widget build(BuildContext context) {
-    final vm = ref.watch(popularSpaceProvider);
+    final vm = ref.watch(yourSpacesProvider);
     final filter = vm.filterList;
     final currentFilter = vm.filterType;
-    final spaces = vm.spacesList;
+    final spaces = vm.forYou;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
