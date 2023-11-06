@@ -1,3 +1,4 @@
+import 'package:blockies/blockies.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
@@ -13,6 +14,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int currentIndex = 0;
+
+  onCopy() {
+    final pushWallet = ref.read(accountProvider).pushWallet!;
+
+    FlutterClipboard.copy(pushWallet.address!).then((value) {
+      showSuccessSnackbar('Address copied successfully');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return pushWallet == null
         ? ConnectScreen(accounts: accounts, vm: vm)
         : Scaffold(
-            backgroundColor: Colors.purpleAccent,
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: currentIndex,
                 selectedItemColor: Colors.purpleAccent,
@@ -75,63 +83,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG),
+                    SvgPicture.asset(
+                      AppAssets.ASSETS_PUSHLOGO_SVG,
+                      width: 70,
                     ),
-                    SizedBox(height: 64),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          DataView(
-                            color: Colors.white,
-                            label: 'Address: ',
-                            value: pushWallet.address ?? '',
-                          ),
-                          SizedBox(height: 16),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: InkWell(
-                              onTap: () {
-                                FlutterClipboard.copy(pushWallet.address!)
-                                    .then((value) {
-                                  showMyDialog(
-                                      context: context,
-                                      title: 'Address ',
-                                      message: 'address copied successfully');
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.white),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.copy,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(width: 12),
-                                    Text(
-                                      'Copy Address',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                    SizedBox(height: 16),
+                    InkWell(
+                      onTap: onCopy,
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.purple),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Blockies(seed: '${pushWallet.address}'),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 16),
-                          Expanded(
-                            child: ListView.separated(
+                            SizedBox(width: 12),
+                            Expanded(child: KText(pushWallet.address ?? '')),
+                            SizedBox(width: 12),
+                            Icon(
+                              Icons.copy,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    Expanded(
+                      child: currentIndex == 0
+                          ? SpacesTab()
+                          : ListView.separated(
                               itemCount: actions.length,
                               itemBuilder: (context, index) {
                                 final item = actions[index];
@@ -163,105 +154,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               separatorBuilder: (context, index) =>
                                   SizedBox(height: 8),
                             ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        ref.read(accountProvider).logOut();
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          KText(
+                            'Switch Account',
+                            size: 14,
+                            color: Colors.red,
                           ),
-                          InkWell(
-                            onTap: () {
-                              ref.read(accountProvider).logOut();
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(
-                                  Icons.logout,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  'Switch Account',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20),
-                                )
-                              ],
-                            ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.logout,
+                            size: 20,
+                            color: Colors.red,
                           ),
-                          SizedBox(height: 24),
                         ],
                       ),
                     ),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
           );
-  }
-}
-
-class ConnectScreen extends StatelessWidget {
-  const ConnectScreen({
-    super.key,
-    required this.accounts,
-    required this.vm,
-  });
-
-  final List<String> accounts;
-  final AccountProvider vm;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.purpleAccent,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  SizedBox(height: 16),
-                  Align(
-                      alignment: Alignment.topCenter,
-                      child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
-                  SizedBox(height: 64),
-                  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: List.generate(
-                      accounts.length,
-                      (index) => InkWell(
-                        onTap: () {
-                          vm.connectWallet(accounts[index]);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.person_4_rounded,
-                                size: 32,
-                              ),
-                              Text('User ${index + 1}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 32,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

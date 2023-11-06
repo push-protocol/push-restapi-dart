@@ -103,6 +103,7 @@ class AccountProvider extends ChangeNotifier {
       creatSocketConnection();
 
       ref.read(requestsProvider).loadRequests();
+      ref.read(spaceRequestsProvider).loadRequests();
       ref.read(conversationsProvider).reset();
       ref.read(mySpacesProvider.notifier).onRefresh();
     } catch (e) {
@@ -139,6 +140,22 @@ class AccountProvider extends ChangeNotifier {
       pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
         print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
         ref.read(conversationsProvider).onReceiveSocket(message);
+      });
+
+      pushSDKSocket.on(EVENTS.SPACES, (groupInfo) {
+        print('SPACES NOTIFICATION EVENTS.SPACES: $groupInfo');
+
+        final type = (groupInfo as Map<String, dynamic>)['eventType'];
+        final recipients = (groupInfo['to'] as List?) ?? [];
+
+        if (type == 'create' ||
+            (type == 'request' &&
+                recipients.contains(walletToPCAIP10(pushWallet!.address!)))) {
+          ref
+              .read(spaceRequestsProvider)
+              .addReqestFromSocket(SpaceFeeds.fromJson(groupInfo));
+          return;
+        }
       });
 
       // To get group creation or updation events

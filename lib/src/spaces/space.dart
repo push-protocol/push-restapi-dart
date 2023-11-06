@@ -13,7 +13,7 @@ export 'src/space.dart';
 export 'src/request_to_be_promoted.dart';
 export 'src/accept_promotion_request.dart';
 export 'src/reject_promotion_request.dart';
-
+export 'src/requests.dart';
 export 'src/models/space_models.dart';
 export 'src/models/livepeer_models.dart';
 

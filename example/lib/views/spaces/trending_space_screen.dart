@@ -29,7 +29,11 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
               hintText:
                   'eg. spaces:466beec0d0bc78d5ba362628a5607ece464eb723e1a2ba5fbb476202866657c5',
               suffixIcon: TextButton(
-                child: KText('Join',color: Colors.purple,weight: FontWeight.w600,),
+                child: KText(
+                  'Join',
+                  color: Colors.purple,
+                  weight: FontWeight.w600,
+                ),
                 onPressed: () {
                   onJoin(controller.text);
                 },
