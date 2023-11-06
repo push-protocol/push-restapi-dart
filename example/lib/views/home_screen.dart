@@ -32,28 +32,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? ConnectScreen(accounts: accounts, vm: vm)
         : Scaffold(
             bottomNavigationBar: BottomNavigationBar(
-                currentIndex: currentIndex,
-                selectedItemColor: pushColor,
-                onTap: (value) {
-                  setState(() {
-                    currentIndex = value;
-                  });
-                },
-                items: [
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.multitrack_audio_outlined),
-                      label: 'Spaces'),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.forum), label: 'Chat')
-                ]),
+              currentIndex: currentIndex,
+              selectedItemColor: pushColor,
+              onTap: (value) {
+                setState(() {
+                  currentIndex = value;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.multitrack_audio_outlined),
+                    label: 'Spaces'),
+                BottomNavigationBarItem(icon: Icon(Icons.forum), label: 'Chat')
+              ],
+            ),
             body: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    SvgPicture.asset(
-                      AppAssets.ASSETS_PUSHLOGO_SVG,
-                      width: 70,
+                    Row(
+                      children: [
+                        Spacer(),
+                        SvgPicture.asset(
+                          AppAssets.ASSETS_PUSHLOGO_SVG,
+                          width: 70,
+                        ),
+                        Expanded(
+                            child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                ref.read(accountProvider).logOut();
+                              },
+                              child: Icon(
+                                Icons.logout,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ))
+                      ],
                     ),
                     SizedBox(height: 16),
                     InkWell(
@@ -87,63 +107,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    Expanded(child: currentIndex == 0 ? SpacesTab() : ChatsTab()
-
-                        /* ListView.separated(
-                              itemCount: actions.length,
-                              itemBuilder: (context, index) {
-                                final item = actions[index];
-                                return ListTile(
-                                  tileColor: Colors.white,
-                                  title: Text(item.title),
-                                  onTap: item.onPressed,
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (item.count > 0)
-                                        Container(
-                                          padding: EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.red,
-                                          ),
-                                          child: Text(
-                                            item.count.toString(),
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      Icon(Icons.arrow_forward_ios),
-                                    ],
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) =>
-                                  SizedBox(height: 8),
-                            ),*/
-                        ),
-                    InkWell(
-                      onTap: () {
-                        ref.read(accountProvider).logOut();
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          KText(
-                            'Switch Account',
-                            size: 14,
-                            color: Colors.red,
-                          ),
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.logout,
-                            size: 20,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
+                    Expanded(
+                      child: currentIndex == 0 ? SpacesTab() : ChatsTab(),
                     ),
-                    SizedBox(height: 24),
                   ],
                 ),
               ),

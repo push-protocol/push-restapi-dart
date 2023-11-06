@@ -1,3 +1,5 @@
+import 'package:blockies/blockies.dart';
+
 import '../__lib.dart';
 
 class ConnectScreen extends StatelessWidget {
@@ -7,13 +9,12 @@ class ConnectScreen extends StatelessWidget {
     required this.vm,
   });
 
-  final List<String> accounts;
+  final List<DemoUser> accounts;
   final AccountProvider vm;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: pushColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -26,7 +27,51 @@ class ConnectScreen extends StatelessWidget {
                       alignment: Alignment.topCenter,
                       child: SvgPicture.asset(AppAssets.ASSETS_PUSHLOGO_SVG)),
                   SizedBox(height: 64),
-                  Wrap(
+                  Expanded(
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        final item = accounts[index];
+                        return InkWell(
+                          onTap: () {
+                            vm.connectWallet(item.mnemonic);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: pushColor),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Blockies(seed: item.address),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: KText(
+                                    item.address,
+                                    size: 16,
+                                    weight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 16),
+                      itemCount: accounts.length,
+                    ),
+                  ),
+                  /*  Wrap(
                     spacing: 24,
                     runSpacing: 24,
                     children: List.generate(
@@ -55,7 +100,7 @@ class ConnectScreen extends StatelessWidget {
                   ),
                   SizedBox(
                     height: 32,
-                  ),
+                  ),*/
                 ],
               ),
             ),

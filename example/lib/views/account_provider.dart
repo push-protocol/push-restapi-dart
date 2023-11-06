@@ -23,14 +23,23 @@ class AccountProvider extends ChangeNotifier {
   final mnemonic5 =
       'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
 
-  List<String> get accounts => [
-        mnemonic2,
-        mnemonic3,
-        mnemonic4,
-        mnemonic5,
-        mnemonic1,
+  List<DemoUser> get accounts => [
+        DemoUser(
+            mnemonic: mnemonic1,
+            address: '0xD3FD4422210E69Fe8cD790a546Cbb5d7DCe904Ce'),
+        DemoUser(
+            mnemonic: mnemonic2,
+            address: '0x8ca107e6845b095599FDc1A937E6f16677a90325'),
+        DemoUser(
+            mnemonic: mnemonic3,
+            address: '0x9e16C5B631C3328843fA7d2acc8edd100f21693a'),
+        DemoUser(
+            mnemonic: mnemonic4,
+            address: '0x87bBCDe9DF530bC106B1D958e23b61c33b7Ee194'),
+        DemoUser(
+            mnemonic: mnemonic5,
+            address: '0x29b8276AA5bc432e03745eF275ded9074faB5970'),
       ];
-
 
   connectWallet(String mnemonic) async {
     try {
@@ -203,4 +212,13 @@ class AccountProvider extends ChangeNotifier {
     pushWallet = null;
     notifyListeners();
   }
+}
+
+class DemoUser {
+  final String mnemonic, address;
+
+  DemoUser({
+    required this.mnemonic,
+    required this.address,
+  });
 }
