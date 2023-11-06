@@ -12,3 +12,6 @@ export 'my_spaces/my_spaces_provider.dart';
 export 'space_requests/space_request_provider.dart';
 export 'space_requests/space_invites_screen.dart';
 export 'space_tile.dart';
+
+export 'popular/popular_space_provider.dart';
+export 'popular/popular_tab.dart';

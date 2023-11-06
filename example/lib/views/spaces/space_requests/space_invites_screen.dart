@@ -1,5 +1,4 @@
 import 'package:example/__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SpaceInvitesDailog extends ConsumerStatefulWidget {
   const SpaceInvitesDailog({super.key});

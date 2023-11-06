@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:example/__lib.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 

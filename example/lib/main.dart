@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '__lib.dart';
 
 void main() async {
@@ -20,12 +18,15 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.purple,
         appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
         tabBarTheme: TabBarTheme(
-            labelColor: Colors.white,
-            indicatorColor: Colors.purple,
-            unselectedLabelColor: Colors.purple,
-            indicator: BoxDecoration(
-              color: Colors.purple,
-            )),
+          labelColor: Colors.purple,
+          indicatorColor: Colors.purple,
+          unselectedLabelColor: Colors.purple,
+          indicator: BoxDecoration(
+              border: Border.all(
+                color: Colors.purple,
+              ),
+              borderRadius: BorderRadius.circular(16)),
+        ),
       ),
       home: HomeScreen(),
     );

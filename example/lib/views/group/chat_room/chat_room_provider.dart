@@ -4,10 +4,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
-
-import '../../../util/app_file_picker.dart';
 
 final chatRoomProvider = ChangeNotifierProvider((ref) => ChatRoomProvider(ref));
 

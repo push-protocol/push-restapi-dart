@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../__lib.dart';
 
 class SpacesTab extends ConsumerStatefulWidget {
@@ -12,7 +10,6 @@ class SpacesTab extends ConsumerStatefulWidget {
 class _SpacesTabState extends ConsumerState<SpacesTab> {
   @override
   Widget build(BuildContext context) {
-
     final requestsCount =
         ref.watch(spaceRequestsProvider).requestsList?.length ?? 0;
 
@@ -53,7 +50,6 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
             InkWell(
               onTap: () {
                 Get.bottomSheet(SpaceInvitesDailog());
-                // pushScreen(SpaceInvitesScreen());
               },
               child: Stack(
                 children: [
@@ -85,6 +81,36 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
             ),
           ],
         ),
+        SizedBox(height: 16),
+        Expanded(
+            child: DefaultTabController(
+                length: 3,
+                child: Column(
+                  children: [
+                    TabBar(
+                      tabs: [
+                        Tab(
+                          text: 'Popular',
+                        ),
+                        Tab(
+                          text: 'For You',
+                        ),
+                        Tab(
+                          text: 'Hosted by you',
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          PopularTab(),
+                          Container(),
+                          Container(),
+                        ],
+                      ),
+                    ),
+                  ],
+                )))
       ],
     );
 

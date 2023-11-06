@@ -1,5 +1,4 @@
 import '../__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
@@ -102,10 +101,14 @@ class AccountProvider extends ChangeNotifier {
       );
       creatSocketConnection();
 
-      ref.read(requestsProvider).loadRequests();
+      //Spaces
+      ref.read(popularSpaceProvider).loadSpaces();
       ref.read(spaceRequestsProvider).loadRequests();
-      ref.read(conversationsProvider).reset();
       ref.read(mySpacesProvider.notifier).onRefresh();
+
+      //CHAT
+      ref.read(requestsProvider).loadRequests();
+      ref.read(conversationsProvider).reset();
     } catch (e) {
       pop();
     }
