@@ -8,6 +8,8 @@ import 'on_receive_meta_message_for_space.dart';
 import 'initialize.dart';
 import 'join.dart';
 import 'update_space_meta.dart';
+import 'stop.dart';
+import 'start.dart';
 
 import '../../../push_restapi_dart.dart';
 
@@ -45,7 +47,6 @@ class PushSpaceNotifier extends ChangeNotifier {
   _setPlaybackUrl(String? url) {
     _playbackUrl = url;
     notifyListeners();
-    log('_setPlaybackUrl _playbackUrl: $_playbackUrl');
   }
 
   // to store data related to push space
@@ -117,7 +118,7 @@ class PushSpaceNotifier extends ChangeNotifier {
       setLivePeerKey(livepeerApiKey);
     }
 
-    final result = await joinSpace(
+    final result = await join_(
       spaceId: spaceId,
       address: address,
       pgpPrivateKey: pgpPrivateKey,
@@ -146,7 +147,7 @@ class PushSpaceNotifier extends ChangeNotifier {
       setLivePeerKey(livepeerApiKey);
     }
 
-    final result = await startSpace(
+    final result = await start_(
       accountAddress: accountAddress,
       signer: signer,
       spaceId: spaceId,
@@ -241,6 +242,19 @@ class PushSpaceNotifier extends ChangeNotifier {
     setMicrophoneState(!_isMicOn);
   }
 
+  Future<void> _disconnectFromRoom() async {
+    if (_room != null) {
+      // turn off mic
+      // TODO: Replace this with setMicrophoneState() call once we have the queue
+      _isMicOn = false;
+      await _room?.localParticipant?.setMicrophoneEnabled(false);
+
+      // disconnect from the room
+      _room!.disconnect();
+      _room = null;
+    }
+  }
+
   Future leave() async {
     try {
       final localAddress = getCachedWallet()!.address!;
@@ -273,17 +287,7 @@ class PushSpaceNotifier extends ChangeNotifier {
       String messageContent =
           _room != null ? CHAT.UA_SPEAKER_LEAVE : CHAT.UA_LISTENER_LEAVE;
 
-      if (_room != null) {
-        // turn off mic
-        // TODO: Replace this with setMicrophoneState() call once we have the queue
-        _isMicOn = false;
-        await _room?.localParticipant?.setMicrophoneEnabled(false);
-
-        // disconnect from the room
-        _room!.disconnect();
-
-        _room = null;
-      }
+      await _disconnectFromRoom();
 
       if (_playbackUrl != null) {
         _playbackUrl = null;
@@ -303,7 +307,9 @@ class PushSpaceNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  stop() {}
+  Future stop() async {
+    await stop_(spaceData: data, disconnectFromRoom: _disconnectFromRoom);
+  }
 
   sendReaction({required String reaction}) async {
     final reactionMessage = ReactionMessage(

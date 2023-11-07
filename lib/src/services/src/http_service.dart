@@ -196,6 +196,42 @@ class HttpService {
     }
   }
 
+  Future<dynamic> patch({
+  String? baseUrl,
+  String? authorization,
+  required String path,
+  var data,
+  bool skipJsonDecode = false,
+  Map<String, String>? headers,
+}) async {
+  http_package.Response? response;
+  try {
+    baseUrl ??= Api.getAPIBaseUrls();
+    final url = Uri.parse((baseUrl) + path);
+    log('PATCH---$url');
+    log('PATCH---DATA---$data');
+
+    response = await http_package.patch(
+      url,
+      body: data == null ? null : jsonEncode(data),
+      headers: headers ?? header(authorization),
+    );
+    log('Status Code:${response.statusCode}');
+    log('Response : ${response.body}');
+    log('isFailure : ${isFailure(response.statusCode)}');
+    if (skipJsonDecode || isFailure(response.statusCode)) {
+      return response.body;
+    }
+    if (response.body.isEmpty) {
+      return <String, dynamic>{};
+    }
+    return json.decode(response.body);
+  } catch (exception) {
+    log(exception.toString());
+    return null;
+  }
+}
+
   bool isFailure(int statusCode) {
     return statusCode < 200 || statusCode > 299;
   }

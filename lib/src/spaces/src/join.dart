@@ -5,7 +5,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'helpers/live_peer.dart';
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceData?> joinSpace({
+Future<SpaceData?> join_({
   required String spaceId,
   String? address,
   String? pgpPrivateKey,
