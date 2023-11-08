@@ -32,6 +32,13 @@ dependencies:
   clipboard: ^0.1.3
   video_player: ^2.7.1
   flutter_chat_bubble: ^2.0.2
+  flutter_svg: ^2.0.7
+  get: ^4.6.5
+  intl: ^0.18.1
+  image_picker: ^1.0.4
+  image_cropper: ^5.0.0
+  flutter_native_image: ^0.0.6+1
+  blockies: ^0.1.2
 
   ethers: 
     git:
@@ -41,13 +48,7 @@ dependencies:
 
   push_restapi_dart:
     path: '../'
-  flutter_svg: ^2.0.7
-  get: ^4.6.5
-  intl: ^0.18.1
-  image_picker: ^1.0.4
-  image_cropper: ^5.0.0
-  flutter_native_image: ^0.0.6+1
-  # file_picker: ^5.2.10
+
 
 
 flutter:

@@ -59,12 +59,17 @@ class PushSpaceNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  onReceiveMetaMessage(Map<String, dynamic> metaMessage) async {
-    // when the space isnt joined we dont act on the received meta messages
+  onReceiveMetaMessage(Map<String, dynamic> message) async {
+    // when the space isnt joined we dont act on the recieved meta messages
     if (data.spaceId == '') return;
 
-    final result =
-        await onReceiveMetaMessageForSpace(metaMessage, data.spaceId);
+    final result = await onReceiveMetaMessageForSpace(
+        message: message,
+        spaceId: data.spaceId,
+        joinOnPromotion: () {
+          _setPlaybackUrl(null);
+          join(spaceId: data.spaceId);
+        });
     if (result != null) {
       data = result;
       notifyListeners();
@@ -159,6 +164,29 @@ class PushSpaceNotifier extends ChangeNotifier {
     return result;
   }
 
+  /// To be called by a listener and is requesting to be promoted as a speaker
+  requestToBePromoted() {
+    final result = requestToBePromoted_(data: data);
+    data = result;
+    notifyListeners();
+  }
+
+  /// Promotion request is accepted by the host
+  Future<void> acceptPromotionRequest({required String promoteeAddress}) async {
+    final result = await acceptPromotionRequest_(
+        data: data, promoteeAddress: promoteeAddress);
+    data = result;
+    notifyListeners();
+  }
+
+  /// Promotion request is rejected by the host
+  rejectPromotionRequest({required String promoteeAddress}) {
+    final result =
+        rejectPromotionRequest_(data: data, promoteeAddress: promoteeAddress);
+    data = result;
+    notifyListeners();
+  }
+
   _updateLocalUserRoom(Room? localRoom) {
     _room = localRoom;
     notifyListeners();
@@ -215,7 +243,36 @@ class PushSpaceNotifier extends ChangeNotifier {
 
   Future leave() async {
     try {
-      _playbackUrl = null;
+      final localAddress = getCachedWallet()!.address!;
+
+      // update liveSpaceData by removing the current user
+      if (localAddress == pCAIP10ToWallet(data.spaceCreator)) {
+        // host
+        data.liveSpaceData.host = AdminPeer();
+      } else if (_room != null) {
+        // speaker
+        final speakers = <AdminPeer>[];
+        for (var speaker in data.liveSpaceData.speakers) {
+          if (speaker.address != localAddress) {
+            speakers.add(speaker);
+          }
+        }
+        data.liveSpaceData.speakers = speakers;
+      } else {
+        // listener
+        final listeners = <ListenerPeer>[];
+        for (var listener in data.liveSpaceData.listeners) {
+          if (listener.address != localAddress) {
+            listeners.add(listener);
+          }
+        }
+        data.liveSpaceData.listeners = listeners;
+      }
+
+      // prepare messageContent of the user activity message
+      String messageContent =
+          _room != null ? CHAT.UA_SPEAKER_LEAVE : CHAT.UA_LISTENER_LEAVE;
+
       if (_room != null) {
         // turn off mic
         // TODO: Replace this with setMicrophoneState() call once we have the queue
@@ -225,35 +282,20 @@ class PushSpaceNotifier extends ChangeNotifier {
         // disconnect from the room
         _room!.disconnect();
 
-        // fire a user activity message signaling that the user has left the space
-        final localAddress = getCachedWallet()!.address!;
-        final spaceData = data;
-
-        String metaMessageContent = CHAT.UA_SPEAKER_LEAVE;
-
-        if (localAddress == pCAIP10ToWallet(spaceData.spaceCreator)) {
-          spaceData.liveSpaceData.host = AdminPeer();
-        } else {
-          final speakers = <AdminPeer>[];
-          for (var speaker in spaceData.liveSpaceData.speakers) {
-            if (speaker.address != localAddress) {
-              speakers.add(speaker);
-            }
-          }
-          spaceData.liveSpaceData.speakers = speakers;
-        }
-
-        sendLiveSpaceData(
-            messageType: MessageType.USER_ACTIVITY,
-            updatedLiveSpaceData: spaceData.liveSpaceData,
-            content: metaMessageContent,
-            affectedAddresses: [localAddress],
-            spaceId: spaceData.spaceId);
-
-        data = _initSpaceData;
+        _room = null;
       }
 
-      _room = null;
+      if (_playbackUrl != null) {
+        _playbackUrl = null;
+      }
+
+      sendLiveSpaceData(
+          messageType: MessageType.USER_ACTIVITY,
+          updatedLiveSpaceData: data.liveSpaceData,
+          content: messageContent,
+          affectedAddresses: [localAddress],
+          spaceId: data.spaceId);
+      data = _initSpaceData;
     } catch (e) {
       log('leave error $e');
     }

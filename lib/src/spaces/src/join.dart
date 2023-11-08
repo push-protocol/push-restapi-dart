@@ -67,6 +67,12 @@ Future<SpaceData?> joinSpace({
           roomId: roomId, participantName: localAddress);
       updateRoom(room);
 
+      // remove local user from listeners to handle the case of promotion
+      spaceData.liveSpaceData.listeners =
+          spaceData.liveSpaceData.listeners.where((listener) {
+        return listener.address != localAddress;
+      }).toList();
+
       spaceData.liveSpaceData.speakers = [
         ...spaceData.liveSpaceData.speakers,
         AdminPeer(
