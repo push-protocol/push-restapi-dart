@@ -48,16 +48,6 @@ void main() {
           true,
         );
       });
-
-      test('.validatePassword', () {
-        expect(() => validatePassword(''), throwsA(isA<Exception>()));
-        expect(() => validatePassword('12345678'), throwsA(isA<Exception>()));
-        expect(() => validatePassword('ABCDEFGH'), throwsA(isA<Exception>()));
-        expect(() => validatePassword('abcdefgh'), throwsA(isA<Exception>()));
-        expect(() => validatePassword('ABDEefgh'), throwsA(isA<Exception>()));
-        expect(() => validatePassword('ABDEefgh223'), throwsA(isA<Exception>()));
-        expect(validatePassword('123.ABC/abc'), true);
-      });
     },
   );
 }

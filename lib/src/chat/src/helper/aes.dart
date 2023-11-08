@@ -22,7 +22,7 @@ String generateRandomSecret(int length) {
 Future<String> aesEncrypt(
     {required String plainText, required String secretKey}) async {
   try {
-    final salt = genRandomWithNonZero(8);
+    final salt = generateRandomSecretNonZero(8);
     var keyndIV = deriveKeyAndIV(secretKey, salt);
     final key = encrypt.Key(keyndIV.first);
     final iv = encrypt.IV(keyndIV.last);
@@ -38,7 +38,7 @@ Future<String> aesEncrypt(
   }
 }
 
-Uint8List genRandomWithNonZero(int seedLength) {
+Uint8List generateRandomSecretNonZero(int seedLength) {
   final random = Random.secure();
   const int randomMax = 245;
   final Uint8List uint8list = Uint8List(seedLength);

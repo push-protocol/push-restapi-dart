@@ -19,6 +19,13 @@ class Pagination {
 }
 
 class Constants {
+  static const Map<String, dynamic> PAGINATION = {
+    'INITIAL_PAGE': 1,
+    'LIMIT': 10,
+    'LIMIT_MIN': 1,
+    'LIMIT_MAX': 50,
+  };
+  
   static const int DEFAULT_CHAIN_ID = 5;
   static const int DEV_CHAIN_ID = 99999;
   static const List<int> NON_ETH_CHAINS = [
