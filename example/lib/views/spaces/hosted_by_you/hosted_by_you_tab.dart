@@ -1,15 +1,15 @@
 import '../../../__lib.dart';
 
-class ByYouTab extends ConsumerStatefulWidget {
-  const ByYouTab({
+class HostedByYouTab extends ConsumerStatefulWidget {
+  const HostedByYouTab({
     super.key,
   });
 
   @override
-  ConsumerState<ByYouTab> createState() => _PopularTabState();
+  ConsumerState<HostedByYouTab> createState() => _PopularTabState();
 }
 
-class _PopularTabState extends ConsumerState<ByYouTab> {
+class _PopularTabState extends ConsumerState<HostedByYouTab> {
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(yourSpacesProvider);

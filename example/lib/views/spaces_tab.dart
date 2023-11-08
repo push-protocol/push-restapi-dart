@@ -105,7 +105,7 @@ class _SpacesTabState extends ConsumerState<SpacesTab> {
                         children: [
                           PopularTab(),
                           ForYouTab(),
-                          ByYouTab(),
+                          HostedByYouTab(),
                         ],
                       ),
                     ),
