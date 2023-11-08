@@ -42,7 +42,7 @@ class YourSpacesProvider extends ChangeNotifier {
         .toList();
   }
 
-  List<SpaceFeeds>? get byYou {
+  List<SpaceFeeds>? get hostedByYou {
     return spacesList
         ?.where((element) =>
             element.spaceInformation?.spaceCreator ==

@@ -15,7 +15,7 @@ class _PopularTabState extends ConsumerState<HostedByYouTab> {
     final vm = ref.watch(yourSpacesProvider);
     final filter = vm.filterList;
     final currentFilter = vm.filterType;
-    final spaces = vm.byYou;
+    final spaces = vm.hostedByYou;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

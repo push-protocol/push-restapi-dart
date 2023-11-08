@@ -11,24 +11,24 @@ class PopolarSpaceProvider extends ChangeNotifier {
     filterType = filterList.first.count;
   }
 
-  List<SpaceFeeds>? _requests;
+  List<SpaceFeeds>? _spaces;
   List<SpaceFeeds>? get spacesList {
     switch (filterType) {
       case 0:
-        return _requests;
+        return _spaces;
       case 1:
-        return _requests
+        return _spaces
             ?.where((element) =>
                 element.spaceInformation?.status == ChatStatus.ACTIVE)
             .toList();
       case 2:
-        return _requests
+        return _spaces
             ?.where((element) =>
                 element.spaceInformation?.status == ChatStatus.PENDING)
             .toList();
 
       default:
-        return _requests;
+        return _spaces;
     }
   }
 
@@ -69,17 +69,9 @@ class PopolarSpaceProvider extends ChangeNotifier {
 
   loadSpaces() async {
     setBusy(true);
-    _requests = await trendingSpaces();
+    _spaces = await trendingSpaces();
 
     setBusy(false);
   }
 
-  addReqestFromSocket(SpaceFeeds req) {
-    if (_requests != null) {
-      _requests!.insert(0, req);
-    } else {
-      _requests = [req];
-    }
-    notifyListeners();
-  }
 }
