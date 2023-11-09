@@ -2,7 +2,7 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
-Future<List<SpaceFeeds>?> trendingSpaces({
+Future<List<SpaceFeeds>?> trending({
   int page = 1,
   int limit = 10,
 }) async {

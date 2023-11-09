@@ -3,11 +3,11 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import '../../../__lib.dart';
 
 final popularSpaceProvider =
-    ChangeNotifierProvider((ref) => PopolarSpaceProvider(ref));
+    ChangeNotifierProvider((ref) => PopularSpaceProvider(ref));
 
-class PopolarSpaceProvider extends ChangeNotifier {
+class PopularSpaceProvider extends ChangeNotifier {
   final Ref ref;
-  PopolarSpaceProvider(this.ref) {
+  PopularSpaceProvider(this.ref) {
     filterType = filterList.first.count;
   }
 
@@ -69,7 +69,7 @@ class PopolarSpaceProvider extends ChangeNotifier {
 
   loadSpaces() async {
     setBusy(true);
-    _spaces = await trendingSpaces();
+    _spaces = await trending();
 
     setBusy(false);
   }
