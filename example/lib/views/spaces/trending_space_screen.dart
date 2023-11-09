@@ -41,7 +41,7 @@ class _TrendingSpaceScreenState extends ConsumerState<TrendingSpaceScreen> {
             SizedBox(height: 32),
             Expanded(
               child: FutureBuilder<List<SpaceFeeds>?>(
-                future: trendingSpaces(limit: 30),
+                future: trending(limit: 30),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
