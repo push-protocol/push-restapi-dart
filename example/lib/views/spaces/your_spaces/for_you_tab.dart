@@ -6,10 +6,10 @@ class ForYouTab extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ForYouTab> createState() => _PopularTabState();
+  ConsumerState<ForYouTab> createState() => _ForYouTabState();
 }
 
-class _PopularTabState extends ConsumerState<ForYouTab> {
+class _ForYouTabState extends ConsumerState<ForYouTab> {
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(yourSpacesProvider);
