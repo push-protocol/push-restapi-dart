@@ -55,6 +55,7 @@ Future<SpaceData?> start_({
       meta: jsonEncode({
         "playbackId": stream.playbackId,
         "roomId": roomId,
+        "streamId": stream.streamId!
       }),
       scheduleAt: space.scheduleAt,
       scheduleEnd: space.scheduleEnd,

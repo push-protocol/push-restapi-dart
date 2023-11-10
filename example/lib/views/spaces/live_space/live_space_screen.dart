@@ -69,17 +69,29 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    InkWell(
-                      onTap: onLeaveSpace,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: KText(
-                          'Leave',
-                          color: Colors.red,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
-                    )
+                    isHost
+                        ? InkWell(
+                            onTap: onEndSpace,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: KText(
+                                'End',
+                                color: Colors.red,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                          )
+                        : InkWell(
+                            onTap: onLeaveSpace,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: KText(
+                                'Leave',
+                                color: Colors.red,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                          )
                   ],
                 ),
                 SizedBox(height: 16),
@@ -304,6 +316,22 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
   void onShowReaction() {
     _showReaction = true;
     setState(() {});
+  }
+
+  onEndSpace() async {
+    showLoadingDialog(context);
+    try {
+      await ref.read(liveSpaceProvider).stop();
+
+      print('##Show dialog');
+      Navigator.pop(context);
+      Navigator.pop(context);
+      showSuccessSnackbar('Space Ended Successfully');
+
+      print('##Show dialog------');
+    } catch (e) {
+      Navigator.pop(context);
+    }
   }
 
   onLeaveSpace() async {

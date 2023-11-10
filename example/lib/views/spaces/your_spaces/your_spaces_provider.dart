@@ -87,7 +87,7 @@ class YourSpacesProvider extends ChangeNotifier {
 
   onRefresh() async {
     setBusy(true);
-    _spaces = await spaces(toDecrypt: true);
+    _spaces = await spaces(toDecrypt: true, limit: 5);
 
     setBusy(false);
   }

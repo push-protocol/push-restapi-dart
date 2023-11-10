@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../push_restapi_dart.dart';
 import 'helpers/live_peer.dart';
 
@@ -8,12 +10,12 @@ Future<SpaceData> stop_({
   try {
     final space = await getSpaceById(spaceId: spaceData.spaceId);
 
-    if (space.status != ChatStatus.ENDED) {
+    if (space.status == ChatStatus.ENDED) {
       throw Exception('Space already ended');
     }
 
     // send a meta message signaling end of space to all the joinees
-    sendLiveSpaceData(
+    await sendLiveSpaceData(
         messageType: MessageType.META,
         updatedLiveSpaceData: spaceData.liveSpaceData,
         content: CHAT.META_SPACE_END,
@@ -38,7 +40,8 @@ Future<SpaceData> stop_({
         isPublic: space.isPublic);
 
     // end livepeer's livestream
-    endLiveStream(streamId: space.meta!);
+    final streamId = jsonDecode(space.meta ?? '')['streamId'];
+    endLiveStream(streamId: streamId);
 
     // TODO: Close the multiparticipant room
 

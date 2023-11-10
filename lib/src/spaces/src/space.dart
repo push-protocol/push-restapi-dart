@@ -308,7 +308,10 @@ class PushSpaceNotifier extends ChangeNotifier {
   }
 
   Future stop() async {
-    await stop_(spaceData: data, disconnectFromRoom: _disconnectFromRoom);
+    data =
+        await stop_(spaceData: data, disconnectFromRoom: _disconnectFromRoom);
+
+    notifyListeners();
   }
 
   sendReaction({required String reaction}) async {

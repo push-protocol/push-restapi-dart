@@ -133,6 +133,11 @@ class AccountProvider extends ChangeNotifier {
 
         final type = (groupInfo as Map<String, dynamic>)['eventType'];
 
+        if (type == 'stop') {
+          //Refresh Hosted by you and For you tabs to reflect ended spaces
+          ref.read(yourSpacesProvider).onRefresh();
+        }
+
         if (type == 'create') {
           //This is a fix to complement the structure of the space retured by socket
           var spaceFeed = SpaceFeeds.fromJson(groupInfo);
