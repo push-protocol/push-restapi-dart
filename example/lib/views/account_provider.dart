@@ -132,7 +132,7 @@ class AccountProvider extends ChangeNotifier {
         print('SPACES NOTIFICATION EVENTS.SPACES: $groupInfo');
 
         final type = (groupInfo as Map<String, dynamic>)['eventType'];
-        
+
         if (type == 'create') {
           //This is a fix to complement the structure of the space retured by socket
           var spaceFeed = SpaceFeeds.fromJson(groupInfo);

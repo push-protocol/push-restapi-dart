@@ -73,5 +73,4 @@ class PopularSpaceProvider extends ChangeNotifier {
 
     setBusy(false);
   }
-
 }

@@ -4,7 +4,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'helpers/live_peer.dart';
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceData?> startSpace({
+Future<SpaceData?> start_({
   String? accountAddress,
   Signer? signer,
   String? pgpPrivateKey,

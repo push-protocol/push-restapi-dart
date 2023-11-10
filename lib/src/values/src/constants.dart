@@ -95,6 +95,7 @@ class CHAT {
   static const String META_GROUP_USER_INTERACTION = 'USER_INTERACTION';
   static const String META_SPACE_CREATE = 'CREATE_SPACE';
   static const String META_SPACE_START = 'START_SPACE';
+  static const String META_SPACE_END = 'END_SPACE';
   static const String META_SPACE_LISTENER_ADD = 'ADD_LISTENER';
   static const String META_SPACE_LISTENER_REMOVE = 'REMOVE_LISTENER';
   static const String META_SPACE_LISTENER_PRIVILEGE =

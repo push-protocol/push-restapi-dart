@@ -158,3 +158,17 @@ Future<Room?> addSpeakingParticipant({
     autoOnMic: autoOnMic,
   );
 }
+
+Future<void> endLiveStream({required String streamId}) async {
+  await http.patch(
+    baseUrl: _livepeerBaseUrl,
+    path: '/stream/$streamId',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": 'Bearer $_livepeerApiKey',
+    },
+    data: {
+      'suspended': true,
+    },
+  );
+}
