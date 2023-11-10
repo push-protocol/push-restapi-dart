@@ -336,6 +336,9 @@ class PushSpaceNotifier extends ChangeNotifier {
   /// A set to store the addresses of listeners who have been invited by the host.
   final Set<String> _pendingInvites = {};
 
+  // for host's UI to display a list of invites
+  List<String> get pendingInvites => _pendingInvites.toList();
+
   /// Invites a listener ie [inviteeAddress] to be promoted to a speaker.
   inviteToPromote({required String inviteeAddress}) {
     inviteToPromote_(
