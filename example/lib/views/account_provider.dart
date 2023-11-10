@@ -174,6 +174,9 @@ class AccountProvider extends ChangeNotifier {
         EVENTS.SPACES_MESSAGES,
         (data) async {
           final message = data as Map<String, dynamic>;
+          for (var element in message.keys) {
+            print('$element -> ${message[element]}');
+          }
 
           print(
               'SPACES NOTIFICATION EVENTS.SPACES_MESSAGES messageCategory ${message['messageCategory']} messageType ${message['messageType']}');
@@ -183,6 +186,12 @@ class AccountProvider extends ChangeNotifier {
               (message['messageType'] == MessageType.META ||
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
             ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
+          }
+          if (message['messageCategory'] == 'Chat' &&
+              message['messageContent'] == CHAT.META_SPACE_END) {
+            ref
+                .read(liveSpaceProvider)
+                .onReceiveSpaceEndedData(message["chatId"]);
           }
 
           if (message['messageCategory'] == 'Chat' &&

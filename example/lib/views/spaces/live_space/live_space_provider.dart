@@ -5,10 +5,14 @@ import 'dart:math' as m;
 import '../../../__lib.dart';
 
 final liveSpaceProvider = ChangeNotifierProvider<LiveSpaceProvider>((ref) {
-  return LiveSpaceProvider();
+  return LiveSpaceProvider(ref);
 });
 
 class LiveSpaceProvider extends PushSpaceNotifier {
+  final Ref ref;
+
+  LiveSpaceProvider(this.ref);
+
   List<ListenerPeer> get micRequests =>
       data.liveSpaceData.listeners.where((e) => e.handRaised).toList();
 
@@ -35,5 +39,28 @@ class LiveSpaceProvider extends PushSpaceNotifier {
         notifyListeners();
       },
     );
+  }
+
+  onReceiveSpaceEndedData(String spaceId) async {
+    if (spaceId == data.spaceId) {
+      showLoadingDialog();
+      showSuccessSnackbar('Host has ended the space');
+      leave().then((value) {
+        showMyDialog(
+          context: Get.context!,
+          title: 'Space',
+          message: 'Space Ended by Host',
+          onClose: () {
+            pop();
+            pop();
+            pop();
+          },
+        );
+      });
+
+      //Reload latest spaces and spaces requests
+      ref.read(yourSpacesProvider).onRefresh();
+      ref.read(spaceRequestsProvider).loadRequests();
+    }
   }
 }
