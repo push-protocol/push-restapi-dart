@@ -38,8 +38,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Text('Admin'),
                   Wrap(

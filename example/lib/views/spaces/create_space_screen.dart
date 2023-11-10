@@ -37,8 +37,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Text('Speakers'),
                   Wrap(

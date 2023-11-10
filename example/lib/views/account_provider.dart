@@ -132,14 +132,13 @@ class AccountProvider extends ChangeNotifier {
         print('SPACES NOTIFICATION EVENTS.SPACES: $groupInfo');
 
         final type = (groupInfo as Map<String, dynamic>)['eventType'];
-        final recipients = (groupInfo['to'] as List?) ?? [];
+        
+        if (type == 'create') {
+          //This is a fix to complement the structure of the space retured by socket
+          var spaceFeed = SpaceFeeds.fromJson(groupInfo);
+          spaceFeed.spaceInformation = SpaceDTO.fromJson(groupInfo);
 
-        if (type == 'create' ||
-            (type == 'request' &&
-                recipients.contains(walletToPCAIP10(pushWallet!.address!)))) {
-          ref
-              .read(spaceRequestsProvider)
-              .addReqestFromSocket(SpaceFeeds.fromJson(groupInfo));
+          ref.read(spaceRequestsProvider).addReqestFromSocket(spaceFeed);
           return;
         }
       });
