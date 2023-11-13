@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../__lib.dart';
@@ -127,7 +126,7 @@ class GroupAdminsView extends StatelessWidget {
         ),
         if (isUserAdmin)
           MaterialButton(
-            color: Colors.purple,
+            color: pushColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onPressed: () {
@@ -211,7 +210,7 @@ class GroupMembersView extends StatelessWidget {
           ),
           if (isUserAdmin)
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: () {

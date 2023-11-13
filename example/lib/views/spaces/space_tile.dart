@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
@@ -78,7 +77,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
             onPressed: () => onStart(item),
             child: KText(
               'Start',
-              color: Colors.purple,
+              color: pushColor,
               size: 18,
               weight: FontWeight.w600,
             ));
@@ -87,7 +86,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
           onPressed: () {},
           icon: Icon(
             Icons.notification_add,
-            color: Colors.purple,
+            color: pushColor,
           ),
         );
       }
@@ -154,7 +153,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
           progressHook: (p0) {},
         )
         .then((value) {
-      ref.read(mySpacesProvider.notifier).onRefresh();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
       //Remove loading dialog
       Navigator.pop(context);
 
@@ -167,7 +166,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
       pushScreen(LiveSpaceRoom(space: value));
     }).catchError(
       (err) {
-        ref.read(mySpacesProvider.notifier).onRefresh();
+        ref.read(yourSpacesProvider.notifier).onRefresh();
 
         //Remove loading dialog
         Navigator.pop(context);

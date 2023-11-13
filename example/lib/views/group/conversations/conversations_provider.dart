@@ -1,5 +1,4 @@
 import '../../../__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 final conversationsProvider =

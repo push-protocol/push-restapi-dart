@@ -32,7 +32,7 @@ class _StartP2PChatScreenState extends State<StartP2PChatScreen> {
             ),
             SizedBox(height: 64),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onSendMessage,

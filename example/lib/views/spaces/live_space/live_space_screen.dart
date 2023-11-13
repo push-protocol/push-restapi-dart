@@ -1,6 +1,5 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:example/__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:math' as m;

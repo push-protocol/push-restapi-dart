@@ -22,8 +22,9 @@ class EVENTS {
   static final CHAT_RECEIVED_MESSAGE = 'CHATS';
   static final CHAT_GROUPS = 'CHAT_GROUPS';
 
-  //Sapces
+  //Spaces
   static final SPACES_MESSAGES = 'SPACES_MESSAGES';
+  static final SPACES = 'SPACES';
 }
 
 class SOCKETTYPES {

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../../__lib.dart';
@@ -30,7 +29,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
     return Scaffold(
       // floatingActionButton: MaterialButton(
       //   height: 64,
-      //   color: Colors.purple,
+      //   color: pushColor,
       //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       //   onPressed: () {
       //     pushScreen(StartP2PChatScreen());
@@ -110,7 +109,7 @@ class ProfileImage extends StatelessWidget {
         ),
         child: Icon(
           Icons.person,
-          color: Colors.purple,
+          color: pushColor,
         ),
       );
     }
@@ -157,7 +156,7 @@ class ProfileImage extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.purpleAccent),
           shape: BoxShape.circle,
-          color: Colors.purple,
+          color: pushColor,
         ),
       );
     }

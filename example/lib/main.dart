@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '__lib.dart';
 
 void main() async {
@@ -10,6 +8,8 @@ void main() async {
   );
 }
 
+final pushColor = Color(0xFFD43A94);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -17,15 +17,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.purple,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.purple),
+        primaryColor: pushColor,
+        appBarTheme: AppBarTheme(backgroundColor: pushColor),
         tabBarTheme: TabBarTheme(
-            labelColor: Colors.white,
-            indicatorColor: Colors.purple,
-            unselectedLabelColor: Colors.purple,
-            indicator: BoxDecoration(
-              color: Colors.purple,
-            )),
+          labelColor: pushColor,
+          indicatorColor: pushColor,
+          unselectedLabelColor: pushColor,
+          indicator: BoxDecoration(
+            border: Border(bottom: BorderSide(color: pushColor, width: 2)),
+          ),
+        ),
       ),
       home: HomeScreen(),
     );

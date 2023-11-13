@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../__lib.dart';
@@ -39,7 +38,7 @@ class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
             ),
             SizedBox(height: 24),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onAdd,

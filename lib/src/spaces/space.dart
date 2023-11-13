@@ -4,7 +4,7 @@ export 'src/create.dart';
 export 'src/get_space_by_id.dart';
 export 'src/remove_listeners.dart';
 export 'src/remove_speakers.dart';
-export 'src/get_spaces.dart';
+export 'src/spaces.dart';
 export 'src/start_space.dart';
 export 'src/update.dart';
 export 'src/trending.dart';
@@ -13,7 +13,7 @@ export 'src/space.dart';
 export 'src/request_to_be_promoted.dart';
 export 'src/accept_promotion_request.dart';
 export 'src/reject_promotion_request.dart';
-
+export 'src/requests.dart';
 export 'src/models/space_models.dart';
 export 'src/models/livepeer_models.dart';
 

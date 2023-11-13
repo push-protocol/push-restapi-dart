@@ -39,6 +39,7 @@ dependencies:
   image_cropper: ^5.0.0
   flutter_native_image: ^0.0.6+1
   blockies: ^0.1.2
+  jiffy: ^6.2.1
 
   ethers: 
     git:

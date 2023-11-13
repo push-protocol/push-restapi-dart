@@ -1,5 +1,4 @@
 import '../__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
@@ -24,39 +23,22 @@ class AccountProvider extends ChangeNotifier {
   final mnemonic5 =
       'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
 
-  List<String> get accounts => [
-        mnemonic2,
-        mnemonic3,
-        mnemonic4,
-        mnemonic5,
-        mnemonic1,
-      ];
-
-  List<NavItem> get spaceActions => [
-        NavItem(
-          title: 'Create Space',
-          onPressed: () {
-            pushScreen(
-              CreateSpaceScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'My Spaces',
-          onPressed: () {
-            pushScreen(
-              MySpacesScreen(),
-            );
-          },
-        ),
-        NavItem(
-          title: 'Trending Spaces',
-          onPressed: () {
-            pushScreen(
-              TrendingSpaceScreen(),
-            );
-          },
-        ),
+  List<DemoUser> get accounts => [
+        DemoUser(
+            mnemonic: mnemonic1,
+            address: '0xD3FD4422210E69Fe8cD790a546Cbb5d7DCe904Ce'),
+        DemoUser(
+            mnemonic: mnemonic2,
+            address: '0x8ca107e6845b095599FDc1A937E6f16677a90325'),
+        DemoUser(
+            mnemonic: mnemonic3,
+            address: '0x9e16C5B631C3328843fA7d2acc8edd100f21693a'),
+        DemoUser(
+            mnemonic: mnemonic4,
+            address: '0x87bBCDe9DF530bC106B1D958e23b61c33b7Ee194'),
+        DemoUser(
+            mnemonic: mnemonic5,
+            address: '0x29b8276AA5bc432e03745eF275ded9074faB5970'),
       ];
 
   connectWallet(String mnemonic) async {
@@ -102,9 +84,14 @@ class AccountProvider extends ChangeNotifier {
       );
       creatSocketConnection();
 
+      //Spaces
+      ref.read(popularSpaceProvider).loadSpaces();
+      ref.read(spaceRequestsProvider).loadRequests();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
+
+      //CHAT
       ref.read(requestsProvider).loadRequests();
       ref.read(conversationsProvider).reset();
-      ref.read(mySpacesProvider.notifier).onRefresh();
     } catch (e) {
       pop();
     }
@@ -139,6 +126,21 @@ class AccountProvider extends ChangeNotifier {
       pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
         print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
         ref.read(conversationsProvider).onReceiveSocket(message);
+      });
+
+      pushSDKSocket.on(EVENTS.SPACES, (groupInfo) {
+        print('SPACES NOTIFICATION EVENTS.SPACES: $groupInfo');
+
+        final type = (groupInfo as Map<String, dynamic>)['eventType'];
+        
+        if (type == 'create') {
+          //This is a fix to complement the structure of the space retured by socket
+          var spaceFeed = SpaceFeeds.fromJson(groupInfo);
+          spaceFeed.spaceInformation = SpaceDTO.fromJson(groupInfo);
+
+          ref.read(spaceRequestsProvider).addReqestFromSocket(spaceFeed);
+          return;
+        }
       });
 
       // To get group creation or updation events
@@ -209,4 +211,13 @@ class AccountProvider extends ChangeNotifier {
     pushWallet = null;
     notifyListeners();
   }
+}
+
+class DemoUser {
+  final String mnemonic, address;
+
+  DemoUser({
+    required this.mnemonic,
+    required this.address,
+  });
 }

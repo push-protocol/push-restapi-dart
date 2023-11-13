@@ -38,8 +38,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Text('Admin'),
                   Wrap(
@@ -108,7 +107,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               ),
             ),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onCreateGroup,

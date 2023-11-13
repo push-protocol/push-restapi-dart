@@ -1,5 +1,4 @@
 import 'package:example/__lib.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 class CreateSpaceScreen extends ConsumerStatefulWidget {
@@ -38,8 +37,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Text('Speakers'),
                   Wrap(
@@ -97,7 +95,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
               ),
             ),
             MaterialButton(
-              color: Colors.purple,
+              color: pushColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onCreateSpace,
@@ -127,7 +125,7 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
       showMyDialog(
           context: context, title: 'Error', message: 'Space not created');
     } else {
-      ref.read(mySpacesProvider.notifier).onRefresh();
+      ref.read(yourSpacesProvider.notifier).onRefresh();
       showMyDialog(
         context: context,
         title: 'Success',
