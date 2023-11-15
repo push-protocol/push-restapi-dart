@@ -323,12 +323,9 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
     try {
       await ref.read(liveSpaceProvider).stop();
 
-      print('##Show dialog');
       Navigator.pop(context);
       Navigator.pop(context);
       showSuccessSnackbar('Space Ended Successfully');
-
-      print('##Show dialog------');
     } catch (e) {
       Navigator.pop(context);
     }

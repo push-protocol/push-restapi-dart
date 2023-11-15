@@ -58,7 +58,7 @@ class LiveSpaceProvider extends PushSpaceNotifier {
         );
       });
 
-      //Reload latest spaces and spaces requests
+      //Reload Space invites, Spaces for you and by you
       ref.read(yourSpacesProvider).onRefresh();
       ref.read(spaceRequestsProvider).loadRequests();
     }
