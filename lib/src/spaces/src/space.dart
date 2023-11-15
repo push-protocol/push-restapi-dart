@@ -9,7 +9,10 @@ import 'initialize.dart';
 import 'join.dart';
 import 'update_space_meta.dart';
 import 'stop.dart';
-import 'start.dart';
+import 'invite_to_promote.dart';
+import 'accept_promotion_invite.dart';
+import 'reject_promotion_invite.dart';
+import 'complete_promotion_invite.dart';
 
 import '../../../push_restapi_dart.dart';
 
@@ -64,13 +67,20 @@ class PushSpaceNotifier extends ChangeNotifier {
     // when the space isnt joined we dont act on the recieved meta messages
     if (data.spaceId == '') return;
 
-    final result = await onReceiveMetaMessageForSpace(
+    final result = await onReceiveMetaMessage_(
         message: message,
         spaceId: data.spaceId,
-        joinOnPromotion: () {
+        handleJoinOnPromotion: () {
           _setPlaybackUrl(null);
           join(spaceId: data.spaceId);
+        },
+        handleCompletePromotionInvite: ({required String inviteeAddress}) {
+          _completePromotionInvite(inviteeAddress: inviteeAddress);
+        },
+        handleRemovePromotionInvite: ({required String inviteeAddress}) {
+          _pendingInvites.remove(inviteeAddress);
         });
+
     if (result != null) {
       data = result;
       notifyListeners();
@@ -327,5 +337,46 @@ class PushSpaceNotifier extends ChangeNotifier {
     );
 
     await send(options);
+  }
+
+  // Variables and methods for the functionality to promote listener to a speaker
+
+  /// A set to store the addresses of listeners who have been invited by the host.
+  final Set<String> _pendingInvites = {};
+
+  // for host's UI to display a list of invites
+  List<String> get pendingInvites => _pendingInvites.toList();
+
+  /// Invites a listener ie [inviteeAddress] to be promoted to a speaker.
+  inviteToPromote({required String inviteeAddress}) {
+    inviteToPromote_(
+        spaceData: data,
+        inviteeAddress: inviteeAddress,
+        role: SPACE_INVITE_ROLES.SPEAKER,
+        pendingInvites: _pendingInvites);
+  }
+
+  /// Accepts a promotion invite for the current user to become a speaker in a live space.
+  acceptPromotionInvite() {
+    acceptPromotionInvite_(
+      spaceData: data,
+    );
+  }
+
+  /// Rejects a promotion invite for the current user to become a speaker in a live space.
+  rejectPromotionInvite() {
+    rejectPromotionInvite_(
+      spaceData: data,
+    );
+  }
+
+  /// Completes an accepted promotion invite by elevating the corresponding listener to a speaker.
+  /// Note: This method is private as its only gonna be used inside from the onReceiveMetaMessage.
+  Future<void> _completePromotionInvite(
+      {required String inviteeAddress}) async {
+    await completePromotionInvite_(
+        spaceData: data,
+        inviteeAddress: inviteeAddress,
+        pendingInvites: _pendingInvites);
   }
 }
