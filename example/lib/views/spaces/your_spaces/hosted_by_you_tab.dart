@@ -38,36 +38,41 @@ class _HostedByYouTabState extends ConsumerState<HostedByYouTab> {
             })),
         SizedBox(height: 8),
         Expanded(
-          child: vm.isBusy
-              ? Center(
-                  child: LoadingDialog(),
-                )
-              : spaces == null
-                  ? Center(child: Text('Cannot load Spaces'))
-                  : spaces.isEmpty
-                      ? Center(
-                          child: InkWell(
-                            onTap: () {
-                              pushScreen(CreateSpaceScreen());
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset('assets/space.svg'),
-                                SizedBox(height: 16),
-                                Text('Create a space'),
-                              ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await vm.onRefresh();
+            },
+            child: vm.isBusy && (spaces ?? []).isEmpty
+                ? Center(
+                    child: LoadingDialog(),
+                  )
+                : spaces == null
+                    ? Center(child: Text('Cannot load Spaces'))
+                    : spaces.isEmpty
+                        ? Center(
+                            child: InkWell(
+                              onTap: () {
+                                pushScreen(CreateSpaceScreen());
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset('assets/space.svg'),
+                                  SizedBox(height: 16),
+                                  Text('Create a space'),
+                                ],
+                              ),
                             ),
+                          )
+                        : ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 12),
+                            itemCount: spaces.length,
+                            itemBuilder: (context, index) {
+                              return SpaceItemTile(item: spaces[index]);
+                            },
                           ),
-                        )
-                      : ListView.separated(
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: 12),
-                          itemCount: spaces.length,
-                          itemBuilder: (context, index) {
-                            return SpaceItemTile(item: spaces[index]);
-                          },
-                        ),
+          ),
         ),
       ],
     );

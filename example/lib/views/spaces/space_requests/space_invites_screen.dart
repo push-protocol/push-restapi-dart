@@ -27,7 +27,7 @@ class _SpaceInvitesDailogState extends ConsumerState<SpaceInvitesDailog> {
             return SizedBox(
                 height: 300,
                 width: double.infinity,
-                child: Text('Cannot load requests'));
+                child: Text('Cannot load Invites'));
           }
           if (requests.isEmpty) {
             return SizedBox(
@@ -36,7 +36,7 @@ class _SpaceInvitesDailogState extends ConsumerState<SpaceInvitesDailog> {
                 child: Column(
                   children: [
                     SvgPicture.asset('assets/space.svg'),
-                    Text('Cannot load requests'),
+                    Text('No Invites found'),
                   ],
                 ));
           }

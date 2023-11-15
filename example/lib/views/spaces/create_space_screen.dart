@@ -1,5 +1,6 @@
 import 'package:example/__lib.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
+import 'package:unique_names_generator/unique_names_generator.dart';
 
 class CreateSpaceScreen extends ConsumerStatefulWidget {
   const CreateSpaceScreen({super.key});
@@ -26,11 +27,49 @@ class _CreateSpaceScreenState extends ConsumerState<CreateSpaceScreen> {
 
   DateTime _dateTime = DateTime.now().toUtc().add(Duration(minutes: 5));
 
+  createRandom() async {
+    showLoadingDialog(context);
+    try {
+      final generator = UniqueNamesGenerator(
+        config: Config(dictionaries: [names, animals, colors]),
+      );
+      String spaceName = 'Space ${generator.generate()} '.replaceAll('_', ' ');
+      if (spaceName.length > 50) {
+        spaceName = spaceName.substring(0, 45);
+      }
+
+      final result = await createSpace(
+        spaceName: spaceName,
+        spaceDescription: "Testing dart for description for $spaceName",
+        listeners: [],
+        speakers: [],
+        isPublic: true,
+        scheduleAt: DateTime.now().toUtc().add(
+              Duration(minutes: 1),
+            ),
+      );
+      if (result != null) {
+        ref.read(yourSpacesProvider).onRefresh();
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Space'),
+        actions: [
+          TextButton(
+              onPressed: createRandom,
+              child: KText(
+                'Random',
+                color: Colors.white,
+              ))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

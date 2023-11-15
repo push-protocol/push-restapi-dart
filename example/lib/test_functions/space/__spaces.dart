@@ -1,6 +1,5 @@
 export 'create_space.dart';
 export 'get_space.dart';
-export 'start_space.dart';
 export 'trending_spaces.dart';
 export 'update_space.dart';
 export 'send_live_space_data_meta.dart';

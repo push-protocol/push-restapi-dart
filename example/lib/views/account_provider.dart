@@ -132,7 +132,12 @@ class AccountProvider extends ChangeNotifier {
         print('SPACES NOTIFICATION EVENTS.SPACES: $groupInfo');
 
         final type = (groupInfo as Map<String, dynamic>)['eventType'];
-        
+
+        if (type == 'stop') {
+          //Refresh Hosted by you and For you tabs to reflect ended spaces
+          ref.read(yourSpacesProvider).onRefresh();
+        }
+
         if (type == 'create') {
           //This is a fix to complement the structure of the space retured by socket
           var spaceFeed = SpaceFeeds.fromJson(groupInfo);
@@ -178,6 +183,14 @@ class AccountProvider extends ChangeNotifier {
               (message['messageType'] == MessageType.META ||
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
             ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
+          }
+
+          if (message['messageCategory'] == 'Chat' &&
+              message['messageContent'] == CHAT.META_SPACE_END &&
+              message["fromDID"] != walletToPCAIP10(pushWallet!.address!)) {
+            ref
+                .read(liveSpaceProvider)
+                .onReceiveSpaceEndedData(message["chatId"]);
           }
 
           if (message['messageCategory'] == 'Chat' &&

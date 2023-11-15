@@ -5,7 +5,7 @@ export 'src/get_space_by_id.dart';
 export 'src/remove_listeners.dart';
 export 'src/remove_speakers.dart';
 export 'src/spaces.dart';
-export 'src/start_space.dart';
+export 'src/start.dart';
 export 'src/update.dart';
 export 'src/trending.dart';
 export 'src/approve.dart';
