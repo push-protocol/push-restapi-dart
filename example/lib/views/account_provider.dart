@@ -195,6 +195,14 @@ class AccountProvider extends ChangeNotifier {
           }
 
           if (message['messageCategory'] == 'Chat' &&
+              message['messageContent'] == CHAT.META_SPACE_END &&
+              message["fromDID"] != walletToPCAIP10(pushWallet!.address!)) {
+            ref
+                .read(liveSpaceProvider)
+                .onReceiveSpaceEndedData(message["chatId"]);
+          }
+
+          if (message['messageCategory'] == 'Chat' &&
               (message['messageType'] == MessageType.REACTION)) {
             try {
               final reaction = data['messageObj']['content'];
