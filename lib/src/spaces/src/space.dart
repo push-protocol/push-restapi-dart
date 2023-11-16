@@ -357,15 +357,15 @@ class PushSpaceNotifier extends ChangeNotifier {
   }
 
   /// Accepts a promotion invite for the current user to become a speaker in a live space.
-  acceptPromotionInvite() {
-    acceptPromotionInvite_(
+  Future acceptPromotionInvite() async {
+    return acceptPromotionInvite_(
       spaceData: data,
     );
   }
 
   /// Rejects a promotion invite for the current user to become a speaker in a live space.
-  rejectPromotionInvite() {
-    rejectPromotionInvite_(
+  Future rejectPromotionInvite() async {
+    return rejectPromotionInvite_(
       spaceData: data,
     );
   }

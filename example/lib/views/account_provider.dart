@@ -174,12 +174,11 @@ class AccountProvider extends ChangeNotifier {
         EVENTS.SPACES_MESSAGES,
         (data) async {
           final message = data as Map<String, dynamic>;
+          print(
+              'SPACES NOTIFICATION EVENTS.SPACES_MESSAGES messageCategory ${message['messageCategory']} messageType ${message['messageType']}');
           for (var element in message.keys) {
             print('$element -> ${message[element]}');
           }
-
-          print(
-              'SPACES NOTIFICATION EVENTS.SPACES_MESSAGES messageCategory ${message['messageCategory']} messageType ${message['messageType']}');
 
           // Check if the message is a chat meta message or chat user activity message
           if (message['messageCategory'] == 'Chat' &&
@@ -187,19 +186,28 @@ class AccountProvider extends ChangeNotifier {
                   message['messageType'] == MessageType.USER_ACTIVITY)) {
             ref.read(liveSpaceProvider).onReceiveMetaMessage(message);
           }
-          if (message['messageCategory'] == 'Chat' &&
-              message['messageContent'] == CHAT.META_SPACE_END) {
-            ref
-                .read(liveSpaceProvider)
-                .onReceiveSpaceEndedData(message["chatId"]);
-          }
 
+          //Check if space was ended
           if (message['messageCategory'] == 'Chat' &&
               message['messageContent'] == CHAT.META_SPACE_END &&
               message["fromDID"] != walletToPCAIP10(pushWallet!.address!)) {
             ref
                 .read(liveSpaceProvider)
                 .onReceiveSpaceEndedData(message["chatId"]);
+          }
+          //Check if promotion invite was sent
+          if (message['messageCategory'] == 'Chat' &&
+              message['messageContent'] ==
+                  CHAT.META_SPACE_LISTENER_PROMOTION_INVITE) {
+            try {
+              final invitedUsers = message["messageObj"]["info"]['affected'];
+
+              if (invitedUsers.contains(pushWallet?.address)) {
+                ref
+                    .read(liveSpaceProvider)
+                    .onReceivePromotionInvite(message["chatId"]);
+              }
+            } catch (e) {}
           }
 
           if (message['messageCategory'] == 'Chat' &&

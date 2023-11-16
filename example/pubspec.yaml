@@ -41,6 +41,8 @@ dependencies:
   blockies: ^0.1.2
   jiffy: ^6.2.1
 
+  flutter_staggered_animations: ^1.1.1
+
   ethers: 
     git:
       url: https://github.com/gbogboadePush/ethers.git
