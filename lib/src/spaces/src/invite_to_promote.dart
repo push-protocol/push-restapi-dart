@@ -31,7 +31,7 @@ inviteToPromote_(
   sendLiveSpaceData(
       messageType: MessageType.META,
       updatedLiveSpaceData: spaceData.liveSpaceData,
-      content: CHAT.META_SPACE_LISTENER_PROMOTION_INVITE,
+      content: CHAT.META_SPACE_LISTENER_PROMOTE_INVITE,
       affectedAddresses: [inviteeAddress],
       spaceId: spaceData.spaceId);
 }

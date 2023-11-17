@@ -13,7 +13,7 @@ SpaceData rejectPromotionRequest_(
   sendLiveSpaceData(
       messageType: MessageType.META,
       updatedLiveSpaceData: data.liveSpaceData,
-      content: CHAT.META_SPACE_LISTENER_PROMOTION_REJECT,
+      content: CHAT.META_SPACE_LISTENER_REQUEST_MIC_REJECT,
       affectedAddresses: [promoteeAddress],
       spaceId: data.spaceId);
 

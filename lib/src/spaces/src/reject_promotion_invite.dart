@@ -9,7 +9,7 @@ Future rejectPromotionInvite_({required SpaceData spaceData}) async{
  await sendLiveSpaceData(
       messageType: MessageType.USER_ACTIVITY,
       updatedLiveSpaceData: spaceData.liveSpaceData,
-      content: CHAT.UA_LISTENER_REJECT_PROMOTION,
+      content: CHAT.UA_LISTENER_REJECT_PROMOTION_INVITE,
       affectedAddresses: [localAddress!],
       spaceId: spaceData.spaceId);
 }

@@ -13,13 +13,14 @@ Future<SpaceData?> onReceiveMetaMessage_(
 
     final latestSpace = await getSpaceById(spaceId: spaceId);
 
-    MetaMessage parsedMetaMessage = MetaMessage.fromJson(message['messageObj']);
+    String messageType = message['messageType'];
+    final parsedMetaMessage = messageType == MessageType.META
+        ? MetaMessage.fromJson(message['messageObj'])
+        : UserActivityMessage.fromJson(message['messageObj']);
 
     // local address has been promoted to a speaker from a listener
-    if (parsedMetaMessage.type == MessageType.META &&
-        (parsedMetaMessage.content ==
-                CHAT.META_SPACE_LISTENER_PROMOTION_ACCEPT ||
-            parsedMetaMessage.content == CHAT.META_SPACE_SPEAKER_PRIVILEGE) &&
+    if (messageType == MessageType.META &&
+        parsedMetaMessage.content == CHAT.META_SPACE_SPEAKER_PRIVILEGE &&
         localAddress == parsedMetaMessage.info?.affected[0]) {
       // join the room as a speaker
       handleJoinOnPromotion();
@@ -29,17 +30,17 @@ Future<SpaceData?> onReceiveMetaMessage_(
     }
 
     // listener address has accepted a promotion request
-    if (parsedMetaMessage.type == MessageType.USER_ACTIVITY &&
-        parsedMetaMessage.content == CHAT.UA_LISTENER_ACCEPT_PROMOTION &&
-        parsedMetaMessage.info?.affected[0] != null) {
+    if (messageType == MessageType.USER_ACTIVITY &&
+        parsedMetaMessage.content == CHAT.UA_LISTENER_ACCEPT_PROMOTION_INVITE &&
+        localAddress == pCAIP10ToWallet(latestSpace.spaceCreator)) {
       handleCompletePromotionInvite(
           inviteeAddress: parsedMetaMessage.info!.affected[0]);
     }
 
     // listener address has rejected a promotion request
-    if (parsedMetaMessage.type == MessageType.USER_ACTIVITY &&
-        parsedMetaMessage.content == CHAT.UA_LISTENER_REJECT_PROMOTION &&
-        parsedMetaMessage.info?.affected[0] != null) {
+    if (messageType == MessageType.USER_ACTIVITY &&
+        parsedMetaMessage.content == CHAT.UA_LISTENER_REJECT_PROMOTION_INVITE &&
+        localAddress == pCAIP10ToWallet(latestSpace.spaceCreator)) {
       handleRemovePromotionInvite(
           inviteeAddress: parsedMetaMessage.info!.affected[0]);
     }

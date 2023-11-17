@@ -198,7 +198,7 @@ class AccountProvider extends ChangeNotifier {
           //Check if promotion invite was sent
           if (message['messageCategory'] == 'Chat' &&
               message['messageContent'] ==
-                  CHAT.META_SPACE_LISTENER_PROMOTION_INVITE) {
+                  CHAT.META_SPACE_LISTENER_PROMOTE_INVITE) {
             try {
               final invitedUsers = message["messageObj"]["info"]['affected'];
 
