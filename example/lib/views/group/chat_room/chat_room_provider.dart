@@ -161,7 +161,7 @@ class ChatRoomProvider extends ChangeNotifier {
         options = ChatSendOptions(
           message: ReplyMessage(
               content: NestedContent(type: messageType, content: content),
-              reference: replyTo?.link ?? ''),
+              reference: jsonEncode(replyTo!.toJson())),
           receiverAddress: currentChatId,
         );
       }
@@ -175,6 +175,13 @@ class ChatRoomProvider extends ChangeNotifier {
           toDID: '',
           messageType: messageType,
           messageContent: attachmentContent ?? content,
+          messageObj: MessageObject(
+            reference: replyTo == null ? null : jsonEncode(replyTo!.toJson()),
+            content: Content(
+              messageObj: MessageObj(content: attachmentContent ?? content),
+              messageType: messageType,
+            ),
+          ).toJson(),
           signature: '',
           sigType: '',
           encType: '',
@@ -182,6 +189,7 @@ class ChatRoomProvider extends ChangeNotifier {
           timestamp: DateTime.now().microsecondsSinceEpoch,
         ),
       );
+
       clearFields();
 
       updateSending(true);

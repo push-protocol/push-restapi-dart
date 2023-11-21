@@ -228,7 +228,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                                     );
                                                   } else {
                                                     return KText(
-                                                      '${replyTo.messageContent}',
+                                                      '${replyTo.displayText}',
                                                       color: Colors.white,
                                                       maxLines: 2,
                                                     );
@@ -321,6 +321,7 @@ class PushChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final replyTo = item.replyTo;
     return Row(
       mainAxisAlignment:
           isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -348,6 +349,52 @@ class PushChatBubble extends StatelessWidget {
               crossAxisAlignment:
                   isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
+                if (replyTo != null)
+                  Container(
+                    margin: EdgeInsets.all(4),
+                    padding: EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      border: isSender
+                          ? Border(
+                              right: BorderSide(color: Colors.white, width: 3),
+                            )
+                          : Border(
+                              left: BorderSide(color: Colors.white, width: 3),
+                            ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: isSender
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            pCAIP10ToWallet('${replyTo.fromDID}'),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                            ),
+                          ),
+                        ),
+                        Builder(builder: (context) {
+                          if (replyTo.messageType == MessageType.IMAGE) {
+                            final content = jsonDecode(replyTo.messageContent);
+
+                            return _ChatImage(
+                              imageUrl: content['content'],
+                            );
+                          } else {
+                            return KText(
+                              '${replyTo.displayText}',
+                              color: Colors.white,
+                              maxLines: 2,
+                            );
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
                 if (!isSender)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
@@ -372,7 +419,7 @@ class PushChatBubble extends StatelessWidget {
                         );
                       } else {
                         return Text(
-                          '${item.messageContent}',
+                          item.displayText,
                           style: TextStyle(color: Colors.white),
                         );
                       }
