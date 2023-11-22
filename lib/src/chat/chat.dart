@@ -31,3 +31,4 @@ export 'src/remove_members.dart';
 export 'src/get_group_info.dart';
 export 'src/get_group_member_count.dart';
 export 'src/get_group_members.dart';
+export 'src/get_all_group_members.dart';

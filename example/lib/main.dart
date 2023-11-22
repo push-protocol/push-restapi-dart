@@ -1,7 +1,7 @@
 import '__lib.dart';
 
 void main() async {
-  testGetGroupMembers();
+  testGetAllGroupMembers();
   runApp(
     ProviderScope(
       child: const MyApp(),
