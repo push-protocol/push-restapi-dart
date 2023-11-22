@@ -17,3 +17,5 @@ export 'send_file.dart';
 export 'send_composite.dart';
 export 'send_reaction.dart';
 export 'send_reply.dart';
+export 'get_group_info.dart';
+export 'get_group_member_count.dart';

@@ -8,6 +8,7 @@ export 'src/helper/service.dart';
 export 'src/helper/signature.dart';
 
 export 'src/models/group_info_dto.dart';
+export 'src/models/chat_member_counts.dart';
 
 export 'src/chat.dart';
 export 'src/chats.dart';
@@ -27,3 +28,4 @@ export 'src/add_members.dart';
 export 'src/remove_admins.dart';
 export 'src/remove_members.dart';
 export 'src/get_group_info.dart';
+export 'src/get_group_member_count.dart';
