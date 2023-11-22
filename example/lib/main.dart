@@ -1,6 +1,8 @@
 import '__lib.dart';
+import 'test_functions/chat/get_group_info.dart';
 
 void main() async {
+  testGetGroupInfo();
   runApp(
     ProviderScope(
       child: const MyApp(),
