@@ -22,3 +22,4 @@ export 'get_group_member_count.dart';
 export 'get_group_members.dart';
 export 'get_all_group_members.dart';
 export 'get_group_member_status.dart';
+export 'get_group_members_public_keys.dart';
