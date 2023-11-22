@@ -19,3 +19,4 @@ export 'send_reaction.dart';
 export 'send_reply.dart';
 export 'get_group_info.dart';
 export 'get_group_member_count.dart';
+export 'get_group_members.dart';
