@@ -36,3 +36,4 @@ export 'src/get_group_members.dart';
 export 'src/get_all_group_members.dart';
 export 'src/get_group_member_status.dart';
 export 'src/get_group_members_public_keys.dart';
+export 'src/get_all_group_members_public_keys.dart';

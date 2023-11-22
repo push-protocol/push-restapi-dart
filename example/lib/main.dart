@@ -1,7 +1,6 @@
 import '__lib.dart';
 
 void main() async {
-  testGetGroupMembersPublicKeys();
   runApp(
     ProviderScope(
       child: const MyApp(),
