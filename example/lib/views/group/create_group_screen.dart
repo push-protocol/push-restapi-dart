@@ -138,7 +138,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         showMyDialog(
             context: context, title: 'Error', message: 'Group not created');
       } else {
-     ref.read(conversationsProvider).loadChats();
+        ref.read(conversationsProvider).loadChats();
         showMyDialog(
           context: context,
           title: 'Success',

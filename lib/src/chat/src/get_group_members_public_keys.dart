@@ -21,5 +21,7 @@ Future<List<GroupMemberPublicKey>> getGroupMembersPublicKeys({
     throw Exception(result);
   }
 
-  return (result['members'] as List).map((e) => GroupMemberPublicKey.fromJson(e)).toList();
+  return (result['members'] as List)
+      .map((e) => GroupMemberPublicKey.fromJson(e))
+      .toList();
 }

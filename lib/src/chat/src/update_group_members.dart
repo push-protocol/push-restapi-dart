@@ -21,7 +21,10 @@ Future<GroupInfoDTO?> updateGroupMembers({
   }
 
   validateGroupMemberUpdateOptions(
-      chatId: chatId, upsert: upsert, remove: remove);
+    chatId: chatId,
+    upsert: upsert,
+    remove: remove,
+  );
 
   final wallet = getWallet(address: walletToPCAIP10(account!), signer: signer);
   String userDID = getAccountAddress(wallet);

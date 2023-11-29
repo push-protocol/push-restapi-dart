@@ -27,7 +27,7 @@ abstract class Signer {
   Future<String> signMessage(String message);
 }
 
-class ConnectedUser  {
+class ConnectedUser {
   final User user;
   final String? privateKey;
 

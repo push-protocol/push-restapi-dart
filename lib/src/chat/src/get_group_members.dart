@@ -18,5 +18,7 @@ Future<List<ChatMemberProfile>> getGroupMembers(
     throw Exception(result);
   }
 
-  return (result['members'] as List).map((e) => ChatMemberProfile.fromJson(e)).toList();
+  return (result['members'] as List)
+      .map((e) => ChatMemberProfile.fromJson(e))
+      .toList();
 }
