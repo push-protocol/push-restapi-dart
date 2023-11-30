@@ -7,12 +7,8 @@ Future<GroupDTO?> getGroup({required String chatId}) async {
 
   final result = await http.get(path: '/v1/chat/groups/$chatId');
 
-  if (result == null) {
-    return null;
-  }
-
-  if (result is String) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(result ?? 'Cannot find group with $chatId');
   }
 
   return GroupDTO.fromJson(result);
