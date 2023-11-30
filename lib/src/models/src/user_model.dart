@@ -108,21 +108,34 @@ class UserProfile {
   String? name;
   String? desc;
   String? picture;
+  List<String>? blockedUsersList;
   String? profileVerificationProof;
 
-  UserProfile.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    desc = json['desc'];
-    picture = json['picture'];
-    profileVerificationProof = json['profileVerificationProof'];
+  UserProfile({
+    this.name,
+    this.desc,
+    this.picture,
+    this.blockedUsersList,
+    this.profileVerificationProof,
+  });
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      name: json['name'],
+      desc: json['desc'],
+      picture: json['picture'],
+      blockedUsersList: List<String>.from(json['blockedUsersList'] ?? []),
+      profileVerificationProof: json['profileVerificationProof'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name;
-    data['desc'] = desc;
-    data['picture'] = picture;
-    data['profileVerificationProof'] = profileVerificationProof;
-    return data;
+    return {
+      'name': name,
+      'desc': desc,
+      'picture': picture,
+      'blockedUsersList': blockedUsersList,
+      'profileVerificationProof': profileVerificationProof,
+    };
   }
 }
