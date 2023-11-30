@@ -7,12 +7,9 @@ Future<ChatMemberCounts> getGroupMemberCount({required String chatId}) async {
 
   final result = await http.get(path: '/v1/chat/groups/$chatId/members/count');
 
-  if (result == null) {
-    throw Exception(result);
-  }
 
-  if (result is String) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(result??'Cannot get group count');
   }
 
   return ChatMemberCounts.fromJson(result['totalMembersCount']);

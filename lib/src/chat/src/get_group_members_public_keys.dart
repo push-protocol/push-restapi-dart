@@ -13,13 +13,11 @@ Future<List<GroupMemberPublicKey>> getGroupMembersPublicKeys({
       path:
           '/v1/chat/groups/$chatId/members/publicKeys?pageNumber=$page&pageSize=$limit');
 
-  if (result == null) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(result ?? 'Cannot get public keys for $chatId');
   }
 
-  if (result is String) {
-    throw Exception(result);
-  }
-
-  return (result['members'] as List).map((e) => GroupMemberPublicKey.fromJson(e)).toList();
+  return (result['members'] as List)
+      .map((e) => GroupMemberPublicKey.fromJson(e))
+      .toList();
 }

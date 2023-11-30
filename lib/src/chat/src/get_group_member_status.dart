@@ -17,12 +17,8 @@ Future<GroupMemberStatus> getGroupMemberStatus({
     path: '/v1/chat/groups/$chatId/members/$user/status',
   );
 
-  if (result == null) {
-    throw Exception(result);
-  }
-
-  if (result is String) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(result ?? 'Cannot get group satus');
   }
 
   return GroupMemberStatus.fromJson(result);
