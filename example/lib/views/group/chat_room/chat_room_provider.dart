@@ -50,6 +50,12 @@ class ChatRoomProvider extends ChangeNotifier {
     }
   }
 
+  Message? replyTo;
+  setReplyMessage(Message? message) {
+    replyTo = message;
+    notifyListeners();
+  }
+
   onRefreshRoom({
     GroupDTO? groupData,
   }) async {
@@ -137,17 +143,28 @@ class ChatRoomProvider extends ChangeNotifier {
       if (selectedFile != null && messageType == MessageType.IMAGE) {
         final img = base64Encode(selectedFile!.readAsBytesSync());
         attachmentContent = jsonEncode({'content': img});
-
         messageAttachment = ImageMessage(
           content: img,
           name: selectedFile?.uri.pathSegments.last,
         );
       }
-      final options = ChatSendOptions(
-        message: messageAttachment,
-        messageContent: content,
-        receiverAddress: currentChatId,
-      );
+
+      var options;
+
+      if (replyTo == null) {
+        options = ChatSendOptions(
+          message: messageAttachment,
+          messageContent: content,
+          receiverAddress: currentChatId,
+        );
+      } else {
+        options = ChatSendOptions(
+          message: ReplyMessage(
+              content: NestedContent(type: messageType, content: content),
+              reference: jsonEncode(replyTo!.toJson())),
+          receiverAddress: currentChatId,
+        );
+      }
 
       _messageList.insert(
         0,
@@ -158,6 +175,13 @@ class ChatRoomProvider extends ChangeNotifier {
           toDID: '',
           messageType: messageType,
           messageContent: attachmentContent ?? content,
+          messageObj: MessageObject(
+            reference: replyTo == null ? null : jsonEncode(replyTo!.toJson()),
+            content: Content(
+              messageObj: MessageObj(content: attachmentContent ?? content),
+              messageType: messageType,
+            ),
+          ).toJson(),
           signature: '',
           sigType: '',
           encType: '',
@@ -165,17 +189,19 @@ class ChatRoomProvider extends ChangeNotifier {
           timestamp: DateTime.now().microsecondsSinceEpoch,
         ),
       );
+
       clearFields();
 
       updateSending(true);
       final message = await send(options);
       updateSending(false);
-
+      print('onSendMessage...5..after send..${message?.toJson()}');
       if (message != null) {
         getRoomMessages();
       }
     } catch (e) {
       updateSending(false);
+      print(e);
     }
   }
 
@@ -235,6 +261,7 @@ class ChatRoomProvider extends ChangeNotifier {
     _selectedFile = null;
     controller.clear();
     messageType = MessageType.TEXT;
+    replyTo = null;
     notifyListeners();
   }
 }
