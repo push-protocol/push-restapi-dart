@@ -18,7 +18,8 @@ Future<GroupMemberStatus> getGroupMemberStatus({
   );
 
   if (result == null || result is String) {
-    throw Exception(result ?? 'Cannot get group satus');
+    throw Exception(result ??
+        'Failed to retrieve group member status. ChatId: $chatId, User: $user');
   }
 
   return GroupMemberStatus.fromJson(result);

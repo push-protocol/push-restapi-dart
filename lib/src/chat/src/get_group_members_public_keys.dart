@@ -14,7 +14,8 @@ Future<List<GroupMemberPublicKey>> getGroupMembersPublicKeys({
           '/v1/chat/groups/$chatId/members/publicKeys?pageNumber=$page&pageSize=$limit');
 
   if (result == null || result is String) {
-    throw Exception(result ?? 'Cannot get public keys for $chatId');
+    throw Exception(result ??
+        'Failed to retrieve public keys for group members. ChatId: $chatId');
   }
 
   return (result['members'] as List)
