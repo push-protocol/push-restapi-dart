@@ -10,12 +10,9 @@ Future<List<ChatMemberProfile>> getGroupMembers(
     path: '/v1/chat/groups/$chatId/members?pageNumber=$page&pageSize=$limit',
   );
 
-  if (result == null) {
-    throw Exception(result);
-  }
-
-  if (result is String) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(
+        result ?? 'Failed to retrieve group members. ChatId: $chatId');
   }
 
   return (result['members'] as List)
