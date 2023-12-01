@@ -15,8 +15,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int currentIndex = 0;
 
   onCopy() {
-    testUpdateGroupMembers();
-
     final pushWallet = ref.read(accountProvider).pushWallet!;
 
     FlutterClipboard.copy(pushWallet.address!).then((value) {

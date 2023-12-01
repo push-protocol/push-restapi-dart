@@ -45,7 +45,6 @@ class ConnectedUser extends User {
     super.maxMsgPersisted = user.maxMsgPersisted;
     super.wallets = user.wallets;
     super.encryptedPrivateKey = user.encryptedPrivateKey;
-
   }
 }
 
