@@ -27,14 +27,26 @@ abstract class Signer {
   Future<String> signMessage(String message);
 }
 
-class ConnectedUser {
+class ConnectedUser extends User {
   final User user;
   final String? privateKey;
 
   ConnectedUser({
     required this.user,
     required this.privateKey,
-  });
+  }) {
+    super.did = user.did;
+    super.profile = user.profile;
+    super.name = user.name;
+    super.about = user.about;
+    super.verificationProof = user.verificationProof;
+    super.publicKey = user.publicKey;
+    super.msgSent = user.msgSent;
+    super.maxMsgPersisted = user.maxMsgPersisted;
+    super.wallets = user.wallets;
+    super.encryptedPrivateKey = user.encryptedPrivateKey;
+
+  }
 }
 
 class User {
