@@ -19,6 +19,35 @@ class Message {
   bool? deprecated;
   String? deprecatedCode;
 
+  String get displayText {
+    var content = '';
+    try {
+      final contentMap = messageObj["content"];
+
+      if (contentMap is String) {
+        content = contentMap;
+      } else if (contentMap is Map) {
+        content = contentMap['messageObj']['content'];
+      }
+    } catch (e) {
+      content = '$e';
+    }
+    return content;
+  }
+
+  Message? get replyTo {
+    try {
+      final reference = messageObj['reference'];
+      if (reference == null) {
+        return null;
+      } else {
+        return Message.fromJson(jsonDecode(reference));
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   Message({
     required this.fromCAIP10,
     required this.toCAIP10,
@@ -74,6 +103,67 @@ class Message {
     data['encryptedSecret'] = encryptedSecret;
     data['deprecated'] = deprecated;
     data['deprecatedCode'] = deprecatedCode;
+    return data;
+  }
+}
+
+class MessageObject {
+  Content? content;
+  String? reference;
+
+  MessageObject({this.content, this.reference});
+
+  MessageObject.fromJson(Map<String, dynamic> json) {
+    content =
+        json['content'] != null ? Content.fromJson(json['content']) : null;
+    reference = json['reference'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (content != null) {
+      data['content'] = content!.toJson();
+    }
+    data['reference'] = reference;
+    return data;
+  }
+}
+
+class Content {
+  String? messageType;
+  MessageObj? messageObj;
+
+  Content({this.messageType, this.messageObj});
+
+  Content.fromJson(Map<String, dynamic> json) {
+    messageType = json['messageType'];
+    messageObj = json['messageObj'] != null
+        ? MessageObj.fromJson(json['messageObj'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['messageType'] = messageType;
+    if (messageObj != null) {
+      data['messageObj'] = messageObj!.toJson();
+    }
+    return data;
+  }
+}
+
+class MessageObj {
+  String? content;
+
+  MessageObj({this.content});
+
+  MessageObj.fromJson(Map<String, dynamic> json) {
+    content = json['content'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['content'] = content;
     return data;
   }
 }
