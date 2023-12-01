@@ -154,8 +154,10 @@ class AccountProvider extends ChangeNotifier {
 
         final type = (groupInfo as Map<String, dynamic>)['eventType'];
         final recipients = (groupInfo['to'] as List?) ?? [];
+        final from = groupInfo['from'];
 
-        if (type == 'create' ||
+        if ((type == 'create' &&
+                from != walletToPCAIP10(pushWallet!.address!)) ||
             (type == 'request' &&
                 recipients.contains(walletToPCAIP10(pushWallet!.address!)))) {
           ref.read(requestsProvider).addReqestFromSocket(
