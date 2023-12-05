@@ -44,7 +44,6 @@ Future<String?> approve({
     final signature = await sign(
       message: hash,
       privateKey: pgpPrivateKey,
-      publicKey: pgpPrivateKey,
     );
 
     final sigType = "pgp";
