@@ -10,27 +10,30 @@ Future<List<Feeds>> decryptFeeds({
   required User connectedUser,
   required String pgpPrivateKey,
 }) async {
-  // User? otherPeer;
-  // String?
-  //     signatureValidationPubliKey; // To do signature verification, it depends on who has sent the message
+  User? otherPeer;
+  String?
+      signatureValidationPubliKey; // To do signature verification, it depends on who has sent the message
 
   for (final feed in feeds) {
     final message = feed.msg!;
-    // bool gotOtherPeer = false;
+    bool gotOtherPeer = false;
 
     if (message.encType != 'PlainText') {
-      // if (message.fromCAIP10 != connectedUser.wallets?.split(',')[0]) {
-      //   if (!gotOtherPeer) {
-      //     otherPeer = await getUser(address: message.fromCAIP10);
-      //     gotOtherPeer = true;
-      //   }
-      //   signatureValidationPubliKey = otherPeer!.publicKey;
-      // } else {
-      //   signatureValidationPubliKey = connectedUser.publicKey;
-      // }
+      if (message.fromCAIP10 != connectedUser.wallets?.split(',')[0]) {
+        if (!gotOtherPeer) {
+          otherPeer = await getUser(address: message.fromCAIP10);
+          gotOtherPeer = true;
+        }
+        signatureValidationPubliKey = otherPeer!.publicKey;
+      } else {
+        signatureValidationPubliKey = connectedUser.publicKey;
+      }
 
       feed.msg = await decryptAndVerifyMessage(
-          message: message, privateKeyArmored: pgpPrivateKey);
+        pgpPublicKey: signatureValidationPubliKey!,
+        message: message,
+        pgpPrivateKey: pgpPrivateKey,
+      );
     }
   }
 
@@ -48,9 +51,12 @@ Future<List<SpaceFeeds>> decryptSpaceFeeds({
   for (var feed in feeds) {
     final msg = feed.msg!;
 
-    if (msg.encType == 'pgp') {
+    if (msg.encType != 'PlainText') {
       feed.msg = await decryptAndVerifyMessage(
-          message: msg, privateKeyArmored: pgpPrivateKey);
+        pgpPublicKey: connectedUser.publicKey!,
+        message: msg,
+        pgpPrivateKey: pgpPrivateKey,
+      );
       updatedFeeds.add(feed);
     } else {
       updatedFeeds.add(feed);

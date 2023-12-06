@@ -39,7 +39,6 @@ Future<GroupInfoDTO> updateGroupProfile({
   );
 
   final group = await getGroupInfo(chatId: chatId);
-
   /**
    * CREATE PROFILE VERIFICATION PROOF
    */
