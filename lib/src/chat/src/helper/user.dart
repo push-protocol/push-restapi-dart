@@ -15,7 +15,7 @@ Future<ConnectedUser> getConnectedUserV2Core({
 
   if (user != null && user.encryptedPrivateKey != null) {
     if (privateKey != null) {
-      return ConnectedUser(user: user, privateKey: privateKey);
+      return ConnectedUser.fromUser(user: user, privateKey: privateKey);
     } else {
       final decryptedPrivateKey = await getDecryptedPrivateKey(
         address: wallet.address!,
@@ -23,7 +23,8 @@ Future<ConnectedUser> getConnectedUserV2Core({
         user: user,
       );
 
-      return ConnectedUser(user: user, privateKey: decryptedPrivateKey);
+      return ConnectedUser.fromUser(
+          user: user, privateKey: decryptedPrivateKey);
     }
   } else {
     final newUser =
@@ -33,6 +34,7 @@ Future<ConnectedUser> getConnectedUserV2Core({
       wallet: wallet,
       user: newUser,
     );
-    return ConnectedUser(user: newUser, privateKey: decryptedPrivateKey);
+    return ConnectedUser.fromUser(
+        user: newUser, privateKey: decryptedPrivateKey);
   }
 }
