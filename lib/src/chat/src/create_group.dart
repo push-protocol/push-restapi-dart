@@ -62,7 +62,7 @@ Future<GroupDTO?> createGroup({
     final hash = generateHash(bodyToBeHashed);
     final signature = await sign(
       message: hash,
-      privateKey: connectedUser!.privateKey!,
+      privateKey: connectedUser.privateKey!,
     );
 
     const sigType = 'pgp';

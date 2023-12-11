@@ -64,7 +64,7 @@ Future<String?> approve({
           );
 
           final publickKeys = groupMembers.map((e) => e.publicKey).toList();
-          publickKeys.add(connectedUser!.publicKey!);
+          publickKeys.add(connectedUser.publicKey!);
           encryptedSecret =
               await pgpEncrypt(plainText: secretKey, keys: publickKeys);
         }
@@ -81,7 +81,7 @@ Future<String?> approve({
 
     final signature = await sign(
       message: hash,
-      privateKey: connectedUser!.privateKey!,
+      privateKey: connectedUser.privateKey!,
     );
 
     final body = {

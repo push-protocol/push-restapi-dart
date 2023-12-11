@@ -39,9 +39,7 @@ Future<GroupInfoDTO> updateGroupProfile({
   );
 
   final group = await getGroupInfo(chatId: chatId);
-  if (group == null) {
-    throw Exception('Group not found');
-  }
+
   /**
    * CREATE PROFILE VERIFICATION PROOF
    */
@@ -57,7 +55,7 @@ Future<GroupInfoDTO> updateGroupProfile({
 
   final signature = await sign(
     message: hash,
-    privateKey: connectedUser!.privateKey!,
+    privateKey: connectedUser.privateKey!,
   );
 
   final sigType = 'pgpv2';
