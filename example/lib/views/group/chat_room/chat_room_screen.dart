@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:blockies/blockies.dart';
 import 'package:example/__lib.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -18,7 +19,9 @@ class ChatRoomScreen extends ConsumerStatefulWidget {
 
 class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
   late Feeds room;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  Message? selectedMessage;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -31,7 +34,6 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     });
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final myAddress = ref.read(accountProvider).pushWallet?.address;
@@ -42,6 +44,17 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         actions: [
+          if (selectedMessage != null)
+            InkWell(
+              child: IconButton(
+                  onPressed: () {
+                    roomVm.setReplyMessage(selectedMessage);
+                    setState(() {
+                      selectedMessage = null;
+                    });
+                  },
+                  icon: Icon(Icons.reply)),
+            ),
           if (room.groupInformation != null)
             InkWell(
               onTap: () {
@@ -85,82 +98,26 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                   bool isSender =
                                       'eip155:$myAddress' == item.fromDID;
 
-                                  return ChatBubble(
-                                    clipper: ChatBubbleClipper1(
-                                        type: isSender
-                                            ? BubbleType.sendBubble
-                                            : BubbleType.receiverBubble),
-                                    alignment: isSender
-                                        ? Alignment.topRight
-                                        : Alignment.topLeft,
-                                    backGroundColor: Colors.blue,
-                                    child: Container(
-                                      constraints: BoxConstraints(
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.7,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: isSender
-                                            ? CrossAxisAlignment.end
-                                            : CrossAxisAlignment.start,
-                                        children: [
-                                          if (!isSender)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 4.0),
-                                              child: Text(
-                                                pCAIP10ToWallet(
-                                                    '${item.fromDID}'),
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 8,
-                                                ),
-                                              ),
-                                            ),
-                                          Wrap(
-                                            crossAxisAlignment:
-                                                WrapCrossAlignment.end,
-                                            children: [
-                                              Builder(builder: (context) {
-                                                if (item.messageType ==
-                                                    MessageType.IMAGE) {
-                                                  final content = jsonDecode(
-                                                      item.messageContent);
-                                                  final imgUrl =
-                                                      content['content'];
-                                                  print(imgUrl);
-                                                  return _ChatImage(
-                                                    imageUrl:
-                                                        content['content'],
-                                                  );
-                                                } else {
-                                                  return Text(
-                                                    '${item.messageContent}',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  );
-                                                }
-                                              }),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: Text(
-                                                  formatDateTime(
-                                                    DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                            item.timestamp!),
-                                                  ),
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 8,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                  return GestureDetector(
+                                    onHorizontalDragEnd: (details) {},
+                                    onDoubleTap: () {
+                                      if (selectedMessage?.timestamp ==
+                                          item.timestamp) {
+                                        selectedMessage = null;
+                                      } else {
+                                        selectedMessage = item;
+                                      }
+                                      setState(() {});
+                                    },
+                                    child: DecoratedBox(
+                                      decoration: selectedMessage != null &&
+                                              (selectedMessage?.timestamp ==
+                                                  item.timestamp)
+                                          ? BoxDecoration(
+                                              color: pushColor.withOpacity(.5))
+                                          : BoxDecoration(),
+                                      child: PushChatBubble(
+                                          isSender: isSender, item: item),
                                     ),
                                   );
                                 },
@@ -213,19 +170,108 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
                                     ))
                               ],
                             )
-                          : TextField(
-                              controller: roomVm.controller,
-                              keyboardType: TextInputType.multiline,
-                              minLines: 1,
-                              maxLines: 5,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                suffixIcon: InkWell(
-                                  onTap: roomVm.onSelectFile,
-                                  child: Icon(Icons.attachment),
-                                ),
+                          : Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.purple,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Column(
+                                children: [
+                                  Consumer(builder: (context, ref, child) {
+                                    final replyTo =
+                                        ref.watch(chatRoomProvider).replyTo;
+
+                                    if (replyTo == null) {
+                                      return SizedBox.shrink();
+                                    }
+                                    bool isSender =
+                                        'eip155:$myAddress' == replyTo.fromDID;
+                                    return Container(
+                                      margin: EdgeInsets.all(4),
+                                      padding: EdgeInsets.only(left: 8),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              left: BorderSide(
+                                                  color: pushColor, width: 3))),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 4.0),
+                                                  child: Text(
+                                                    isSender
+                                                        ? 'You'
+                                                        : pCAIP10ToWallet(
+                                                            '${replyTo.fromDID}'),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Builder(builder: (context) {
+                                                  if (replyTo.messageType ==
+                                                      MessageType.IMAGE) {
+                                                    final content = jsonDecode(
+                                                        replyTo.messageContent);
+
+                                                    return _ChatImage(
+                                                      imageUrl:
+                                                          content['content'],
+                                                    );
+                                                  } else {
+                                                    return KText(
+                                                      '${replyTo.displayText}',
+                                                      color: Colors.white,
+                                                      maxLines: 2,
+                                                    );
+                                                  }
+                                                }),
+                                              ],
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              roomVm.setReplyMessage(null);
+                                            },
+                                            child: Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: TextField(
+                                      controller: roomVm.controller,
+                                      keyboardType: TextInputType.multiline,
+                                      minLines: 1,
+                                      maxLines: 5,
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        suffixIcon: InkWell(
+                                          onTap: roomVm.onSelectFile,
+                                          child: Icon(
+                                            Icons.attachment,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                     ),
@@ -259,6 +305,144 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PushChatBubble extends StatelessWidget {
+  const PushChatBubble({
+    super.key,
+    required this.isSender,
+    required this.item,
+  });
+
+  final bool isSender;
+  final Message item;
+
+  @override
+  Widget build(BuildContext context) {
+    final replyTo = item.replyTo;
+    return Row(
+      mainAxisAlignment:
+          isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        if (!isSender)
+          SizedBox(
+            height: 32,
+            width: 32,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Blockies(seed: pCAIP10ToWallet('${item.fromDID}')),
+            ),
+          ),
+        ChatBubble(
+          clipper: ChatBubbleClipper1(
+              type:
+                  isSender ? BubbleType.sendBubble : BubbleType.receiverBubble),
+          alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+          backGroundColor: pushColor,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.6,
+            ),
+            child: Column(
+              crossAxisAlignment:
+                  isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                if (replyTo != null)
+                  Container(
+                    margin: EdgeInsets.all(4),
+                    padding: EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      border: isSender
+                          ? Border(
+                              right: BorderSide(color: Colors.white, width: 3),
+                            )
+                          : Border(
+                              left: BorderSide(color: Colors.white, width: 3),
+                            ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: isSender
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            pCAIP10ToWallet('${replyTo.fromDID}'),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                            ),
+                          ),
+                        ),
+                        Builder(builder: (context) {
+                          if (replyTo.messageType == MessageType.IMAGE) {
+                            final content = jsonDecode(replyTo.messageContent);
+
+                            return _ChatImage(
+                              imageUrl: content['content'],
+                            );
+                          } else {
+                            return KText(
+                              '${replyTo.displayText}',
+                              color: Colors.white,
+                              maxLines: 2,
+                            );
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
+                if (!isSender)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    child: Text(
+                      pCAIP10ToWallet('${item.fromDID}'),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                    ),
+                  ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  children: [
+                    Builder(builder: (context) {
+                      if (item.messageType == MessageType.IMAGE) {
+                        final content = jsonDecode(item.messageContent);
+                        final imgUrl = content['content'];
+                        print(imgUrl);
+                        return _ChatImage(
+                          imageUrl: content['content'],
+                        );
+                      } else {
+                        return Text(
+                          item.displayText,
+                          style: TextStyle(color: Colors.white),
+                        );
+                      }
+                    }),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        formatDateTime(
+                          DateTime.fromMillisecondsSinceEpoch(item.timestamp!),
+                        ),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
