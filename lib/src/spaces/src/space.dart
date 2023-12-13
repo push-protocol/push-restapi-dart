@@ -322,7 +322,7 @@ class PushSpaceNotifier extends ChangeNotifier {
 
     final options = ChatSendOptions(
       message: reactionMessage,
-      receiverAddress: data.spaceId,
+      to: data.spaceId,
     );
 
     await send(options);

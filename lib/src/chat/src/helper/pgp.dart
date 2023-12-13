@@ -51,11 +51,25 @@ Future<String> pgpDecrypt({
   required String cipherText,
   required String privateKeyArmored,
 }) async {
-//TODO implement pgpDecrypt
   try {
     return OpenPGP.decrypt(cipherText, privateKeyArmored, '');
   } catch (e) {
     log('pgpDecrypt Error $e');
     rethrow;
+  }
+}
+
+Future<void> verifySignature(
+    {required String messageContent,
+    required String signatureArmored,
+    required String publicKeyArmored}) async {
+  try {
+    await OpenPGP.verify(
+      signatureArmored,
+      messageContent,
+      publicKeyArmored,
+    );
+  } catch (e) {
+    log('verifySignature Error ${e.toString()}');
   }
 }

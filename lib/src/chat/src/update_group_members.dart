@@ -51,12 +51,6 @@ Future<GroupInfoDTO?> updateGroupMembers({
   String? encryptedSecret;
 
   final group = await getGroupInfo(chatId: chatId);
-  if (group == null) {
-    throw Exception('Group not found');
-  }
-
-  print('group.isPublic: ${group.isPublic}');
-  print('group.encryptedSecret: ${group.encryptedSecret}');
 
   if (!group.isPublic) {
     if (group.encryptedSecret != null) {

@@ -39,9 +39,6 @@ Future<GroupInfoDTO> updateGroupProfile({
   );
 
   final group = await getGroupInfo(chatId: chatId);
-  if (group == null) {
-    throw Exception('Group not found');
-  }
   /**
    * CREATE PROFILE VERIFICATION PROOF
    */
