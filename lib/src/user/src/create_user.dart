@@ -69,10 +69,8 @@ Future<User?> createUserEmpty({required String accountAddress}) async {
 
   final result = await http.post(path: '/v2/users', data: data);
 
-  if (result == null) {
-    return null;
-  } else if (result is String) {
-    throw Exception(result);
+  if (result == null || result is String) {
+    throw Exception(result ?? 'Unable to create account for $accountAddress');
   } else {
     return User.fromJson(result);
   }

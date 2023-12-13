@@ -156,14 +156,14 @@ class ChatRoomProvider extends ChangeNotifier {
         options = ChatSendOptions(
           message: messageAttachment,
           messageContent: content,
-          receiverAddress: currentChatId,
+          to: currentChatId,
         );
       } else {
         options = ChatSendOptions(
           message: ReplyMessage(
               content: NestedContent(type: messageType, content: content),
               reference: jsonEncode(replyTo!.toJson())),
-          receiverAddress: currentChatId,
+          to: currentChatId,
         );
       }
 
@@ -196,7 +196,7 @@ class ChatRoomProvider extends ChangeNotifier {
       updateSending(true);
       final message = await send(options);
       updateSending(false);
-      print('onSendMessage...5..after send..${message?.toJson()}');
+
       if (message != null) {
         getRoomMessages();
       }
