@@ -227,10 +227,10 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
                   if (isHost)
                     InkWell(
                       onTap: () {
-                        Get.bottomSheet(SpaceMicRequestsView());
+                        Get.bottomSheet(SpaceModerationView());
                       },
                       child: Column(
-                        children: [Icon(Icons.waving_hand), Text('Requests')],
+                        children: [Icon(Icons.group_add), Text('Moderate')],
                       ),
                     ),
                   Spacer(),

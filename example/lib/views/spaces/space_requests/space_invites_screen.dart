@@ -50,12 +50,15 @@ class _SpaceInvitesDailogState extends ConsumerState<SpaceInvitesDailog> {
                 weight: FontWeight.w600,
               ),
               Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.all(16),
-                  itemBuilder: (context, index) =>
-                      SpaceItemTile(item: requests[index]),
-                  separatorBuilder: (context, index) => SizedBox(height: 16),
-                  itemCount: requests.length,
+                child: RefreshIndicator(
+                  onRefresh: ref.read(spaceRequestsProvider).loadRequests,
+                  child: ListView.separated(
+                    padding: EdgeInsets.all(16),
+                    itemBuilder: (context, index) =>
+                        SpaceItemTile(item: requests[index]),
+                    separatorBuilder: (context, index) => SizedBox(height: 16),
+                    itemCount: requests.length,
+                  ),
                 ),
               ),
             ],
