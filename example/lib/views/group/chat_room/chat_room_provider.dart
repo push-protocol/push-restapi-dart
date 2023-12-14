@@ -208,10 +208,8 @@ class ChatRoomProvider extends ChangeNotifier {
 
   Future getLatesGroupInfo() async {
     final result = await getGroup(chatId: _currentChatid);
-    if (result != null) {
-      _room.groupInformation = result;
-      notifyListeners();
-    }
+    _room.groupInformation = result;
+    notifyListeners();
   }
 
   GroupDTO? get groupInformation => _room.groupInformation;
