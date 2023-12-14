@@ -40,7 +40,7 @@ Future<GroupDTO> updateGroupConfig({
 
   final signature = await sign(
     message: hash,
-    privateKey: connectedUser!.privateKey!,
+    privateKey: connectedUser.privateKey!,
   );
 
   final sigType = 'pgpv2';
