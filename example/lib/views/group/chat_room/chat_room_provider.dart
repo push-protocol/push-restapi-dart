@@ -196,7 +196,6 @@ class ChatRoomProvider extends ChangeNotifier {
       updateSending(true);
       final message = await send(options);
       updateSending(false);
-      print('onSendMessage...5..after send..${message?.toJson()}');
       if (message != null) {
         getRoomMessages();
       }
