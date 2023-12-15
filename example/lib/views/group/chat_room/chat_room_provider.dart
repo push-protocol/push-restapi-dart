@@ -77,13 +77,14 @@ class ChatRoomProvider extends ChangeNotifier {
     GroupInfoDTO? groupData,
   }) async {
     if (groupData != null && groupData.chatId == _currentChatid) {
-      _room.groupInformation = GroupDTO.fromJson(groupData.toJson());
+      _groupInfoDTO = GroupInfoDTO.fromJson(groupData.toJson());
       notifyListeners();
     }
 
     getRoomMessages();
 
     getLatestGroupInfo();
+    getLatestGroupMembers();
   }
 
   Future getRoomMessages() async {
