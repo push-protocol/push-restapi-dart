@@ -16,16 +16,16 @@ class EditGroupInfoScreen extends ConsumerStatefulWidget {
 class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  Feeds? room;
+  GroupInfoDTO? groupInfo;
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        room = ref.read(chatRoomProvider).room;
-        nameController.text = room!.groupInformation!.groupName!;
-        descriptionController.text = room!.groupInformation!.groupDescription!;
+        groupInfo = ref.read(chatRoomProvider).groupInformation;
+        nameController.text = groupInfo!.groupName;
+        descriptionController.text = groupInfo!.groupDescription;
       });
     });
   }
@@ -54,7 +54,7 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
                             DecorationImage(image: FileImage(selectedFile!))),
                   )
                 : ProfileImage(
-                    imageUrl: room?.groupInformation?.groupImage,
+                    imageUrl: groupInfo?.groupImage,
                     size: 100,
                   ),
           ),
@@ -100,25 +100,23 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
 
   String composeImage() {
     final img = base64Encode(selectedFile!.readAsBytesSync());
-    return jsonEncode({'content': img});
+    return 'data:image/png;base64,$img';
   }
 
   onSubmit() async {
     try {
       showLoadingDialog();
       await push.updateGroupProfile(
-        chatId: room!.chatId!,
+        chatId: groupInfo!.chatId,
         groupName: nameController.text.trim(),
-        groupImage: selectedFile != null
-            ? composeImage()
-            : room!.groupInformation!.groupImage!,
+        groupImage:
+            selectedFile != null ? composeImage() : groupInfo!.groupImage!,
         groupDescription: descriptionController.text.trim(),
       );
 
-      await ref.read(chatRoomProvider).getLatesGroupInfo();
+      await ref.read(chatRoomProvider).getLatestGroupInfo();
       pop();
       pop();
-      
     } catch (e) {
       pop();
     }

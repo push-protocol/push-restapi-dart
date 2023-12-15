@@ -39,15 +39,32 @@ class ChatRoomProvider extends ChangeNotifier {
     final chatId = room.chatId!;
     _room = room;
     _messageList = _localMessagesCache[chatId] ?? [];
+    _groupInfoDTO = room.groupInformation != null
+        ? GroupInfoDTO.fromGroupDTO(room.groupInformation!)
+        : null;
     _currentChatid = chatId;
     controller.clear();
 
-    notifyListeners();
     getRoomMessages();
 
-    if (room.groupInformation != null) {
-      getLatesGroupInfo();
+    if (_groupInfoDTO != null) {
+      getLatestGroupInfo();
+      _members = (room.groupInformation?.members ?? [])
+          .map(
+            (e) => ChatMemberProfile(
+              address: e.wallet,
+              intent: false,
+              role: e.isAdmin ? GroupMemberRole.admin : GroupMemberRole.member,
+              userInfo: null,
+            ),
+          )
+          .toList();
+
+      getLatestGroupMembers();
+    } else {
+      _members.clear();
     }
+    notifyListeners();
   }
 
   Message? replyTo;
@@ -56,18 +73,17 @@ class ChatRoomProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  onRefreshRoom({
+  Future onRefreshRoom({
     GroupInfoDTO? groupData,
   }) async {
     if (groupData != null && groupData.chatId == _currentChatid) {
-      _room.groupInformation =
-          GroupDTO.fromJson(groupData.toJson()); //groupData;
+      _room.groupInformation = GroupDTO.fromJson(groupData.toJson());
       notifyListeners();
     }
 
     getRoomMessages();
 
-    getLatesGroupInfo();
+    getLatestGroupInfo();
   }
 
   Future getRoomMessages() async {
@@ -205,33 +221,38 @@ class ChatRoomProvider extends ChangeNotifier {
     }
   }
 
-  Future getLatesGroupInfo() async {
-    final result = await getGroup(chatId: _currentChatid);
-    _room.groupInformation = result;
+  GroupInfoDTO? _groupInfoDTO;
+
+  Future getLatestGroupInfo() async {
+    _groupInfoDTO = await getGroupInfo(chatId: _currentChatid);
     notifyListeners();
   }
 
-  GroupDTO? get groupInformation => _room.groupInformation;
-
-  List<MemberDTO> get admins {
-    return groupInformation?.members
-            .where((element) => element.isAdmin == true)
-            .toList() ??
-        [];
+  Future getLatestGroupMembers() async {
+    _members = await getGroupMembers(chatId: _currentChatid);
+    notifyListeners();
   }
 
-  List<MemberDTO> get members =>
-      groupInformation?.members
-          .where((element) => element.isAdmin != true)
-          .toList() ??
-      [];
+  GroupInfoDTO? get groupInformation => _groupInfoDTO;
 
-  List<MemberDTO> get pendingMembers => groupInformation?.pendingMembers ?? [];
+  List<ChatMemberProfile> _members = [];
+  List<ChatMemberProfile> get admins {
+    return _members
+        .where((element) => element.role == GroupMemberRole.admin)
+        .toList();
+  }
+
+  List<ChatMemberProfile> get members => _members
+      .where((element) => element.role == GroupMemberRole.member)
+      .toList();
+
+  List<ChatMemberProfile> get pendingMembers =>
+      _members.where((element) => !element.intent).toList();
 
   String get currentUser => ref.read(accountProvider).pushWallet?.address ?? '';
 
   bool get isUserAdmin =>
-      admins.map((e) => e.wallet).contains(walletToPCAIP10(currentUser));
+      admins.map((e) => e.address).contains(walletToPCAIP10(currentUser));
 
   File? _selectedFile;
   File? get selectedFile => _selectedFile;

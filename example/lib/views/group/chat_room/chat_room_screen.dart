@@ -70,7 +70,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
               ),
             )
         ],
-        title: Text('${room.groupInformation?.groupName ?? room.intentSentBy}'),
+        title: Text('${roomVm.groupInformation?.groupName ?? room.intentSentBy}'),
       ),
       body: GestureDetector(
         onTap: () {
