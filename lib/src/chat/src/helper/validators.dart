@@ -139,3 +139,28 @@ void validateGroupMemberUpdateOptions({
     }
   }
 }
+
+Future validateSendOptions(ComputedOptions options) async {
+  if (options.account == null && options.signer == null) {
+    throw Exception('At least one from account or signer is necessary!');
+  }
+
+  final wallet = getWallet(address: options.account, signer: options.signer);
+
+  if (!isValidETHAddress(wallet.address!)) {
+    throw Exception('Invalid address ${wallet.address!}');
+  }
+
+  if (options.pgpPrivateKey == null && options.signer == null) {
+    throw Exception(
+        "Unable to decrypt keys. Please ensure that either 'signer' or 'pgpPrivateKey' is properly defined.");
+  }
+
+  if (options.messageType != MessageType.COMPOSITE &&
+      options.messageType != MessageType.REPLY &&
+      options.messageObj?.content.isEmpty) {
+    throw Exception('Cannot send empty message');
+  }
+
+  //TODO implement validateMessageObj
+}

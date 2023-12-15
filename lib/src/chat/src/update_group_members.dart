@@ -52,12 +52,11 @@ Future<GroupInfoDTO?> updateGroupMembers({
 
   final group = await getGroupInfo(chatId: chatId);
 
-
   if (!group.isPublic) {
     if (group.encryptedSecret != null) {
-      final isMember = (await getGroupMemberStatus(
-              chatId: chatId, did: connectedUser.user.did!))
-          .isMember;
+      final isMember =
+          (await getGroupMemberStatus(chatId: chatId, did: connectedUser.did!))
+              .isMember;
 
       var groupMembers = await getAllGroupMembersPublicKeys(chatId: chatId);
 
@@ -86,7 +85,7 @@ Future<GroupInfoDTO?> updateGroupMembers({
 
         // This is autoJoin Case
         if (!isMember) {
-          publicKeys.add(connectedUser.user.publicKey!);
+          publicKeys.add(connectedUser.publicKey!);
         }
 
         encryptedSecret = await pgpEncrypt(

@@ -172,14 +172,14 @@ class ChatRoomProvider extends ChangeNotifier {
         options = ChatSendOptions(
           message: messageAttachment,
           messageContent: content,
-          receiverAddress: currentChatId,
+          to: currentChatId,
         );
       } else {
         options = ChatSendOptions(
           message: ReplyMessage(
               content: NestedContent(type: messageType, content: content),
               reference: jsonEncode(replyTo!.toJson())),
-          receiverAddress: currentChatId,
+          to: currentChatId,
         );
       }
 
