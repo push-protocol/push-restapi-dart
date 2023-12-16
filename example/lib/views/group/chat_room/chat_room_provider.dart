@@ -160,7 +160,8 @@ class ChatRoomProvider extends ChangeNotifier {
 
       if (selectedFile != null && messageType == MessageType.IMAGE) {
         final img = base64Encode(selectedFile!.readAsBytesSync());
-        attachmentContent = jsonEncode({'content': img});
+        attachmentContent =
+            jsonEncode({'content': 'data:image/png;base64,$img'});
         messageAttachment = ImageMessage(
           content: img,
           name: selectedFile?.uri.pathSegments.last,
