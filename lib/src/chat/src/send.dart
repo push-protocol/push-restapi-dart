@@ -46,7 +46,7 @@ Future<MessageWithCID?> send(ChatSendOptions options) async {
     }
 
     final sendMessagePayload = await sendMessagePayloadCore(
-      senderConnectedUser: connectedUser!,
+      senderConnectedUser: connectedUser,
       receiverAddress: computedOptions.to,
       senderPgpPrivateKey: computedOptions.pgpPrivateKey,
       senderAddress: computedOptions.account,
