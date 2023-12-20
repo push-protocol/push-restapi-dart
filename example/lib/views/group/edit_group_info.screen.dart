@@ -105,17 +105,14 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
 
   onSubmit() async {
     try {
-      if (groupInfo!.groupImage == null && selectedFile == null) {
-        showErrorSnackbar('Select group image');
-        return;
-      }
+    
 
       showLoadingDialog();
       await push.updateGroupProfile(
         chatId: groupInfo!.chatId,
         groupName: nameController.text.trim(),
         groupImage:
-            selectedFile != null ? composeImage() : groupInfo!.groupImage!,
+            selectedFile != null ? composeImage() : groupInfo!.groupImage,
         groupDescription: descriptionController.text.trim(),
       );
 
