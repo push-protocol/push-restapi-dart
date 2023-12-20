@@ -2,10 +2,9 @@ import '../../../push_restapi_dart.dart';
 
 Future<SpaceData> acceptPromotionRequest_(
     {required SpaceData data, required String promoteeAddress}) async {
-  final localAddress = getCachedWallet()!.address!;
-  if (localAddress != pCAIP10ToWallet(data.spaceCreator)) {
-    throw Exception("Only host is allowed to accept a promotion request");
-  }
+  isHost(
+      hostAddress: data.spaceCreator,
+      errorMessage: "Only host is allowed to accept a promotion request");
 
   // elevate the listener to a speaker
   await addSpeakers(
@@ -18,7 +17,7 @@ Future<SpaceData> acceptPromotionRequest_(
   sendLiveSpaceData(
       messageType: MessageType.META,
       updatedLiveSpaceData: data.liveSpaceData,
-      content: CHAT.META_SPACE_LISTENER_PROMOTION_ACCEPT,
+      content: CHAT.META_SPACE_SPEAKER_PRIVILEGE,
       affectedAddresses: [promoteeAddress],
       spaceId: data.spaceId);
 

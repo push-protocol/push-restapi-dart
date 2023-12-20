@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'dart:math' as m;
@@ -61,6 +62,58 @@ class LiveSpaceProvider extends PushSpaceNotifier {
       //Reload Space invites, Spaces for you and by you
       ref.read(yourSpacesProvider).onRefresh();
       ref.read(spaceRequestsProvider).loadRequests();
+    }
+  }
+
+  onReceivePromotionInvite(String spaceId) {
+    if (spaceId == data.spaceId) {
+      showPromotionDialog(spaceId);
+    }
+  }
+
+  showPromotionDialog(String spaceId) {
+    late Flushbar<void> flushBar;
+    flushBar = Flushbar<void>(
+      titleText: KText(
+        'Host has invited you to speak',
+        size: 14,
+        color: Colors.white,
+        weight: FontWeight.w600,
+      ),
+      messageText: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+              onPressed: () async {
+                flushBar.dismiss();
+                await rejectPromotionInvite();
+              },
+              child: KText(
+                'Reject',
+                color: Colors.red,
+              )),
+          TextButton(
+            onPressed: () async {
+              flushBar.dismiss();
+              await acceptPromotionInvite();
+            },
+            child: KText(
+              'Accept',
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.all(6),
+      borderRadius: BorderRadius.circular(12),
+      flushbarStyle: FlushbarStyle.FLOATING,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 30),
+      backgroundColor: Colors.deepPurple,
+    );
+
+    if (!flushBar.isShowing()) {
+      flushBar.show(Get.context!);
     }
   }
 }
