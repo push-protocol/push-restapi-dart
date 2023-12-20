@@ -105,6 +105,11 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
 
   onSubmit() async {
     try {
+      if (groupInfo!.groupImage == null && selectedFile == null) {
+        showErrorSnackbar('Select group image');
+        return;
+      }
+
       showLoadingDialog();
       await push.updateGroupProfile(
         chatId: groupInfo!.chatId,
@@ -118,6 +123,7 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
       pop();
       pop();
     } catch (e) {
+      log('EditGroupInfoScreen onSubmit $e');
       pop();
     }
   }
