@@ -1,22 +1,35 @@
 import '../../push_restapi_dart.dart';
 
 class PushApi {
-  final Signer? signer;
-  final String account;
-  final String? decryptedPgpPvtKey;
+  late final Signer? _signer;
+  late final String _account;
+  late final String? _decryptedPgpPvtKey;
   final String? pgpPublicKey;
   final bool readMode;
 
   void Function(ProgressHookType)? progressHook;
 
+  late Chat chat;
   PushApi({
-    this.signer,
-    required this.account,
-    this.decryptedPgpPvtKey,
+    Signer? signer,
+    required String account,
+    String? decryptedPgpPvtKey,
     this.pgpPublicKey,
     this.progressHook,
     this.readMode = false,
-  });
+  }) {
+    _signer = signer;
+    _account = account;
+    _decryptedPgpPvtKey = decryptedPgpPvtKey;
+
+    chat = Chat(
+      signer: signer,
+      account: account,
+      decryptedPgpPvtKey: decryptedPgpPvtKey,
+      pgpPublicKey: pgpPublicKey,
+      progressHook: progressHook,
+    );
+  }
 
   static Future<PushApi> initialize(
       {Signer? signer, PushAPIInitializeProps? options}) async {
@@ -81,5 +94,16 @@ class PushApi {
     );
 
     return api;
+  }
+
+//TODO initStream
+  Future initStream() async {}
+
+  Future<User?> info({String? overrideAccount}) async {
+    return getUser(address: overrideAccount ?? _account);
+  }
+
+  static String ensureSignerMessage() {
+    return 'Operation not allowed in read-only mode. Signer is required.';
   }
 }

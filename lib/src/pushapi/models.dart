@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import '../../push_restapi_dart.dart';
 
 class PushAPIInitializeProps {
@@ -17,3 +19,14 @@ class PushAPIInitializeProps {
     this.origin,
   });
 }
+
+// class ChatListType {
+//   static const String CHATS = 'CHATS';
+//   static const String REQUESTS = 'REQUESTS';
+
+//   static bool isValidChatListType(String type) {
+//     return [CHATS, REQUESTS].contains(type);
+//   }
+// }
+
+enum ChatListType { CHATS, REQUESTS }
