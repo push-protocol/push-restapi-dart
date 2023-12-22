@@ -13,12 +13,10 @@ testPushApi() async {
       web3.EthPrivateKey.createRandom(Random.secure());
   final signer2 = Web3Signer(randomCredentials2);
 
-  final alice = await PushApi.initialize(signer: signer);
-  final bob = await PushApi.initialize(signer: signer2);
+  final alice = await PushAPI.initialize(signer: signer);
+  final bob = await PushAPI.initialize(signer: signer2);
 
   print('Push api : ${alice.pgpPublicKey}');
-  print('Push api : ${alice.account}');
 
   print('Push api bob: ${bob.pgpPublicKey}');
-  print('Push api bob: ${bob.account}');
 }

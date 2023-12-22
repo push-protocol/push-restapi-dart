@@ -1,6 +1,6 @@
 import '../../push_restapi_dart.dart';
 
-class PushApi {
+class PushAPI {
   late final Signer? _signer;
   late final String _account;
   late final String? _decryptedPgpPvtKey;
@@ -10,7 +10,7 @@ class PushApi {
   void Function(ProgressHookType)? progressHook;
 
   late Chat chat;
-  PushApi({
+  PushAPI({
     Signer? signer,
     required String account,
     String? decryptedPgpPvtKey,
@@ -31,7 +31,7 @@ class PushApi {
     );
   }
 
-  static Future<PushApi> initialize(
+  static Future<PushAPI> initialize(
       {Signer? signer, PushAPIInitializeProps? options}) async {
     if (signer == null && options?.account == null) {
       throw Exception("Either 'signer' or 'account' must be provided.");
@@ -85,7 +85,7 @@ class PushApi {
       }
     }
 
-    final api = PushApi(
+    final api = PushAPI(
       account: derivedAccount,
       signer: signer,
       decryptedPgpPvtKey: decryptedPGPPrivateKey,
