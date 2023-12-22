@@ -16,9 +16,7 @@ class _SearchSpacesScreenState extends State<SearchSpacesScreen> {
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
-            children: [
-             
-            ],
+            children: [],
           ),
         ),
       ),

@@ -105,8 +105,6 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
 
   onSubmit() async {
     try {
-    
-
       showLoadingDialog();
       await push.updateGroupProfile(
         chatId: groupInfo!.chatId,
