@@ -1,3 +1,10 @@
+
+### 0.3.0-alpha
+### Update
+- Optimize group chat to support larger groups.
+- Add new message types (reply, reaction, user activity, image, video)
+
+---
 ### 0.2.8-alpha
 ### Update
 - Optimize send method
