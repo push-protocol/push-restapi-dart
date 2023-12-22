@@ -120,7 +120,6 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
       pop();
       pop();
     } catch (e) {
-      log('EditGroupInfoScreen onSubmit $e');
       pop();
     }
   }
