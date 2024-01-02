@@ -36,7 +36,7 @@ class GroupMembersDialog extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Align(
+            /* Align(
               alignment: Alignment.centerRight,
               child: MaterialButton(
                 onPressed: () {
@@ -54,7 +54,7 @@ class GroupMembersDialog extends ConsumerWidget {
                   ],
                 ),
               ),
-            ),
+            ),*/
             TabBar(tabs: [
               Tab(text: 'Admin'),
               Tab(text: 'Members'),

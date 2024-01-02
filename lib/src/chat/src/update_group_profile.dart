@@ -6,7 +6,7 @@ Future<GroupInfoDTO> updateGroupProfile({
   required String chatId,
   required String groupName,
   String? groupDescription,
-  required String groupImage,
+  String? groupImage,
   dynamic rules,
   String? pgpPrivateKey,
 }) async {
