@@ -23,9 +23,9 @@ class PushAPI {
     _decryptedPgpPvtKey = decryptedPgpPvtKey;
 
     chat = Chat(
-      signer: signer,
-      account: account,
-      decryptedPgpPvtKey: decryptedPgpPvtKey,
+      signer: _signer,
+      account: _account,
+      decryptedPgpPvtKey: _decryptedPgpPvtKey,
       pgpPublicKey: pgpPublicKey,
       progressHook: progressHook,
     );

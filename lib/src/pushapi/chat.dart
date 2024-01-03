@@ -23,10 +23,18 @@ class Chat {
     _decryptedPgpPvtKey = decryptedPgpPvtKey;
 
     _userAPI = UserAPI(account: account);
+    group = GroupAPI(
+        account: account,
+        progressHook: progressHook,
+        decryptedPgpPvtKey: _decryptedPgpPvtKey,
+        pgpPublicKey: pgpPublicKey,
+        signer: _signer);
   }
 
   late final UserAPI _userAPI;
   bool get _hasSigner => _signer != null;
+
+  late final GroupAPI group;
 
   Future<List<Feeds>?> list({
     required ChatListType type,
@@ -216,6 +224,363 @@ class Chat {
           desc: user.profile!.desc,
           picture: user.profile!.picture,
           blockedUsersList: user.profile?.blockedUsersList),
+    );
+  }
+}
+
+class GroupAPI {
+  late final Signer? _signer;
+
+  late final String _account;
+  late final String? _decryptedPgpPvtKey;
+  void Function(ProgressHookType)? progressHook;
+
+  GroupAPI({
+    Signer? signer,
+    required String account,
+    String? decryptedPgpPvtKey,
+    String? pgpPublicKey,
+    required this.progressHook,
+  }) {
+    _signer = signer;
+    _account = account;
+    _decryptedPgpPvtKey = decryptedPgpPvtKey;
+
+    participants = GroupParticipantsAPI();
+  }
+
+  bool get _hasSigner => _signer != null;
+
+  late final GroupParticipantsAPI participants;
+
+  Future<GroupInfoDTO?> create({
+    required String name,
+    required GroupCreationOptions options,
+  }) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final groupParam = ChatCreateGroupTypeV2(
+      account: _account,
+      pgpPrivateKey: _decryptedPgpPvtKey,
+      signer: _signer,
+      groupName: name,
+      groupDescription: options.description,
+      groupImage: options.image,
+      rules: options.rules,
+      isPublic: !options.private,
+      groupType: 'default',
+      config: GroupConfig(),
+      admins: options.admins,
+      members: options.members,
+    );
+
+    return PUSH_CHAT.createGroupV2(options: groupParam);
+  }
+
+  Future<GroupAccess> permissions({required String chatId}) async {
+    return PUSH_CHAT.getGroupAccess(chatId: chatId, did: _account);
+  }
+
+  Future<GroupInfoDTO> info({required String chatId}) async {
+    return PUSH_CHAT.getGroupInfo(chatId: chatId);
+  }
+
+  Future<GroupDTO> update({
+    required String chatId,
+    required GroupUpdateOptions options,
+  }) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final group = await PUSH_CHAT.getGroupInfo(chatId: chatId);
+
+    final updateGroupProfileOptions = ChatUpdateGroupProfileType(
+      chatId: chatId,
+      groupName: options.name ?? group.groupName,
+      groupDescription: options.description ?? group.groupDescription,
+      groupImage: options.image ?? group.groupImage,
+      pgpPrivateKey: _decryptedPgpPvtKey,
+      rules: options.rules ?? group.rules,
+      signer: _signer,
+      account: _account,
+    );
+
+    final updateGroupConfigOptions = ChatUpdateConfigProfileType(
+      chatId: chatId,
+      account: _account,
+      meta: options.meta,
+      pgpPrivateKey: _decryptedPgpPvtKey,
+      scheduleAt: options.scheduleAt,
+      scheduleEnd: options.scheduleEnd,
+      signer: _signer,
+      status: options.status,
+    );
+
+    await updateGroupProfile(options: updateGroupProfileOptions);
+    return await updateGroupConfig(
+      options: updateGroupConfigOptions,
+    );
+  }
+
+  ///role: 'ADMIN' | 'MEMBER';
+  Future<GroupInfoDTO?> add({
+    required String chatId,
+    required String role,
+    required List<String> accounts,
+  }) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final validRoles = ['ADMIN', 'MEMBER'];
+    if (!validRoles.contains(role)) {
+      throw Exception('Invalid role provided.');
+    }
+
+    if (accounts.isEmpty) {
+      throw Exception('accounts array cannot be empty!');
+    }
+
+    for (var account in accounts) {
+      if (!isValidETHAddress(account)) {
+        throw Exception('Invalid account address: $account');
+      }
+    }
+
+    if (role == 'ADMIN') {
+      return PUSH_CHAT.addAdmins(
+        chatId: chatId,
+        admins: accounts,
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    } else {
+      return PUSH_CHAT.addMembers(
+        chatId: chatId,
+        members: accounts,
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    }
+  }
+
+  ///role: 'ADMIN' | 'MEMBER';
+  Future remove({
+    required String chatId,
+    required String role,
+    required List<String> accounts,
+  }) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final validRoles = ['ADMIN', 'MEMBER'];
+    if (!validRoles.contains(role)) {
+      throw Exception('Invalid role provided.');
+    }
+
+    if (accounts.isEmpty) {
+      throw Exception('accounts array cannot be empty!');
+    }
+
+    for (var account in accounts) {
+      if (!isValidETHAddress(account)) {
+        throw Exception('Invalid account address: $account');
+      }
+    }
+
+    var adminsToRemove = <String>[];
+    var membersToRemove = <String>[];
+
+    for (var account in accounts) {
+      final status =
+          await PUSH_CHAT.getGroupMemberStatus(chatId: chatId, did: account);
+      if (status.isAdmin) {
+        adminsToRemove.add(account);
+      } else {
+        membersToRemove.add(account);
+      }
+    }
+
+    if (adminsToRemove.isNotEmpty) {
+      await PUSH_CHAT.removeAdmins(
+        chatId: chatId,
+        admins: adminsToRemove,
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    }
+
+    if (membersToRemove.isNotEmpty) {
+      await PUSH_CHAT.removeMembers(
+        chatId: chatId,
+        members: membersToRemove,
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    }
+
+    return info(chatId: chatId);
+  }
+
+  ///role: 'ADMIN' | 'MEMBER';
+  Future<GroupInfoDTO?> modify({
+    required String chatId,
+    required String role,
+    required List<String> accounts,
+  }) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final validRoles = ['ADMIN', 'MEMBER'];
+    if (!validRoles.contains(role)) {
+      throw Exception('Invalid role provided.');
+    }
+
+    if (accounts.isEmpty) {
+      throw Exception('accounts array cannot be empty!');
+    }
+
+    for (var account in accounts) {
+      if (!isValidETHAddress(account)) {
+        throw Exception('Invalid account address: $account');
+      }
+    }
+
+    return PUSH_CHAT.modifyRoles(
+      options: ModifyRolesType(
+        chatId: chatId,
+        newRole: role,
+        account: _account,
+        members: accounts,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      ),
+    );
+  }
+
+  Future<GroupInfoDTO> join({required String target}) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final status = await PUSH_CHAT.getGroupMemberStatus(
+      chatId: target,
+      did: _account,
+    );
+
+    if (status.isPending) {
+      await PUSH_CHAT.approve(
+        senderAddress: target,
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    } else if (!status.isMember) {
+      await PUSH_CHAT.addMembers(
+        chatId: target,
+        members: [_account],
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    }
+
+    return await info(chatId: target);
+  }
+
+  Future<GroupInfoDTO> leave({required String target}) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    final status = await PUSH_CHAT.getGroupMemberStatus(
+      chatId: target,
+      did: _account,
+    );
+
+    if (status.isAdmin) {
+      await PUSH_CHAT.removeAdmins(
+        chatId: target,
+        admins: [_account],
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    } else if (!status.isMember) {
+      await PUSH_CHAT.removeMembers(
+        chatId: target,
+        members: [_account],
+        account: _account,
+        pgpPrivateKey: _decryptedPgpPvtKey,
+        signer: _signer,
+      );
+    }
+
+    return await info(chatId: target);
+  }
+
+  Future<void> reject({required String target}) async {
+    if (!_hasSigner) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    await PUSH_CHAT.reject(
+      senderAddress: target,
+      account: _account,
+      pgpPrivateKey: _decryptedPgpPvtKey,
+      signer: _signer,
+    );
+  }
+}
+
+class GroupParticipantsAPI {
+  void Function(ProgressHookType)? progressHook;
+
+  GroupParticipantsAPI();
+
+  Future<List<ChatMemberProfile>> list({
+    required String chatId,
+    required GetGroupParticipantsOptions options,
+  }) async {
+    return PUSH_CHAT.getGroupMembers(
+      options: FetchChatGroupInfoType(
+        chatId: chatId,
+        limit: options.limit,
+        page: options.limit,
+        pending: options.filter?.pending,
+        role: options.filter?.role,
+      ),
+    );
+  }
+
+  Future<GroupCountInfo> count({required String chatId}) async {
+    final count = await PUSH_CHAT.getGroupMemberCount(chatId: chatId);
+
+    return GroupCountInfo(
+      participants: count.overallCount - count.pendingCount,
+      pending: count.pendingCount,
+    );
+  }
+
+  Future<ParticipantStatus> status({
+    required String chatId,
+    required String accountId,
+  }) async {
+    final status =
+        await PUSH_CHAT.getGroupMemberStatus(chatId: chatId, did: accountId);
+    return ParticipantStatus(
+      pending: status.isPending,
+      role: status.isAdmin ? 'ADMIN' : 'MEMBER',
+      participant: status.isMember,
     );
   }
 }

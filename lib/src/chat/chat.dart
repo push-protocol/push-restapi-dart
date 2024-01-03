@@ -15,6 +15,7 @@ export 'src/models/group_member_status.dart';
 export 'src/models/group_member_public_key.dart';
 export 'src/models/update_group_members.dart';
 export 'src/models/send_models.dart';
+export 'src/models/group_access.dart';
 
 export 'src/chat.dart';
 export 'src/chats.dart';
@@ -44,3 +45,6 @@ export 'src/update_group_config.dart';
 export 'src/update_group_profile.dart';
 export 'src/update_group_members.dart';
 export 'src/reject_request.dart';
+export 'src/create_group_v2.dart';
+export 'src/get_group_access.dart';
+export 'src/modify_roles.dart';
