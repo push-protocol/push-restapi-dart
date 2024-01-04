@@ -48,7 +48,7 @@ dependencies:
 
 
   push_restapi_dart:
-    path: '../'
+    path: '../../'
 
 
 
