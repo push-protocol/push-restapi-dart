@@ -20,15 +20,6 @@ class PushAPIInitializeProps {
   });
 }
 
-// class ChatListType {
-//   static const String CHATS = 'CHATS';
-//   static const String REQUESTS = 'REQUESTS';
-
-//   static bool isValidChatListType(String type) {
-//     return [CHATS, REQUESTS].contains(type);
-//   }
-// }
-
 enum ChatListType { CHATS, REQUESTS }
 
 class GroupCreationOptions {
