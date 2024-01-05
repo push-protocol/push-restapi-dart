@@ -497,10 +497,12 @@ Future<String> decryptPGPKey({
 }
 
 //TODO: Implement verifyProfileKeys
-verifyProfileKeys({
+ verifyProfileKeys({
   required String encryptedPrivateKey,
   required String publicKey,
   required String did,
   required String caip10,
   required String verificationProof,
-}) async {}
+}) async {
+  return '';
+}

@@ -17,10 +17,17 @@ class PushAPI {
     this.pgpPublicKey,
     this.progressHook,
     this.readMode = false,
+    ENV env = ENV.staging,
+    bool showHttpLog = false,
   }) {
     _signer = signer;
     _account = account;
     _decryptedPgpPvtKey = decryptedPgpPvtKey;
+
+    initPush(
+      env: env,
+      showHttpLog: showHttpLog,
+    );
 
     chat = Chat(
       signer: _signer,

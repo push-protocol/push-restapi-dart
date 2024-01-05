@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:use_cases/chats/chat.dart';
 
 void main() {
   runApp(const MainApp());
+  runChatClassUseCases();
 }
 
 class MainApp extends StatelessWidget {
@@ -12,7 +14,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text('Hello World!'),
+          child: Text('Push'),
         ),
       ),
     );
