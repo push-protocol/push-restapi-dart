@@ -154,10 +154,6 @@ Future<GroupInfoDTO?> createGroupCoreV2(
       'idempotentVerificationProof': idempotentVerificationProof,
     };
 
-    for (var item in body.keys) {
-      print('$item: ${body[item]}');
-    }
-
     final result = await http.post(
       path: '/v2/chat/groups',
       data: body,
