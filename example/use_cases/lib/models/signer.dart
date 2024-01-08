@@ -58,7 +58,7 @@ class Web3Signer extends push.Signer {
 
   @override
   String getAddress() {
-    return this.credentials.address.hex;
+    return credentials.address.hex;
   }
 
   @override

@@ -83,8 +83,8 @@ Future<GroupInfoDTO?> createGroupCoreV2(
     final profileVerificationBody = {
       'groupName': options.groupName,
       'groupDescription': options.groupDescription,
-      'rules': options.rules ?? {},
       'groupImage': options.groupImage,
+      'rules': options.rules ?? {},
       'isPublic': options.isPublic,
       'groupType': options.groupType,
     };
@@ -153,6 +153,10 @@ Future<GroupInfoDTO?> createGroupCoreV2(
       'admins': convertedAdmins,
       'idempotentVerificationProof': idempotentVerificationProof,
     };
+
+    for (var item in body.keys) {
+      print('$item: ${body[item]}');
+    }
 
     final result = await http.post(
       path: '/v2/chat/groups',

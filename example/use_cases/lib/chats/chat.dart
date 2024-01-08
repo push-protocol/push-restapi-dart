@@ -47,9 +47,18 @@ String groupDescription() {
 /// *************** SAMPLE GROUP DATA ***************************
 
 Future runChatClassUseCases() async {
-  final userAlice = await PushAPI.initialize(signer: wallet1Signer);
-  final userBob = await PushAPI.initialize(signer: wallet2Signer);
-  final userKate = await PushAPI.initialize(signer: wallet3Signer);
+  final userAlice = await PushAPI.initialize(
+    signer: wallet1Signer,
+    options: PushAPIInitializeOptions(showHttpLog: true),
+  );
+  final userBob = await PushAPI.initialize(
+    signer: wallet2Signer,
+    options: PushAPIInitializeOptions(showHttpLog: true),
+  );
+  final userKate = await PushAPI.initialize(
+    signer: wallet3Signer,
+    options: PushAPIInitializeOptions(showHttpLog: true),
+  );
 
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
@@ -171,4 +180,55 @@ Future runChatClassUseCases() async {
   log('PushAPI.group.update | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
+  log('PushAPI.group.add');
+  final addMember = await userAlice.chat.group.add(
+    chatId: groupChatId,
+    role: 'MEMBER',
+    accounts: [wallet3Signer.getAddress()],
+  );
+  log(addMember);
+  await delay(2000); // Delay added to log the events in order
+  log('PushAPI.group.add | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  log('PushAPI.group.remove');
+  final removeMember = await userAlice.chat.group.remove(
+    chatId: groupChatId,
+    role: 'MEMBER',
+    accounts: [wallet3Signer.getAddress()],
+  );
+  log(removeMember);
+  await delay(2000); // Delay added to log the events in order
+  log('PushAPI.group.remove | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  log('PushAPI.group.join');
+  final joinGrp = await userBob.chat.group.join(target: groupChatId);
+
+  log(joinGrp);
+  await delay(2000); // Delay added to log the events in order
+  log('PushAPI.group.join | Response - 200 OK\n\n');
+  //-------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  log('PushAPI.group.leave');
+  final leaveGrp = await userBob.chat.group.leave(target: groupChatId);
+
+  log(leaveGrp);
+  await delay(2000); // Delay added to log the events in order
+  log('PushAPI.group.leave | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  log('PushAPI.group.reject');
+  final sampleGrp = await userAlice.chat.group.create(
+      name: 'Sample Grp',
+      options: GroupCreationOptions(
+        description: groupDescription(),
+        image: groupImage,
+        members: [wallet2Signer.getAddress()], // invite bob
+        admins: [],
+        private: true,
+      ));
+  await userBob.chat.group.reject(target: sampleGrp!.chatId);
+  await delay(2000); // Delay added to log the events in order
+  log('PushAPI.group.reject | Response - 200 OK\n\n');
 }

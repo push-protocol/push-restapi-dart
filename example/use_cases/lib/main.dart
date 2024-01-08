@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:use_cases/chats/chat.dart';
 
-void main() {
+void main() async {
   runApp(const MainApp());
-  runChatClassUseCases();
+
+  log(r'''
+
+          ░█████╗░██╗░░██╗░█████╗░████████╗
+          ██╔══██╗██║░░██║██╔══██╗╚══██╔══╝
+          ██║░░╚═╝███████║███████║░░░██║░░░
+          ██║░░██╗██╔══██║██╔══██║░░░██║░░░
+          ╚█████╔╝██║░░██║██║░░██║░░░██║░░░
+          ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░
+        ''');
+
+  await runChatClassUseCases();
 }
 
 class MainApp extends StatelessWidget {

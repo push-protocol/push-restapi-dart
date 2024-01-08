@@ -39,7 +39,7 @@ class PushAPI {
   }
 
   static Future<PushAPI> initialize(
-      {Signer? signer, PushAPIInitializeProps? options}) async {
+      {Signer? signer, PushAPIInitializeOptions? options}) async {
     if (signer == null && options?.account == null) {
       throw Exception("Either 'signer' or 'account' must be provided.");
     }
@@ -98,6 +98,7 @@ class PushAPI {
       decryptedPgpPvtKey: decryptedPGPPrivateKey,
       pgpPublicKey: pgpPublicKey,
       readMode: readMode,
+      showHttpLog: options?.showHttpLog ?? false,
     );
 
     return api;
