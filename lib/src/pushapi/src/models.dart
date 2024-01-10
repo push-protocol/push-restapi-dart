@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-import '../../push_restapi_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 class PushAPIInitializeOptions {
   void Function(ProgressHookType)? progressHook;

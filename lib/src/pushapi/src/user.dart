@@ -1,4 +1,4 @@
-import '../../push_restapi_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 class UserAPI {
   late final String _account;

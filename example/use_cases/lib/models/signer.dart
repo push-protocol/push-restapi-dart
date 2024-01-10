@@ -27,7 +27,7 @@ class EthersSigner extends push.Signer {
           privateKey: ethersWallet.privateKey, message: Uint8List.fromList(m));
       return signature;
     } catch (e) {
-      print('override: getEip191Signature: error$e');
+      push.log('override: getEip191Signature: error$e');
       return message;
     }
   }
