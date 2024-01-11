@@ -84,7 +84,7 @@ Future<GroupInfoDTO?> createGroupCoreV2(
       'groupName': options.groupName,
       'groupDescription': options.groupDescription,
       'groupImage': options.groupImage,
-      'rules': options.rules,
+      'rules': options.rules ?? {},
       'isPublic': options.isPublic,
       'groupType': options.groupType,
     };
@@ -138,7 +138,7 @@ Future<GroupInfoDTO?> createGroupCoreV2(
       'groupName': options.groupName,
       'groupDescription': options.groupDescription,
       'groupImage': options.groupImage,
-      'rules': options.rules,
+      'rules': options.rules ?? {},
       'isPublic': options.isPublic,
       'groupType': options.groupType,
       'profileVerificationProof': profileVerificationProof,
@@ -159,7 +159,7 @@ Future<GroupInfoDTO?> createGroupCoreV2(
       data: body,
     );
 
-    if (result == null) {
+    if (result == null || result is String) {
       throw Exception(result);
     }
     return GroupInfoDTO.fromJson(result);

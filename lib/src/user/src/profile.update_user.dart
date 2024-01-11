@@ -76,13 +76,13 @@ Future<User?> profileUpdate({
 
     var updatedUser = User.fromJson(result);
 
-    updatedUser.publicKey = verifyProfileKeys(
-      encryptedPrivateKey: updatedUser.encryptedPrivateKey!,
-      publicKey: updatedUser.publicKey!,
-      did: updatedUser.did!,
-      caip10: updatedUser.wallets!,
-      verificationProof: updatedUser.verificationProof!,
-    );
+    // updatedUser.publicKey = verifyProfileKeys(
+    //   encryptedPrivateKey: updatedUser.encryptedPrivateKey!,
+    //   publicKey: updatedUser.publicKey!,
+    //   did: updatedUser.did!,
+    //   caip10: updatedUser.wallets!,
+    //   verificationProof: updatedUser.verificationProof!,
+    // );
 
     return populateDeprecatedUser(user: updatedUser);
   } catch (err) {

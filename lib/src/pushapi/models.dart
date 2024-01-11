@@ -2,22 +2,23 @@
 
 import '../../push_restapi_dart.dart';
 
-class PushAPIInitializeProps {
+class PushAPIInitializeOptions {
   void Function(ProgressHookType)? progressHook;
   String? account;
   String? version;
   Map<String, Map<String, String>>? versionMeta;
   bool autoUpgrade;
   String? origin;
+  bool showHttpLog;
 
-  PushAPIInitializeProps({
-    this.progressHook,
-    this.account,
-    this.version = Constants.ENC_TYPE_V3,
-    this.versionMeta,
-    this.autoUpgrade = true,
-    this.origin,
-  });
+  PushAPIInitializeOptions(
+      {this.progressHook,
+      this.account,
+      this.version = Constants.ENC_TYPE_V3,
+      this.versionMeta,
+      this.autoUpgrade = true,
+      this.origin,
+      this.showHttpLog = false});
 }
 
 enum ChatListType { CHATS, REQUESTS }
