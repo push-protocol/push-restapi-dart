@@ -1,7 +1,6 @@
 import '__lib.dart';
 
 void main() async {
-  testPushApi();
   runApp(
     ProviderScope(
       child: const MyApp(),
