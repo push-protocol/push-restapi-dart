@@ -333,7 +333,7 @@ class PushSpaceNotifier extends ChangeNotifier {
 
     final options = ChatSendOptions(
       message: reactionMessage,
-      to: data.spaceId,
+      recipient: data.spaceId,
     );
 
     await send(options);

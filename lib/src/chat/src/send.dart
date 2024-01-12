@@ -144,7 +144,7 @@ ComputedOptions computeOptions(ChatSendOptions options) {
     }
   }
 
-  String to = options.to;
+  String to = options.recipient;
   if (to.isEmpty) {
     throw Exception('Options.to is required');
   }

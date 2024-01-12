@@ -9,6 +9,9 @@ class PushAPI {
 
   void Function(ProgressHookType)? progressHook;
 
+  String get account => _account;
+  String? get decryptedPgpPvtKey => _decryptedPgpPvtKey;
+
   late Chat chat;
   late PushStream stream;
   PushAPI({
@@ -41,6 +44,7 @@ class PushAPI {
 
   static Future<PushAPI> initialize({
     Signer? signer,
+    ENV env = ENV.staging,
     PushAPIInitializeOptions? options,
   }) async {
     if (signer == null && options?.account == null) {
@@ -96,7 +100,8 @@ class PushAPI {
     }
 
     final api = PushAPI(
-      account: derivedAccount,
+      account: derivedAccount.toLowerCase(),
+      env: env,
       signer: signer,
       decryptedPgpPvtKey: decryptedPGPPrivateKey,
       pgpPublicKey: pgpPublicKey,

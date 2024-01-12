@@ -66,9 +66,12 @@ class FilterOptions {
   bool? pending;
   String? role;
 
+  ///role: 'admin' | 'member';
   FilterOptions({
     this.pending,
     this.role,
+
+    ///role: 'admin' | 'member';
   });
 }
 
