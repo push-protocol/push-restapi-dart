@@ -2,77 +2,62 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../../__lib.dart';
 
-class ChatRequestScreen extends ConsumerStatefulWidget {
-  const ChatRequestScreen({super.key});
+class ChatRequestsTab extends ConsumerStatefulWidget {
+  const ChatRequestsTab({
+    super.key,
+  });
 
   @override
-  ConsumerState<ChatRequestScreen> createState() => _ChatRequestScreenState();
+  ConsumerState<ChatRequestsTab> createState() => _ChatRequestsTabState();
 }
 
-class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
+class _ChatRequestsTabState extends ConsumerState<ChatRequestsTab> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Requests'),
-        actions: [
-          InkWell(
-            onTap: () {
-              ref.read(requestsProvider).loadRequests();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.refresh),
-            ),
-          )
-        ],
-      ),
-      body: Consumer(
-        builder: (context, ref, child) {
-          final vm = ref.watch(requestsProvider);
-          final requestsList = vm.requestsList;
-          if (vm.isBusy && (requestsList ?? []).isEmpty) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (requestsList == null) {
-            return Center(child: Text('Cannot load Requests'));
-          }
+    return Consumer(
+      builder: (context, ref, child) {
+        final vm = ref.watch(requestsProvider);
+        final requestsList = vm.requestsList;
+        if (vm.isBusy && (requestsList ?? []).isEmpty) {
+          return Center(
+            child: LoadingDialog(),
+          );
+        }
+        if (requestsList == null) {
+          return Center(child: Text('Cannot load Requests'));
+        }
 
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 32),
+        return RefreshIndicator(
+          onRefresh: vm.loadRequests,
+          child: ListView.separated(
             separatorBuilder: (context, index) => Divider(),
             itemCount: requestsList.length,
             itemBuilder: (context, index) {
               final item = requestsList[index];
-              final image = item.groupInformation?.groupImage ??
-                  item.profilePicture ??
-                  '';
+              final image =
+                  item.groupInformation?.groupImage ?? item.profilePicture;
 
-              return ListTile(
-                onTap: () {
-                  onAccetRequests(item.chatId!);
-                },
-                leading: ProfileImage(imageUrl: image),
-                title: Text(
-                    '${item.groupInformation?.groupName ?? item.intentSentBy}'),
-                subtitle: Text(
-                  item.msg?.messageContent ?? 'Send first message',
-                  maxLines: 1,
-                ),
-              );
+              return InkWell(
+                  onTap: () {
+                    onAccetRequests(item.chatId!);
+                  },
+                  child: ConversationTile(
+                    image: image,
+                    item: item,
+                    subText: 'Tap to Accept Request',
+                  ));
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
   onAccetRequests(String senderAddress) async {
     try {
       showLoadingDialog(context);
-      final result = await approve(senderAddress: senderAddress);
+      final result = await pushUser.chat.accept(target: senderAddress);
       print('onAccetRequests: $result');
       pop(context);
       showMyDialog(
@@ -91,5 +76,6 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
     }
 
     ref.read(requestsProvider).loadRequests();
+    ref.read(conversationsProvider).loadChats();
   }
 }

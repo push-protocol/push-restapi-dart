@@ -1,6 +1,5 @@
 import 'package:blockies/blockies.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../__lib.dart';
 
@@ -15,9 +14,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int currentIndex = 0;
 
   onCopy() {
-    final pushWallet = ref.read(accountProvider).pushWallet!;
+    final pushWallet = ref.read(accountProvider).pushUser!;
 
-    FlutterClipboard.copy(pushWallet.address!).then((value) {
+    FlutterClipboard.copy(pushWallet.account).then((value) {
       showSuccessSnackbar('Address copied successfully');
     });
   }
@@ -27,7 +26,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final vm = ref.watch(accountProvider);
     final accounts = vm.accounts;
 
-    Wallet? pushWallet = vm.pushWallet;
+    var pushWallet = vm.pushUser;
+    // Wallet? pushWallet = vm.pushWallet;
     return pushWallet == null
         ? ConnectScreen(accounts: accounts, vm: vm)
         : Scaffold(
@@ -40,10 +40,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 });
               },
               items: [
+                BottomNavigationBarItem(icon: Icon(Icons.forum), label: 'Chat'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.multitrack_audio_outlined),
                     label: 'Spaces'),
-                BottomNavigationBarItem(icon: Icon(Icons.forum), label: 'Chat')
               ],
             ),
             body: SafeArea(
@@ -93,11 +93,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Blockies(seed: '${pushWallet.address}'),
+                                child: Blockies(seed: '${pushWallet.account}'),
                               ),
                             ),
                             SizedBox(width: 12),
-                            Expanded(child: KText(pushWallet.address ?? '')),
+                            Expanded(child: KText(pushWallet.account)),
                             SizedBox(width: 12),
                             Icon(
                               Icons.copy,
@@ -108,7 +108,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     SizedBox(height: 16),
                     Expanded(
-                      child: currentIndex == 0 ? SpacesTab() : ChatsTab(),
+                      child: currentIndex == 1 ? SpacesTab() : ChatsTab(),
                     ),
                   ],
                 ),

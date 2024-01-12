@@ -50,7 +50,7 @@ Future<void> testSendReaction() async {
     pgpPrivateKey: pgpPrivateKey,
     message: ReactionMessage(
         content: CHAT.REACTION_THUMBSUP, reference: referenceLink),
-    to: groupId,
+    recipient: groupId,
   );
 
   final result = await send(options);

@@ -34,7 +34,8 @@ Future<void> testSendComposite() async {
       NestedContent(type: MessageType.TEXT, content: "inner message 1"),
       NestedContent(type: MessageType.TEXT, content: "inner message 2")
     ]),
-    to: '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
+    recipient:
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);

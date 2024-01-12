@@ -20,7 +20,7 @@ class _SpaceModerationViewState extends ConsumerState<SpaceModerationView> {
 
     final liveSpaceData = vm.liveSpaceData;
 
-    final localAddress = ref.read(accountProvider).pushWallet?.address;
+    final localAddress = ref.read(accountProvider).pushUser?.account;
     bool isHost = localAddress == liveSpaceData.host.address;
 
     return DefaultTabController(

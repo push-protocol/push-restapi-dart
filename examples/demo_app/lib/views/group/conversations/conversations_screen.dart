@@ -74,7 +74,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                   subtitle: Text(
                     item.msg?.messageType == MessageType.TEXT
                         ? item.msg?.messageContent ?? 'Send first message'
-                        : '${item.msg?.messageType} was sent by ${item.msg?.fromDID}',
+                        : 'Send first message', // '${item.msg?.messageType} was sent by ${item.msg?.fromDID}',
                     maxLines: 1,
                   ),
                 );

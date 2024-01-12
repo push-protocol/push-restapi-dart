@@ -2,7 +2,7 @@ import 'package:blockies/blockies.dart';
 
 import '../__lib.dart';
 
-class ConnectScreen extends StatelessWidget {
+class ConnectScreen extends ConsumerWidget {
   const ConnectScreen({
     super.key,
     required this.accounts,
@@ -13,7 +13,7 @@ class ConnectScreen extends StatelessWidget {
   final AccountProvider vm;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -33,7 +33,7 @@ class ConnectScreen extends StatelessWidget {
                         final item = accounts[index];
                         return InkWell(
                           onTap: () {
-                            vm.connectWallet(item.mnemonic);
+                            vm.connectWallet(item);
                           },
                           child: Container(
                             padding: EdgeInsets.all(6),
@@ -71,36 +71,20 @@ class ConnectScreen extends StatelessWidget {
                       itemCount: accounts.length,
                     ),
                   ),
-                  /*  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: List.generate(
-                      accounts.length,
-                      (index) => InkWell(
-                        onTap: () {
-                          vm.connectWallet(accounts[index]);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.person_4_rounded,
-                                size: 32,
-                              ),
-                              Text('User ${index + 1}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                  MaterialButton(
+                    color: pushColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    onPressed: () {
+                      ref.read(accountProvider).generateNewUser();
+                    },
+                    textColor: Colors.white,
+                    child: Center(child: Text('Add New Wallet')),
+                    padding: EdgeInsets.all(16),
                   ),
                   SizedBox(
-                    height: 32,
-                  ),*/
+                    height: 20,
+                  )
                 ],
               ),
             ),

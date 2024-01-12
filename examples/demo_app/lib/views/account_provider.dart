@@ -1,87 +1,85 @@
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../__lib.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'package:ethers/signers/wallet.dart' as ether;
+// import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:web3dart/web3dart.dart' as web3;
+// import 'package:ethers/signers/wallet.dart' as ether;
 
 final accountProvider = ChangeNotifierProvider((ref) => AccountProvider(ref));
 
 class AccountProvider extends ChangeNotifier {
   final Ref ref;
+  late SharedPreferences prefs;
 
-  AccountProvider(this.ref);
+  AccountProvider(this.ref) {
+    init();
+  }
 
-  Wallet? pushWallet;
+  final _prefsKey = 'accounts';
 
-  final mnemonic1 =
-      'glory science timber unknown happy doctor walnut grain question float coffee trip';
-  final mnemonic2 =
-      'label mobile gas salt service gravity nose bomb marine online say twice';
-  final mnemonic3 =
-      'priority feed chair canoe news gym cost permit sea worry modify save';
-  final mnemonic4 =
-      'roast exclude blame mixture dune neither vital liquid winter summer nation solution';
-  final mnemonic5 =
-      'picnic crystal plug narrow siege need beach sphere radar wide ship trust';
+  init() async {
+    prefs = await SharedPreferences.getInstance();
+    final data = prefs.getStringList(_prefsKey);
+    if (data != null) {
+      _accounts = List.generate(
+          data.length, (index) => DemoUser.fromJson(jsonDecode(data[index])));
+      notifyListeners();
+    }
+  }
 
-  List<DemoUser> get accounts => [
-        DemoUser(
-            mnemonic: mnemonic1,
-            address: '0xD3FD4422210E69Fe8cD790a546Cbb5d7DCe904Ce'),
-        DemoUser(
-            mnemonic: mnemonic2,
-            address: '0x8ca107e6845b095599FDc1A937E6f16677a90325'),
-        DemoUser(
-            mnemonic: mnemonic3,
-            address: '0x9e16C5B631C3328843fA7d2acc8edd100f21693a'),
-        DemoUser(
-            mnemonic: mnemonic4,
-            address: '0x87bBCDe9DF530bC106B1D958e23b61c33b7Ee194'),
-        DemoUser(
-            mnemonic: mnemonic5,
-            address: '0x29b8276AA5bc432e03745eF275ded9074faB5970'),
-      ];
+  // Wallet? pushWallet;
+  PushAPI? pushUser;
+  String get account => pushUser?.account ?? '';
 
-  connectWallet(String mnemonic) async {
+  List<DemoUser> _accounts = [];
+  List<DemoUser> get accounts => _accounts;
+
+  generateNewUser() async {
+    // Dummy Wallet Addresses and signers
+    var random = Random.secure();
+    final wallet = web3.EthPrivateKey.createRandom(random);
+    _accounts = [
+      ..._accounts,
+      DemoUser(
+        mnemonic: wallet.privateKey,
+        address: wallet.address.hexEip55,
+      )
+    ];
+
+    prefs.setStringList(
+      _prefsKey,
+      List.generate(
+        _accounts.length,
+        (index) => jsonEncode(_accounts[index].toJson()),
+      ),
+    );
+
+    notifyListeners();
+
+    final user = PushAPI.initialize(signer: Web3Signer(wallet));
+
+    return user;
+  }
+
+  Future<void> connectWallet(DemoUser user) async {
     try {
       showLoadingDialog();
-      final ethersWallet = ether.Wallet.fromMnemonic(mnemonic);
-      final signer = EthersSigner(
-        ethersWallet: ethersWallet,
-        address: ethersWallet.address!,
+
+      final wallet = web3.EthPrivateKey(Uint8List.fromList(user.mnemonic));
+
+      pushUser = await PushAPI.initialize(
+        signer: Web3Signer(wallet),
+        options: PushAPIInitializeOptions(
+          account: user.address.toLowerCase(),
+          showHttpLog: true,
+        ),
       );
 
-      print('walletMnemonic.address: ${ethersWallet.address}');
-      final user = await getUser(address: ethersWallet.address!);
-
-      if (user == null) {
-        pop();
-        print('Cannot get user');
-        return;
-      }
-
-      String? pgpPrivateKey = null;
-      if (user.encryptedPrivateKey != null) {
-        pgpPrivateKey = await decryptPGPKey(
-          encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-          wallet: getWallet(signer: signer),
-        );
-      }
-
-      print('pgpPrivateKey: $pgpPrivateKey');
-
-      pushWallet = Wallet(
-        address: ethersWallet.address,
-        signer: signer,
-        pgpPrivateKey: pgpPrivateKey,
-      );
-      notifyListeners();
-
-      pop();
-
-      initPush(
-        wallet: pushWallet,
-        env: ENV.staging,
-      );
       creatSocketConnection();
 
       //Spaces
@@ -92,16 +90,104 @@ class AccountProvider extends ChangeNotifier {
       //CHAT
       ref.read(requestsProvider).loadRequests();
       ref.read(conversationsProvider).reset();
+
+      notifyListeners();
+      pop();
     } catch (e) {
+      print(e);
       pop();
     }
   }
 
-  io.Socket? pushSDKSocket;
+  // io.Socket? pushSDKSocket;
+  PushStream? pushStream;
   Future<void> creatSocketConnection() async {
+    pushStream = await pushUser!.initStream(
+      listen: [
+        STREAM.CHAT,
+        STREAM.CHAT_OPS,
+      ],
+      options: PushStreamInitializeOptions(
+        filter: PushStreamFilter(
+          channels: ['*'],
+          chats: ['*'],
+        ),
+      ),
+    );
+
+    pushStream!.on(STREAM.CONNECT.value, (data) {
+      print(' NOTIFICATION EVENTS.CONNECT: $data');
+    });
+
+    await pushStream!.connect();
+
+    pushStream!.on(STREAM.DISCONNECT.value, (data) {
+      log('Stream Disconnected');
+    });
+    pushStream!.on(STREAM.CHAT.value, (dynamic data) {
+      log('Stream STREAM.CHAT $data');
+      ref.read(conversationsProvider).onReceiveSocket(data);
+      ref.read(requestsProvider).addReqestFromSocket(
+            Feeds(
+              chatId: data['chatId'],
+              intentSentBy: data['groupName'] ?? data['from'],
+            ),
+          );
+    });
+    pushStream!.on(STREAM.CHAT_OPS.value, (dynamic data) {
+      log('Stream STREAM.CHAT_OPS $data');
+
+      ref.read(conversationsProvider).onReceiveSocket(data);
+      ref.read(requestsProvider).addReqestFromSocket(
+            Feeds(
+              chatId: data['chatId'],
+              intentSentBy: data['groupName'] ?? data['from'],
+            ),
+          );
+    });
+
+    // pushStream!.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
+    //   print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
+    //   ref.read(conversationsProvider).onReceiveSocket(message);
+    // });
+
+    // To get group creation or updation events
+    // pushStream!.on(EVENTS.CHAT_GROUPS, (groupInfo) {
+    //   print('CHAT NOTIFICATION EVENTS.CHAT_GROUPS: $groupInfo');
+
+    //   final type = (groupInfo as Map<String, dynamic>)['eventType'];
+    //   final recipients = (groupInfo['to'] as List?) ?? [];
+    //   final from = groupInfo['from'];
+
+    //   if ((type == 'create' && from != walletToPCAIP10(pushUser!.account)) ||
+    //       (type == 'request' &&
+    //           recipients.contains(walletToPCAIP10(pushUser!.account)))) {
+    //     ref.read(requestsProvider).addReqestFromSocket(
+    //           Feeds(
+    //             chatId: groupInfo['chatId'],
+    //             intentSentBy: groupInfo['groupName'] ?? groupInfo['from'],
+    //           ),
+    //         );
+    //     return;
+    //   }
+    //   ref.read(conversationsProvider).onReceiveSocket(groupInfo);
+    // });
+
+    // To get messages in realtime
+    // pushStream!.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
+    //   print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
+    //   ref.read(conversationsProvider).onReceiveSocket(message);
+    // });
+
+    /*
     try {
+      pushStream = await PushStream.initialize(
+        account: pushUser!.account,
+        listen: [STREAM.ALL],
+      );
+
       final options = SocketInputOptions(
-        user: pushWallet!.address!,
+        user: pushUser!.account,
         env: ENV.staging,
         socketType: SOCKETTYPES.CHAT,
         socketOptions: SocketOptions(
@@ -157,10 +243,9 @@ class AccountProvider extends ChangeNotifier {
         final recipients = (groupInfo['to'] as List?) ?? [];
         final from = groupInfo['from'];
 
-        if ((type == 'create' &&
-                from != walletToPCAIP10(pushWallet!.address!)) ||
+        if ((type == 'create' && from != walletToPCAIP10(pushUser!.account)) ||
             (type == 'request' &&
-                recipients.contains(walletToPCAIP10(pushWallet!.address!)))) {
+                recipients.contains(walletToPCAIP10(pushUser!.account)))) {
           ref.read(requestsProvider).addReqestFromSocket(
                 Feeds(
                   chatId: groupInfo['chatId'],
@@ -193,7 +278,7 @@ class AccountProvider extends ChangeNotifier {
           //Check if space was ended
           if (message['messageCategory'] == 'Chat' &&
               message['messageContent'] == CHAT.META_SPACE_END &&
-              message["fromDID"] != walletToPCAIP10(pushWallet!.address!)) {
+              message["fromDID"] != walletToPCAIP10(pushUser!.account)) {
             ref
                 .read(liveSpaceProvider)
                 .onReceiveSpaceEndedData(message["chatId"]);
@@ -205,7 +290,7 @@ class AccountProvider extends ChangeNotifier {
             try {
               final invitedUsers = message["messageObj"]["info"]['affected'];
 
-              if (invitedUsers.contains(pushWallet?.address)) {
+              if (invitedUsers.contains(pushUser?.account)) {
                 ref
                     .read(liveSpaceProvider)
                     .onReceivePromotionInvite(message["chatId"]);
@@ -238,13 +323,15 @@ class AccountProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+    */
   }
 
   logOut() {
-    pushWallet = null;
-    if (pushSDKSocket != null) {
-      pushSDKSocket!.close();
-      pushSDKSocket = null;
+    // pushWallet = null;
+    pushUser = null;
+    if (pushStream != null) {
+      pushStream!.disconnect();
+      pushStream = null;
     }
 
     notifyListeners();
@@ -252,10 +339,27 @@ class AccountProvider extends ChangeNotifier {
 }
 
 class DemoUser {
-  final String mnemonic, address;
+  final List<int> mnemonic;
+  final String address;
 
   DemoUser({
     required this.mnemonic,
     required this.address,
   });
+
+  factory DemoUser.fromJson(Map<String, dynamic> json) {
+    return DemoUser(
+      mnemonic: (json['mnemonic'] as List)
+          .map((e) => int.parse(e.toString()))
+          .toList(),
+      address: json['address'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'mnemonic': mnemonic,
+      'address': address,
+    };
+  }
 }

@@ -16,19 +16,22 @@ class RequestsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   Future loadRequests() async {
     setBusy(true);
-    _requests = await requests(toDecrypt: true);
+    _requests = await pushUser.chat.list(type: ChatListType.REQUESTS);
 
     setBusy(false);
   }
 
   addReqestFromSocket(Feeds req) {
-    if (_requests != null) {
-      _requests!.insert(0, req);
-    } else {
-      _requests = [req];
-    }
-    notifyListeners();
+    loadRequests();
+    // if (_requests != null) {
+    //   _requests!.insert(0, req);
+    // } else {
+    //   _requests = [req];
+    // }
+    // notifyListeners();
   }
 }

@@ -34,7 +34,8 @@ Future<void> testSendToGroup() async {
     account: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
     messageContent: 'Testing send() from Dart SDK for group chat',
-    to: '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
+    recipient:
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);

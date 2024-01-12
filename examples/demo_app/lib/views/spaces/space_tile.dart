@@ -68,7 +68,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
   }
 
   Widget action(SpaceFeeds item) {
-    final localAddress = ref.read(accountProvider).pushWallet?.address;
+    final localAddress = ref.read(accountProvider).pushUser?.account;
     bool isHost =
         walletToPCAIP10(localAddress!) == item.spaceInformation?.spaceCreator;
     if (item.spaceInformation?.status == ChatStatus.PENDING) {
@@ -125,7 +125,7 @@ class _SpaceItemTileState extends ConsumerState<SpaceItemTile> {
   }
 
   onStart(SpaceFeeds item) {
-    final localAddress = ref.read(accountProvider).pushWallet?.address;
+    final localAddress = ref.read(accountProvider).pushUser?.account;
 
     if (walletToPCAIP10(localAddress!) != item.spaceInformation?.spaceCreator) {
       showMyDialog(

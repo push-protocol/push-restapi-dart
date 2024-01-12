@@ -53,7 +53,7 @@ Future<void> testSendReply() async {
             type: MessageType.TEXT,
             content: "reply message sent from the Dart SDK"),
         reference: referenceLink),
-    to: groupId,
+    recipient: groupId,
   );
 
   final result = await send(options);

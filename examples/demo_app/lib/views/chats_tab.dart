@@ -63,82 +63,6 @@ class ChatsTab extends StatelessWidget {
   }
 }
 
-class ChatRequestsTab extends ConsumerStatefulWidget {
-  const ChatRequestsTab({
-    super.key,
-  });
-
-  @override
-  ConsumerState<ChatRequestsTab> createState() => _ChatRequestsTabState();
-}
-
-class _ChatRequestsTabState extends ConsumerState<ChatRequestsTab> {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final vm = ref.watch(requestsProvider);
-        final requestsList = vm.requestsList;
-        if (vm.isBusy && (requestsList ?? []).isEmpty) {
-          return Center(
-            child: LoadingDialog(),
-          );
-        }
-        if (requestsList == null) {
-          return Center(child: Text('Cannot load Requests'));
-        }
-
-        return RefreshIndicator(
-          onRefresh: vm.loadRequests,
-          child: ListView.separated(
-            separatorBuilder: (context, index) => Divider(),
-            itemCount: requestsList.length,
-            itemBuilder: (context, index) {
-              final item = requestsList[index];
-              final image =
-                  item.groupInformation?.groupImage ?? item.profilePicture;
-
-              return InkWell(
-                  onTap: () {
-                    onAccetRequests(item.chatId!);
-                  },
-                  child: ConversationTile(
-                    image: image,
-                    item: item,
-                    subText: 'Tap to Accept Request',
-                  ));
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  onAccetRequests(String senderAddress) async {
-    try {
-      showLoadingDialog(context);
-      final result = await approve(senderAddress: senderAddress);
-      print('onAccetRequests: $result');
-      pop(context);
-      showMyDialog(
-        context: context,
-        title: 'Approve Request',
-        message: result ?? 'Approve failed',
-      );
-    } catch (e) {
-      print('onAccetRequests: Errors $e');
-      showMyDialog(
-        context: context,
-        title: 'Approve Request Error',
-        message: '$e',
-      );
-      pop(context);
-    }
-
-    ref.read(requestsProvider).loadRequests();
-  }
-}
-
 class ConversationsTab extends StatelessWidget {
   const ConversationsTab({
     super.key,
@@ -186,22 +110,26 @@ class ConversationsTab extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => Divider(),
-                  itemCount: spaces.length,
-                  itemBuilder: (context, index) {
-                    final item = spaces[index];
-                    final image = item.groupInformation?.groupImage ??
-                        item.profilePicture;
+                child: spaces.isEmpty
+                    ? Center(
+                        child: KText('Start a conversation'),
+                      )
+                    : ListView.separated(
+                        separatorBuilder: (context, index) => Divider(),
+                        itemCount: spaces.length,
+                        itemBuilder: (context, index) {
+                          final item = spaces[index];
+                          final image = item.groupInformation?.groupImage ??
+                              item.profilePicture;
 
-                    return InkWell(
-                      onTap: () {
-                        pushScreen(ChatRoomScreen(room: item));
-                      },
-                      child: ConversationTile(image: image, item: item),
-                    );
-                  },
-                ),
+                          return InkWell(
+                            onTap: () {
+                              pushScreen(ChatRoomScreen(room: item));
+                            },
+                            child: ConversationTile(image: image, item: item),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

@@ -31,7 +31,7 @@ class _LiveSpaceRoomState extends ConsumerState<LiveSpaceRoom>
 
   @override
   Widget build(BuildContext context) {
-    final localAddress = ref.read(accountProvider).pushWallet?.address;
+    final localAddress = ref.read(accountProvider).pushUser?.account;
     final vm = ref.watch(liveSpaceProvider);
     final SpaceDTO data = widget.space;
     final liveSpaceData = vm.liveSpaceData;

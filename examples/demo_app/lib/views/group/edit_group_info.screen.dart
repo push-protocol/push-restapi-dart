@@ -1,4 +1,3 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 import 'dart:convert';
 import 'dart:io';
 
@@ -17,6 +16,9 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   GroupInfoDTO? groupInfo;
+
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   @override
   void initState() {
     super.initState();
@@ -106,14 +108,14 @@ class _EditGroupInfoScreenState extends ConsumerState<EditGroupInfoScreen> {
   onSubmit() async {
     try {
       showLoadingDialog();
-      await push.updateGroupProfile(
-          options: ChatUpdateGroupProfileType(
+      await pushUser.chat.group.update(
         chatId: groupInfo!.chatId,
-        groupName: nameController.text.trim(),
-        groupImage:
-            selectedFile != null ? composeImage() : groupInfo!.groupImage!,
-        groupDescription: descriptionController.text.trim(),
-      ));
+        options: GroupUpdateOptions(
+          name: nameController.text.trim(),
+          image: selectedFile != null ? composeImage() : groupInfo!.groupImage!,
+          description: descriptionController.text.trim(),
+        ),
+      );
 
       await ref.read(chatRoomProvider).getLatestGroupInfo();
       pop();

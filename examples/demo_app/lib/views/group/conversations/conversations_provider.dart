@@ -17,9 +17,16 @@ class ConversationsProvider extends ChangeNotifier {
   List<Feeds> _conversations = [];
   List<Feeds> get conversations => _conversations;
 
+  String get localAddress => ref.read(accountProvider).pushUser!.account;
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   Future loadChats() async {
     setBusy(true);
-    final result = await chats(toDecrypt: true);
+    final result = await pushUser.chat.list(
+      type: ChatListType.CHATS,
+      limit: 20,
+    );
+
     if (result != null) {
       _conversations = result;
 

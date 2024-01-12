@@ -40,6 +40,7 @@ dependencies:
   jiffy: ^6.2.1
 
   flutter_staggered_animations: ^1.1.1
+  shared_preferences_riverpod: ^0.3.0
 
   ethers: 
     git:
@@ -49,6 +50,7 @@ dependencies:
 
   push_restapi_dart:
     path: '../../'
+  shared_preferences: ^2.2.2
 
 
 

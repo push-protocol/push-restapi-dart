@@ -17,6 +17,8 @@ class ChatRoomProvider extends ChangeNotifier {
     });
   }
 
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   bool isLoading = false;
   updateLoading(bool state) {
     isLoading = state;
@@ -89,16 +91,11 @@ class ChatRoomProvider extends ChangeNotifier {
 
   Future getRoomMessages() async {
     updateLoading(true);
-    String? hash = await conversationHash(conversationId: currentChatId);
 
-    List<Message>? messages = null;
-    if (hash != null) {
-      messages = await history(
-        limit: FetchLimit.MAX,
-        threadhash: hash,
-        toDecrypt: true,
-      );
-    }
+    List<Message>? messages = await pushUser.chat.history(
+      target: _currentChatid,
+      limit: FetchLimit.MAX,
+    );
 
     updateLoading(false);
 
@@ -113,6 +110,10 @@ class ChatRoomProvider extends ChangeNotifier {
   }
 
   getOlderMessages() async {
+    if (messageList.isEmpty) {
+      return;
+    }
+
     if (currentChatId != messageList.last.toCAIP10) {
       return;
     }
@@ -124,10 +125,10 @@ class ChatRoomProvider extends ChangeNotifier {
 
     final hash = _messageList.last.link;
     if (hash != null) {
-      final messages = await history(
+      final messages = await pushUser.chat.history(
+        target: _currentChatid,
+        reference: hash,
         limit: FetchLimit.MAX,
-        threadhash: hash,
-        toDecrypt: true,
       );
 
       if (messages != null) {
@@ -153,7 +154,7 @@ class ChatRoomProvider extends ChangeNotifier {
         return;
       }
 
-      final currentUser = ref.read(accountProvider).pushWallet;
+      final currentUser = ref.read(accountProvider).pushUser;
 
       SendMessage? messageAttachment;
       String? attachmentContent;
@@ -174,14 +175,14 @@ class ChatRoomProvider extends ChangeNotifier {
         options = ChatSendOptions(
           message: messageAttachment,
           messageContent: content,
-          to: currentChatId,
+          recipient: currentChatId,
         );
       } else {
         options = ChatSendOptions(
           message: ReplyMessage(
               content: NestedContent(type: messageType, content: content),
               reference: jsonEncode(replyTo!.toJson())),
-          to: currentChatId,
+          recipient: currentChatId,
         );
       }
 
@@ -190,7 +191,7 @@ class ChatRoomProvider extends ChangeNotifier {
         Message(
           fromCAIP10: '',
           toCAIP10: '',
-          fromDID: walletToPCAIP10('${currentUser?.address}'),
+          fromDID: walletToPCAIP10('${currentUser?.account}'),
           toDID: '',
           messageType: messageType,
           messageContent: attachmentContent ?? content,
@@ -212,7 +213,8 @@ class ChatRoomProvider extends ChangeNotifier {
       clearFields();
 
       updateSending(true);
-      final message = await send(options);
+      final message = await pushUser.chat.send(options: options);
+
       updateSending(false);
       if (message != null) {
         getRoomMessages();
@@ -226,13 +228,14 @@ class ChatRoomProvider extends ChangeNotifier {
   GroupInfoDTO? _groupInfoDTO;
 
   Future getLatestGroupInfo() async {
-    _groupInfoDTO = await getGroupInfo(chatId: _currentChatid);
+    _groupInfoDTO = await pushUser.chat.group.info(chatId: _currentChatid);
     notifyListeners();
   }
 
   Future getLatestGroupMembers() async {
-    _members = await getGroupMembers(
-        options: FetchChatGroupInfoType(chatId: _currentChatid));
+    _members = await pushUser.chat.group.participants
+        .list(chatId: _currentChatid, options: GetGroupParticipantsOptions());
+
     notifyListeners();
   }
 
@@ -252,10 +255,11 @@ class ChatRoomProvider extends ChangeNotifier {
   List<ChatMemberProfile> get pendingMembers =>
       _members.where((element) => !element.intent).toList();
 
-  String get currentUser => ref.read(accountProvider).pushWallet?.address ?? '';
+  String get currentUser => ref.read(accountProvider).pushUser?.account ?? '';
 
-  bool get isUserAdmin =>
-      admins.map((e) => e.address).contains(walletToPCAIP10(currentUser));
+  bool get isUserAdmin => admins
+      .map((e) => e.address.toLowerCase())
+      .contains(walletToPCAIP10(currentUser).toLowerCase());
 
   File? _selectedFile;
   File? get selectedFile => _selectedFile;

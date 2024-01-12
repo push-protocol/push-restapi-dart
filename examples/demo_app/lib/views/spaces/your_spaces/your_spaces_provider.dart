@@ -32,7 +32,8 @@ class YourSpacesProvider extends ChangeNotifier {
     }
   }
 
-  String get localAddress => ref.read(accountProvider).pushWallet!.address!;
+  String get localAddress => ref.read(accountProvider).pushUser!.account;
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
 
   List<SpaceFeeds>? get forYou {
     return spacesList
@@ -87,7 +88,12 @@ class YourSpacesProvider extends ChangeNotifier {
 
   onRefresh() async {
     setBusy(true);
-    _spaces = await spaces(toDecrypt: true, limit: 5);
+    _spaces = await spaces(
+      toDecrypt: true,
+      accountAddress: pushUser.account,
+      pgpPrivateKey: pushUser.decryptedPgpPvtKey,
+      limit: 5,
+    );
 
     setBusy(false);
   }

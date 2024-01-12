@@ -11,6 +11,8 @@ class PopularSpaceProvider extends ChangeNotifier {
     filterType = filterList.first.count;
   }
 
+  String get account => ref.read(accountProvider).account;
+
   List<SpaceFeeds>? _spaces;
   List<SpaceFeeds>? get spacesList {
     switch (filterType) {

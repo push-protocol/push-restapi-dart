@@ -20,6 +20,8 @@ class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
 
   String get type => widget.isAdmin ? 'Admin' : 'Member';
 
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,17 +68,12 @@ class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
       var result;
 
       showLoadingDialog();
-      if (widget.isAdmin) {
-        result = await addAdmins(
-          chatId: widget.chatId!,
-          admins: [address],
-        );
-      } else {
-        result = await addMembers(
-          chatId: widget.chatId!,
-          members: [address],
-        );
-      }
+      result = await pushUser.chat.group.add(
+        chatId: widget.chatId!,
+        role: widget.isAdmin ? 'ADMIN' : 'MEMBER',
+        accounts: [address],
+      );
+
       pop();
       if (result == null) {
         showMyDialog(

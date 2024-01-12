@@ -36,7 +36,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myAddress = ref.read(accountProvider).pushWallet?.address;
+    final myAddress = ref.read(accountProvider).pushUser?.account;
     final roomVm = ref.watch(chatRoomProvider);
     final messageList = roomVm.messageList;
 

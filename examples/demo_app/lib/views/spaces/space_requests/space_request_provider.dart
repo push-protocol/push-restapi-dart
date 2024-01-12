@@ -11,6 +11,9 @@ class SpaceRequestsProvider extends ChangeNotifier {
   List<SpaceFeeds>? _requests;
   List<SpaceFeeds>? get requestsList => _requests;
 
+  String get localAddress => ref.read(accountProvider).pushUser!.account;
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   bool isBusy = false;
   setBusy(bool state) {
     isBusy = state;
@@ -20,6 +23,8 @@ class SpaceRequestsProvider extends ChangeNotifier {
   Future loadRequests() async {
     setBusy(true);
     _requests = await spaceRequests(
+      accountAddress: pushUser.account,
+      pgpPrivateKey: pushUser.decryptedPgpPvtKey,
       toDecrypt: true,
     );
 

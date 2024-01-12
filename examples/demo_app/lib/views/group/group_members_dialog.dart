@@ -272,7 +272,7 @@ class MemberActionWidget extends ConsumerStatefulWidget {
 class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.read(accountProvider).pushWallet?.address;
+    final currentUser = ref.read(accountProvider).pushUser?.account;
     if (widget.item.address == walletToPCAIP10(currentUser!)) {
       return Container(
         padding: EdgeInsets.all(6),
@@ -323,11 +323,14 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     return SizedBox.shrink();
   }
 
+  PushAPI get pushUser => ref.read(accountProvider).pushUser!;
+
   _removeMember() {
     showLoadingDialog();
-    removeMembers(
+    pushUser.chat.group.remove(
       chatId: widget.chatId!,
-      members: [widget.item.address],
+      role: 'MEMBER',
+      accounts: [widget.item.address],
     ).then((value) {
       pop();
 
@@ -344,9 +347,11 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
 
   _removeAdmin() {
     showLoadingDialog();
-    removeAdmins(
+
+    pushUser.chat.group.remove(
       chatId: widget.chatId!,
-      admins: [widget.item.address],
+      role: 'ADMIN',
+      accounts: [widget.item.address],
     ).then((value) {
       pop();
 
@@ -363,47 +368,59 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
 
   _demoteToMember() async {
     showLoadingDialog();
-    removeAdmins(
+    pushUser.chat.group.modify(
       chatId: widget.chatId!,
-      admins: [widget.item.address],
+      role: 'MEMBER',
+      accounts: [widget.item.address],
     ).then((value) {
-      addMembers(
-        chatId: widget.chatId!,
-        members: [widget.item.address],
-      ).then((value) {
-        pop();
+      pop();
 
-        ref.read(chatRoomProvider).getLatestGroupMembers();
-        showMyDialog(
-          context: context,
-          title: 'Demote to member',
-          message: value == null
-              ? 'Cannot remove admin'
-              : 'Admin demoted successfully',
-        );
-      });
+      ref.read(chatRoomProvider).getLatestGroupMembers();
+      showMyDialog(
+        context: context,
+        title: 'Demote to member',
+        message: value == null
+            ? 'Cannot remove admin'
+            : 'Admin demoted successfully',
+      );
     });
   }
 
   _promoteToAdmin() {
     showLoadingDialog();
-    removeMembers(
+    pushUser.chat.group.modify(
       chatId: widget.chatId!,
-      members: [widget.item.address],
+      role: 'ADMIN',
+      accounts: [widget.item.address],
     ).then((value) {
-      addAdmins(chatId: widget.chatId!, admins: [widget.item.address])
-          .then((value) {
-        ref.read(chatRoomProvider).getLatestGroupMembers();
-        pop();
-        showMyDialog(
-          context: context,
-          title: 'Remove User',
-          message: value == null
-              ? 'Cannot promote user'
-              : 'Member promoted successfully',
-        );
-      });
+      pop();
+
+      ref.read(chatRoomProvider).getLatestGroupMembers();
+      showMyDialog(
+        context: context,
+        title: 'Demote to member',
+        message: value == null
+            ? 'Cannot promote user'
+            : 'Member promoted successfully',
+      );
     });
+    // removeMembers(
+    //   chatId: widget.chatId!,
+    //   members: [widget.item.address],
+    // ).then((value) {
+    //   addAdmins(chatId: widget.chatId!, admins: [widget.item.address])
+    //       .then((value) {
+    //     ref.read(chatRoomProvider).getLatestGroupMembers();
+    //     pop();
+    //     showMyDialog(
+    //       context: context,
+    //       title: 'Remove User',
+    //       message: value == null
+    //           ? 'Cannot promote user'
+    //           : 'Member promoted successfully',
+    //     );
+    //   });
+    // });
   }
 }
 

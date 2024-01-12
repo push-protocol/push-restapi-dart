@@ -1,7 +1,7 @@
 import '__lib.dart';
 
 void main() async {
-  testPushApi();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ProviderScope(
       child: const MyApp(),
