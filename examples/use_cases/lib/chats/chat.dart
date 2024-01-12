@@ -49,15 +49,15 @@ String groupDescription() {
 Future runChatClassUseCases() async {
   final userAlice = await PushAPI.initialize(
     signer: wallet1Signer,
-    options: PushAPIInitializeOptions(showHttpLog: true),
+    // options: PushAPIInitializeOptions(showHttpLog: true),
   );
   final userBob = await PushAPI.initialize(
     signer: wallet2Signer,
-    options: PushAPIInitializeOptions(showHttpLog: true),
+    // options: PushAPIInitializeOptions(showHttpLog: true),
   );
   final userKate = await PushAPI.initialize(
     signer: wallet3Signer,
-    options: PushAPIInitializeOptions(showHttpLog: true),
+    // options: PushAPIInitializeOptions(showHttpLog: true),
   );
 
   // -------------------------------------------------------------------
@@ -84,11 +84,11 @@ Future runChatClassUseCases() async {
   // -------------------------------------------------------------------
   log('PushAPI.chat.send');
   final aliceMessagesBob = await userAlice.chat.send(
-      recipient: wallet2Signer.getAddress(),
-      options: SendMessage(
-        content: 'Hello Bob!',
-        type: MessageType.TEXT,
-      ));
+      options: ChatSendOptions(
+    messageContent: 'Hello Bob!',
+    messageType: MessageType.TEXT,
+    recipient: wallet2Signer.getAddress(),
+  ));
   log(aliceMessagesBob);
   await delay(2000); // Delay added to log the events in order
   log('PushAPI.chat.send | Response - 200 OK\n\n');
@@ -104,10 +104,10 @@ Future runChatClassUseCases() async {
   // -------------------------------------------------------------------
   log('PushAPI.chat.reject');
   await userKate.chat.send(
-    recipient: wallet1Signer.getAddress(),
-    options: SendMessage(
-      content: 'Sending malicious message',
-      type: MessageType.TEXT,
+    options: ChatSendOptions(
+      recipient: wallet1Signer.getAddress(),
+      messageContent: 'Sending malicious message',
+      messageType: MessageType.TEXT,
     ),
   );
   final aliceRejectsRequest =
