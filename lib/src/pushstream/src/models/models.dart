@@ -4,21 +4,25 @@ import '../../../../push_restapi_dart.dart';
 
 class PushStreamInitializeOptions {
   final PushStreamFilter? filter;
-  final PushStreamConnection? connection;
+  late final PushStreamConnection connection;
   final bool raw;
   final ENV env;
   final String? overrideAccount;
 
   PushStreamInitializeOptions({
     this.filter,
-    this.connection,
+    PushStreamConnection? connection,
     this.raw = false,
     this.overrideAccount,
     this.env = ENV.staging,
-  });
+  }) {
+    this.connection = connection ?? PushStreamConnection();
+  }
 
-  static PushStreamInitializeOptions defaut() {
-    return PushStreamInitializeOptions(connection: PushStreamConnection());
+  static PushStreamInitializeOptions default_() {
+    return PushStreamInitializeOptions(
+      connection: PushStreamConnection(),
+    );
   }
 }
 
@@ -73,31 +77,31 @@ extension STREAMExtension on STREAM {
   }
 }
 
-enum ProposedEventNames {
-  Message,
-  Request,
-  Accept,
-  Reject,
-  LeaveGroup,
-  JoinGroup,
-  CreateGroup,
-  UpdateGroup,
-  Remove,
+class ProposedEventNames {
+  static const Message = 'chat.message';
+  static const Request = 'chat.request';
+  static const Accept = 'chat.accept';
+  static const Reject = 'chat.reject';
+  static const LeaveGroup = 'chat.group.participant.leave';
+  static const JoinGroup = 'chat.group.participant.join';
+  static const CreateGroup = 'chat.group.create';
+  static const UpdateGroup = 'chat.group.update';
+  static const Remove = 'chat.group.participant.remove';
 }
 
 class GroupEventType {
-  static final createGroup = 'createGroup';
-  static final updateGroup = 'updateGroup';
-  static final joinGroup = 'joinGroup';
-  static final leaveGroup = 'leaveGroup';
-  static final remove = 'remove';
+  static const createGroup = 'createGroup';
+  static const updateGroup = 'updateGroup';
+  static const joinGroup = 'joinGroup';
+  static const leaveGroup = 'leaveGroup';
+  static const remove = 'remove';
 }
 
 class MessageEventType {
-  static final message = 'message';
-  static final request = 'request';
-  static final accept = 'accept';
-  static final reject = 'reject';
+  static const message = 'message';
+  static const request = 'request';
+  static const accept = 'accept';
+  static const reject = 'reject';
 }
 
 class MessageEvent {
@@ -188,4 +192,44 @@ class MessageRawData {
 class MessageOrigin {
   static const other = 'other';
   static const self = 'self';
+}
+
+class GroupMeta {
+  final String name;
+  final String description;
+  final String image;
+  final String owner;
+  final bool private;
+  final dynamic rules;
+
+  GroupMeta({
+    required this.name,
+    required this.description,
+    required this.image,
+    required this.owner,
+    required this.private,
+    required this.rules,
+  });
+
+  factory GroupMeta.fromJson(Map<String, dynamic> json) {
+    return GroupMeta(
+      name: json['name'],
+      description: json['description'],
+      image: json['image'],
+      owner: json['owner'],
+      private: json['private'],
+      rules: json['rules'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'image': image,
+      'owner': owner,
+      'private': private,
+      'rules': rules.toJson(),
+    };
+  }
 }
