@@ -75,4 +75,8 @@ class GroupInfoDTO {
       'encryptedSecret': encryptedSecret,
     };
   }
+
+  static GroupInfoDTO fromGroupDTO(GroupDTO group) {
+    return GroupInfoDTO.fromJson(group.toJson());
+  }
 }

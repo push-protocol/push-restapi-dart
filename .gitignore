@@ -17,3 +17,4 @@ pubspec.lock
 build/
 .vscode/
 coverage/
+.fvm/

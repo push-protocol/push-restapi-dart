@@ -28,23 +28,49 @@ abstract class Signer {
 }
 
 class ConnectedUser extends User {
-  final User user;
   final String? privateKey;
 
   ConnectedUser({
-    required this.user,
     required this.privateKey,
-  }) {
-    super.did = user.did;
-    super.profile = user.profile;
-    super.name = user.name;
-    super.about = user.about;
-    super.verificationProof = user.verificationProof;
-    super.publicKey = user.publicKey;
-    super.msgSent = user.msgSent;
-    super.maxMsgPersisted = user.maxMsgPersisted;
-    super.wallets = user.wallets;
-    super.encryptedPrivateKey = user.encryptedPrivateKey;
+  });
+
+  static ConnectedUser fromUser({required User user, String? privateKey}) {
+    var connectedUser = ConnectedUser(privateKey: privateKey);
+    connectedUser.did = user.did;
+    connectedUser.profile = user.profile;
+    connectedUser.name = user.name;
+    connectedUser.about = user.about;
+    connectedUser.verificationProof = user.verificationProof;
+    connectedUser.publicKey = user.publicKey;
+    connectedUser.msgSent = user.msgSent;
+    connectedUser.maxMsgPersisted = user.maxMsgPersisted;
+    connectedUser.wallets = user.wallets;
+    connectedUser.encryptedPrivateKey = user.encryptedPrivateKey;
+    return connectedUser;
+  }
+}
+
+class CreateUser extends User {
+  final String? decryptedPrivateKey;
+
+  CreateUser({
+    required this.decryptedPrivateKey,
+  });
+
+  static CreateUser fromUser(
+      {required User user, String? decryptedPrivateKey}) {
+    var createdUser = CreateUser(decryptedPrivateKey: decryptedPrivateKey);
+    createdUser.did = user.did;
+    createdUser.profile = user.profile;
+    createdUser.name = user.name;
+    createdUser.about = user.about;
+    createdUser.verificationProof = user.verificationProof;
+    createdUser.publicKey = user.publicKey;
+    createdUser.msgSent = user.msgSent;
+    createdUser.maxMsgPersisted = user.maxMsgPersisted;
+    createdUser.wallets = user.wallets;
+    createdUser.encryptedPrivateKey = user.encryptedPrivateKey;
+    return createdUser;
   }
 }
 

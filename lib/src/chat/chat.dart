@@ -6,6 +6,7 @@ export 'src/helper/validators.dart';
 export 'src/helper/user.dart';
 export 'src/helper/service.dart';
 export 'src/helper/signature.dart';
+export 'src/helper/payload_helper.dart';
 
 export 'src/models/group_info_dto.dart';
 export 'src/models/chat_member_counts.dart';
@@ -13,6 +14,8 @@ export 'src/models/chat_members.dart';
 export 'src/models/group_member_status.dart';
 export 'src/models/group_member_public_key.dart';
 export 'src/models/update_group_members.dart';
+export 'src/models/send_models.dart';
+export 'src/models/group_access.dart';
 
 export 'src/chat.dart';
 export 'src/chats.dart';
@@ -41,3 +44,7 @@ export 'src/get_all_group_members_public_keys.dart';
 export 'src/update_group_config.dart';
 export 'src/update_group_profile.dart';
 export 'src/update_group_members.dart';
+export 'src/reject_request.dart';
+export 'src/create_group_v2.dart';
+export 'src/get_group_access.dart';
+export 'src/modify_roles.dart';

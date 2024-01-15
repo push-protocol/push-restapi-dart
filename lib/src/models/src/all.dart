@@ -223,7 +223,7 @@ class GroupDTO {
   List<MemberDTO> members;
   List<MemberDTO> pendingMembers;
   String? contractAddressERC20;
-  int numberOfERC20;
+  int? numberOfERC20;
   String? contractAddressNFT;
   int? numberOfNFTTokens;
   String? verificationProof;
@@ -285,12 +285,16 @@ class GroupDTO {
   }
 
   GroupDTO.fromJson(Map<String, dynamic> json)
-      : members = (json['members'] as List)
-            .map((member) => MemberDTO.fromJson(member))
-            .toList(),
-        pendingMembers = (json['pendingMembers'] as List)
-            .map((member) => MemberDTO.fromJson(member))
-            .toList(),
+      : members = json['members'] == null
+            ? []
+            : (json['members'] as List)
+                .map((member) => MemberDTO.fromJson(member))
+                .toList(),
+        pendingMembers = json['pendingMembers'] == null
+            ? []
+            : (json['pendingMembers'] as List)
+                .map((member) => MemberDTO.fromJson(member))
+                .toList(),
         contractAddressERC20 = json['contractAddressERC20'],
         numberOfERC20 = json['numberOfERC20'],
         contractAddressNFT = json['contractAddressNFT'],
