@@ -9,15 +9,15 @@ PODS:
     - Flutter
   - flutter_webrtc (0.9.36):
     - Flutter
-    - WebRTC-SDK (= 114.5735.02)
+    - WebRTC-SDK (= 114.5735.08)
   - image_cropper (0.0.4):
     - Flutter
     - TOCropViewController (~> 2.6.1)
   - image_picker_ios (0.0.1):
     - Flutter
-  - livekit_client (1.4.0):
+  - livekit_client (1.5.6):
     - Flutter
-    - WebRTC-SDK (= 114.5735.02)
+    - WebRTC-SDK (= 114.5735.08)
   - openpgp (0.6.0):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -32,7 +32,8 @@ PODS:
   - TOCropViewController (2.6.1)
   - video_player_avfoundation (0.0.1):
     - Flutter
-  - WebRTC-SDK (114.5735.02)
+    - FlutterMacOS
+  - WebRTC-SDK (114.5735.08)
 
 DEPENDENCIES:
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
@@ -46,8 +47,7 @@ DEPENDENCIES:
   - openpgp (from `.symlinks/plugins/openpgp/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -81,25 +81,25 @@ EXTERNAL SOURCES:
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/ios"
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
-  connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
-  device_info_plus: 7545d84d8d1b896cb16a4ff98c19f07ec4b298ea
+  connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
+  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
-  flutter_webrtc: 1944895d4e908c4bc722929dc4b9f8620d8e1b2f
+  flutter_webrtc: 55df3aaa802114dad390191a46c2c8d535751268
   image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
-  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
-  livekit_client: dedfd6601bfb2c567d6988491c8bab7ceeb5a6d9
-  openpgp: 62baddd0b753983d11b8c847b27349bccac1eb1c
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  image_picker_ios: 99dfe1854b4fa34d0364e74a78448a0151025425
+  livekit_client: 381ed3cad6ba0b6ffbfffcf1b5db95ad1e61ffa2
+  openpgp: 117b855c299b1e74f9f58fc027adf456aaac09c2
+  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
-  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
-  WebRTC-SDK: dd913fd31cfbf1d43b9a22d83f4c6354c960c623
+  video_player_avfoundation: e9e6f9cae7d7a6d9b43519b0aab382bca60fcfd1
+  WebRTC-SDK: c24d2a6c9f571f2ed42297cb8ffba9557093142b
 
 PODFILE CHECKSUM: f9420bd595da8fbce156b547dcd3368afc5226ff
 
