@@ -14,7 +14,7 @@ void main() async {
           ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░
         ''');
 
-  // await runChatClassUseCases();
+  await runChatClassUseCases();
 }
 
 class MainApp extends StatelessWidget {
