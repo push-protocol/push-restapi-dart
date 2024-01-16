@@ -8,10 +8,10 @@ String getUUID() {
   return uuid.v4();
 }
 
-NotificationPayload? getPayloadForAPIInput(
+NotificationApiPayload? getPayloadForAPIInput(
     SendNotificationInputOptions inputOptions, dynamic recipients) {
   if (inputOptions.notification != null && inputOptions.payload != null) {
-    return NotificationPayload(
+    return NotificationApiPayload(
         notification: NotificationOptions(
           title: inputOptions.notification?.title ?? '',
           body: inputOptions.notification?.body ?? '',
@@ -117,7 +117,7 @@ Future<String> getVerificationProof({
   required NOTIFICATION_TYPE notificationType,
   required IDENTITY_TYPE identityType,
   required String verifyingContract,
-  required NotificationPayload? payload,
+  required NotificationApiPayload? payload,
   String? ipfsHash,
   Map<String, dynamic> graph = const {},
   required String uuid,
@@ -197,7 +197,7 @@ Future<String> getVerificationProof({
 
 String getPayloadIdentity({
   required IDENTITY_TYPE identityType,
-  required NotificationPayload? payload,
+  required NotificationApiPayload? payload,
   NOTIFICATION_TYPE? notificationType,
   String? ipfsHash,
   Graph? graph,

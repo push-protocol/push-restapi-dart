@@ -497,7 +497,7 @@ Future<String> decryptPGPKey({
 }
 
 //TODO: Implement verifyProfileKeys
- verifyProfileKeys({
+verifyProfileKeys({
   required String encryptedPrivateKey,
   required String publicKey,
   required String did,

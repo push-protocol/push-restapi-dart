@@ -144,7 +144,6 @@ class VideoCallStateNotifier extends ChangeNotifier {
 
         // send a notification containing SDP offer
         // sendVideoCallNotification(
-        //   // TODO: fill this object
         //   {
         //       signer: ,
         //       chainId: ,

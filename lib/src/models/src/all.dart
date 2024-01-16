@@ -149,12 +149,12 @@ class AdditionalMeta {
   }
 }
 
-class NotificationPayload {
+class NotificationApiPayload {
   NotificationOptions notification;
   PayloadData data;
   dynamic recipients;
 
-  NotificationPayload({
+  NotificationApiPayload({
     required this.notification,
     required this.data,
     required this.recipients,

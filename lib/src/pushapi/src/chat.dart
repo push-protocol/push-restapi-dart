@@ -1,8 +1,8 @@
 // ignore_for_file: library_prefixes
 
-import '../../push_restapi_dart.dart';
-import '../chat/chat.dart' as PUSH_CHAT;
-import '../user/user.dart' as PUSH_USER;
+import '../../../push_restapi_dart.dart';
+import '../../chat/chat.dart' as PUSH_CHAT;
+import '../../user/user.dart' as PUSH_USER;
 
 class Chat {
   late final Signer? _signer;
