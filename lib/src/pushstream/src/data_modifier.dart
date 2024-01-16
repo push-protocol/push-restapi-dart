@@ -146,11 +146,11 @@ class DataModifier {
       'event': eventType,
       'origin': data[['messageOrigin']],
       'timestamp': data['timestamp'].toString(),
-      'chatId': data['chatId'], // TODO: ChatId not working for w2w
+      'chatId': data['chatId'], 
       'from': data['fromCAIP10'],
       'to': [
         if (data['toCAIP10'] != null) data['toCAIP10']
-      ], // TODO: Assuming 'to' is an array in MessageEvent. Update as necessary.
+      ],
       'message': {
         'type': data['messageType'],
         'content': data['messageContent'],
