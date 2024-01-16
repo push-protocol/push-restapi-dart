@@ -10,25 +10,18 @@ class PushAPIInitializeOptions {
   bool autoUpgrade;
   String? origin;
   bool showHttpLog;
+  final ENV env;
 
   PushAPIInitializeOptions(
       {this.progressHook,
       this.account,
+      this.env = ENV.prod,
       this.version = Constants.ENC_TYPE_V3,
       this.versionMeta,
       this.autoUpgrade = true,
       this.origin,
       this.showHttpLog = false});
 }
-
-// class ChatListType {
-//   static const String CHATS = 'CHATS';
-//   static const String REQUESTS = 'REQUESTS';
-
-//   static bool isValidChatListType(String type) {
-//     return [CHATS, REQUESTS].contains(type);
-//   }
-// }
 
 enum ChatListType { CHATS, REQUESTS }
 

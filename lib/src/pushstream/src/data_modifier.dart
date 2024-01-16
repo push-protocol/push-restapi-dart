@@ -144,7 +144,7 @@ class DataModifier {
   ) {
     final messageEvent = {
       'event': eventType,
-      'origin': data[['messageOrigin']],
+      'origin': data['messageOrigin'],
       'timestamp': data['timestamp'].toString(),
       'chatId': data['chatId'], 
       'from': data['fromCAIP10'],

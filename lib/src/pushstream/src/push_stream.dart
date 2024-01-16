@@ -11,7 +11,7 @@ class PushStream extends EventEmitter {
   late final bool _raw;
   late final PushStreamInitializeOptions _options;
   late final List<STREAM> _listen;
-  // late final Signer? _signer;
+  late final Signer? _signer;
 
   late final Chat chatInstance;
   PushStream({
@@ -26,7 +26,7 @@ class PushStream extends EventEmitter {
     _options = options;
     _raw = options.raw;
     _listen = listen;
-    // _signer = signer;
+    _signer = signer;
 
     chatInstance = Chat(
       signer: signer,
@@ -186,7 +186,6 @@ class PushStream extends EventEmitter {
         await handleSocketDisconnection('chat');
       });
       pushChatSocket!.on(EVENTS.CHAT_GROUPS, (data) async {
-        print('EVENTS.CHAT_GROUPS: $data');
         try {
           final modifiedData = await DataModifier.handleChatGroupEvent(
             data: data,
@@ -218,23 +217,26 @@ class PushStream extends EventEmitter {
       });
 
       pushChatSocket!.on(EVENTS.CHAT_RECEIVED_MESSAGE, (data) async {
-        print('EVENTS.CHAT_RECEIVED_MESSAGE: $data');
         try {
-          
           if (data['messageCategory'] == 'Chat' ||
               data['messageCategory'] == 'Request') {
             // Dont call this if read only mode ?
-            // if (_signer != null) {
-            //   final chat = await chatInstance
-            //       .decrypt(messagePayloads: [Message.fromJson(data)]);
-            //   data = chat[0].toJson();
-            // }
+            if (_signer != null) {
+              final chat = await chatInstance
+                  .decrypt(messagePayloads: [Message.fromJson(data)]);
+              data = {
+                ...chat[0].toJson(),
+                'messageCategory': data['messageCategory'],
+                'chatId': data['chatId'],
+              };
+            }
           }
 
           final modifiedData = DataModifier.handleChatEvent(data, _raw);
           modifiedData['event'] =
               DataModifier.convertToProposedName(modifiedData['event']);
           DataModifier.handleToField(modifiedData);
+
           if (_shouldEmitChat(data['chatId'])) {
             if (shouldEmit(STREAM.CHAT)) {
               emit(STREAM.CHAT.value, modifiedData);
@@ -308,7 +310,8 @@ class PushStream extends EventEmitter {
   }
 
   bool _shouldEmitChat(String dataChatId) {
-    if (_options.filter?.chats != null ||
+    if (_options.filter != null ||
+        _options.filter!.chats != null ||
         _options.filter!.chats!.isNotEmpty ||
         _options.filter!.chats!.contains('*')) {
       return true;

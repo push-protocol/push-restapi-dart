@@ -1,7 +1,7 @@
 import '../push_restapi_dart.dart';
 
 Future initPush({
-  ENV env = ENV.staging,
+  ENV env = ENV.prod,
   Wallet? wallet,
   bool showHttpLog = false,
 }) async {
