@@ -10,10 +10,12 @@ class PushAPIInitializeOptions {
   bool autoUpgrade;
   String? origin;
   bool showHttpLog;
+  final ENV env;
 
   PushAPIInitializeOptions(
       {this.progressHook,
       this.account,
+      this.env = ENV.prod,
       this.version = Constants.ENC_TYPE_V3,
       this.versionMeta,
       this.autoUpgrade = true,

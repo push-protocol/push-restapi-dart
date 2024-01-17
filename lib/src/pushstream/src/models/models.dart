@@ -14,7 +14,7 @@ class PushStreamInitializeOptions {
     PushStreamConnection? connection,
     this.raw = false,
     this.overrideAccount,
-    this.env = ENV.staging,
+    this.env = ENV.prod,
   }) {
     this.connection = connection ?? PushStreamConnection();
   }

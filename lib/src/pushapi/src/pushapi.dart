@@ -21,7 +21,7 @@ class PushAPI {
     this.pgpPublicKey,
     this.progressHook,
     this.readMode = false,
-    ENV env = ENV.staging,
+    ENV env = ENV.prod,
     bool showHttpLog = false,
   }) {
     _signer = signer;
@@ -44,10 +44,10 @@ class PushAPI {
 
   static Future<PushAPI> initialize({
     Signer? signer,
-    ENV env = ENV.staging,
     PushAPIInitializeOptions? options,
   }) async {
-    if (signer == null && options?.account == null) {
+    options ??= PushAPIInitializeOptions();
+    if (signer == null && options.account == null) {
       throw Exception("Either 'signer' or 'account' must be provided.");
     }
 
@@ -59,9 +59,9 @@ class PushAPI {
 
     if (signer != null) {
       derivedAccount = getAccountAddress(
-          getWallet(address: options?.account, signer: signer));
+          getWallet(address: options.account, signer: signer));
     } else {
-      derivedAccount = options?.account;
+      derivedAccount = options.account;
     }
 
     if (derivedAccount == null) {
@@ -81,18 +81,18 @@ class PushAPI {
     if (readMode) {
       if (user != null && user.encryptedPrivateKey != null) {
         decryptedPGPPrivateKey = await decryptPGPKey(
-          toUpgrade: options?.autoUpgrade,
-          progressHook: options?.progressHook,
-          additionalMeta: options?.versionMeta,
+          toUpgrade: options.autoUpgrade,
+          progressHook: options.progressHook,
+          additionalMeta: options.versionMeta,
           encryptedPGPPrivateKey: user.encryptedPrivateKey!,
-          wallet: getWallet(address: options?.account, signer: signer),
+          wallet: getWallet(address: options.account, signer: signer),
         );
         pgpPublicKey = user.publicKey;
       } else {
         final newUser = await createUser(
           signer: signer,
-          progressHook: options?.progressHook ?? (_) {},
-          version: options?.version ?? ENCRYPTION_TYPE.PGP_V3,
+          progressHook: options.progressHook ?? (_) {},
+          version: options.version ?? ENCRYPTION_TYPE.PGP_V3,
         );
         decryptedPGPPrivateKey = newUser.decryptedPrivateKey;
         pgpPublicKey = newUser.publicKey;
@@ -101,12 +101,12 @@ class PushAPI {
 
     final api = PushAPI(
       account: derivedAccount.toLowerCase(),
-      env: env,
+      env: options.env,
       signer: signer,
       decryptedPgpPvtKey: decryptedPGPPrivateKey,
       pgpPublicKey: pgpPublicKey,
       readMode: readMode,
-      showHttpLog: options?.showHttpLog ?? false,
+      showHttpLog: options.showHttpLog,
     );
 
     return api;

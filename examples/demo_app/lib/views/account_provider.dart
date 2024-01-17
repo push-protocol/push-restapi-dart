@@ -21,6 +21,7 @@ class AccountProvider extends ChangeNotifier {
   }
 
   final _prefsKey = 'accounts';
+  final ENV env = ENV.staging;
 
   init() async {
     prefs = await SharedPreferences.getInstance();
@@ -76,7 +77,7 @@ class AccountProvider extends ChangeNotifier {
         signer: Web3Signer(wallet),
         options: PushAPIInitializeOptions(
           account: user.address.toLowerCase(),
-          showHttpLog: true,
+          env: env,
         ),
       );
 
@@ -108,6 +109,7 @@ class AccountProvider extends ChangeNotifier {
         STREAM.CHAT_OPS,
       ],
       options: PushStreamInitializeOptions(
+        env: env,
         filter: PushStreamFilter(
           channels: ['*'],
           chats: ['*'],
@@ -118,8 +120,6 @@ class AccountProvider extends ChangeNotifier {
     pushStream!.on(STREAM.CONNECT.value, (data) {
       print(' NOTIFICATION EVENTS.CONNECT: $data');
     });
-
-    await pushStream!.connect();
 
     pushStream!.on(STREAM.DISCONNECT.value, (data) {
       log('Stream Disconnected');
@@ -145,6 +145,8 @@ class AccountProvider extends ChangeNotifier {
             ),
           );
     });
+
+    await pushStream!.connect();
 
     // pushStream!.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) {
     //   print('CHAT NOTIFICATION EVENTS.CHAT_RECEIVED_MESSAGE: $message');
