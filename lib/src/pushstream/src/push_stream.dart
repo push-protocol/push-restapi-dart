@@ -43,7 +43,7 @@ class PushStream extends EventEmitter {
       String? decryptedPgpPvtKey,
       PushStreamInitializeOptions? options,
       void Function(ProgressHookType)? progressHook}) async {
-    final defaultOptions = PushStreamInitializeOptions.defaut();
+    final defaultOptions = PushStreamInitializeOptions.default_();
 
     if (listen.isEmpty) {
       throw Exception(
@@ -120,8 +120,8 @@ class PushStream extends EventEmitter {
             env: _options.env,
             socketType: 'chat',
             socketOptions: SocketOptions(
-              autoConnect: _options.connection!.auto,
-              reconnectionAttempts: _options.connection!.retries,
+              autoConnect: _options.connection.auto,
+              reconnectionAttempts: _options.connection.retries,
             ),
           ),
         );
@@ -147,8 +147,8 @@ class PushStream extends EventEmitter {
             env: _options.env,
             socketType: 'notification',
             socketOptions: SocketOptions(
-              autoConnect: _options.connection!.auto,
-              reconnectionAttempts: _options.connection!.retries,
+              autoConnect: _options.connection.auto,
+              reconnectionAttempts: _options.connection.retries,
             ),
           ),
         );
@@ -188,10 +188,15 @@ class PushStream extends EventEmitter {
       pushChatSocket!.on(EVENTS.CHAT_GROUPS, (data) async {
         try {
           final modifiedData = await DataModifier.handleChatGroupEvent(
-              data: data, includeRaw: _raw);
+            data: data,
+            includeRaw: _raw,
+          );
+
           modifiedData['event'] =
-              DataModifier.convertToProposedName(modifiedData.event);
+              DataModifier.convertToProposedName(modifiedData['event']);
+
           DataModifier.handleToField(modifiedData);
+
           if (_shouldEmitChat(data['chatId'])) {
             if (data['eventType'] == GroupEventType.joinGroup ||
                 data['eventType'] == GroupEventType.leaveGroup ||
@@ -213,21 +218,26 @@ class PushStream extends EventEmitter {
 
       pushChatSocket!.on(EVENTS.CHAT_RECEIVED_MESSAGE, (data) async {
         try {
-          if (data.messageCategory == 'Chat' ||
-              data.messageCategory == 'Request') {
+          if (data['messageCategory'] == 'Chat' ||
+              data['messageCategory'] == 'Request') {
             // Dont call this if read only mode ?
             if (_signer != null) {
-              data = await chatInstance
+              final chat = await chatInstance
                   .decrypt(messagePayloads: [Message.fromJson(data)]);
-              data = data[0];
+              data = {
+                ...chat[0].toJson(),
+                'messageCategory': data['messageCategory'],
+                'chatId': data['chatId'],
+              };
             }
           }
 
           final modifiedData = DataModifier.handleChatEvent(data, _raw);
-          modifiedData.event =
-              DataModifier.convertToProposedName(modifiedData.event);
+          modifiedData['event'] =
+              DataModifier.convertToProposedName(modifiedData['event']);
           DataModifier.handleToField(modifiedData);
-          if (_shouldEmitChat(data.chatId)) {
+
+          if (_shouldEmitChat(data['chatId'])) {
             if (shouldEmit(STREAM.CHAT)) {
               emit(STREAM.CHAT.value, modifiedData);
             }
@@ -300,7 +310,8 @@ class PushStream extends EventEmitter {
   }
 
   bool _shouldEmitChat(String dataChatId) {
-    if (_options.filter?.chats != null ||
+    if (_options.filter != null ||
+        _options.filter!.chats != null ||
         _options.filter!.chats!.isNotEmpty ||
         _options.filter!.chats!.contains('*')) {
       return true;

@@ -105,20 +105,15 @@ class Chat {
     );
   }
 
-  Future<MessageWithCID?> send(
-      {required String recipient, required SendMessage options}) async {
+  Future<MessageWithCID?> send({required ChatSendOptions options}) async {
     if (!_hasSigner) {
       throw Exception(PushAPI.ensureSignerMessage());
     }
 
-    final chatOptions = ChatSendOptions(
-      to: recipient,
-      message: options,
-      account: _account,
-      pgpPrivateKey: _decryptedPgpPvtKey,
-    );
+    options.account ??= _account;
+    options.signer ??= _signer;
 
-    return PUSH_CHAT.send(chatOptions);
+    return PUSH_CHAT.send(options);
   }
 
   Future<List<Message>> decrypt(
@@ -549,13 +544,14 @@ class GroupParticipantsAPI {
 
   Future<List<ChatMemberProfile>> list({
     required String chatId,
-    required GetGroupParticipantsOptions options,
+    GetGroupParticipantsOptions? options,
   }) async {
+    options ??= GetGroupParticipantsOptions();
     return PUSH_CHAT.getGroupMembers(
       options: FetchChatGroupInfoType(
         chatId: chatId,
         limit: options.limit,
-        page: options.limit,
+        page: options.page,
         pending: options.filter?.pending,
         role: options.filter?.role,
       ),

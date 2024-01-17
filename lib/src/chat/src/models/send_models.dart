@@ -10,7 +10,7 @@ class ChatSendOptions {
   String? messageType;
 
   /// Message Receiver's Account ( DID )
-  String to;
+  String recipient;
 
   /// Message Sender's Account ( DID )
   /// In case account is not provided, it will be derived from signer
@@ -29,7 +29,7 @@ class ChatSendOptions {
       {this.message,
       this.messageContent,
       this.messageType,
-      required this.to,
+      required this.recipient,
       this.account,
       this.pgpPrivateKey}) {
     assert(MessageType.isValidMessageType(
@@ -41,7 +41,7 @@ class ChatSendOptions {
       'message': message?.toJson(),
       'messageContent': messageContent,
       'messageType': messageType,
-      'receiverAddress': to,
+      'receiverAddress': recipient,
       'accountAddress': account,
       'pgpPrivateKey': pgpPrivateKey
     };
