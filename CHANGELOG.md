@@ -1,4 +1,9 @@
 
+### 0.3.1-alpha
+### Update
+- Added high level sdk (Chat)
+
+---
 ### 0.3.0-alpha
 ### Update
 - Optimize group chat to support larger groups.
