@@ -80,3 +80,9 @@ class GroupInfoDTO {
     return GroupInfoDTO.fromJson(group.toJson());
   }
 }
+
+extension GroupExtension on GroupInfoDTO? {
+  SpaceInfoDTO get toSpaceInfo {
+    return groupInfoDtoToSpaceInfoDto(this!);
+  }
+}

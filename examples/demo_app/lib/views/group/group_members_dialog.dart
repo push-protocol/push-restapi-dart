@@ -329,7 +329,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     showLoadingDialog();
     pushUser.chat.group.remove(
       chatId: widget.chatId!,
-      role: 'MEMBER',
+      role: GroupRoles.MEMBER,
       accounts: [widget.item.address],
     ).then((value) {
       pop();
@@ -350,7 +350,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
 
     pushUser.chat.group.remove(
       chatId: widget.chatId!,
-      role: 'ADMIN',
+      role: GroupRoles.ADMIN,
       accounts: [widget.item.address],
     ).then((value) {
       pop();
@@ -370,7 +370,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     showLoadingDialog();
     pushUser.chat.group.modify(
       chatId: widget.chatId!,
-      role: 'MEMBER',
+      role: GroupRoles.MEMBER,
       accounts: [widget.item.address],
     ).then((value) {
       pop();
@@ -390,7 +390,7 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
     showLoadingDialog();
     pushUser.chat.group.modify(
       chatId: widget.chatId!,
-      role: 'ADMIN',
+      role: GroupRoles.ADMIN,
       accounts: [widget.item.address],
     ).then((value) {
       pop();
@@ -404,23 +404,6 @@ class _MemberActionWidgetState extends ConsumerState<MemberActionWidget> {
             : 'Member promoted successfully',
       );
     });
-    // removeMembers(
-    //   chatId: widget.chatId!,
-    //   members: [widget.item.address],
-    // ).then((value) {
-    //   addAdmins(chatId: widget.chatId!, admins: [widget.item.address])
-    //       .then((value) {
-    //     ref.read(chatRoomProvider).getLatestGroupMembers();
-    //     pop();
-    //     showMyDialog(
-    //       context: context,
-    //       title: 'Remove User',
-    //       message: value == null
-    //           ? 'Cannot promote user'
-    //           : 'Member promoted successfully',
-    //     );
-    //   });
-    // });
   }
 }
 

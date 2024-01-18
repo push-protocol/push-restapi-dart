@@ -1,6 +1,6 @@
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceDTO> addSpeakers({
+Future<SpaceInfoDTO> addSpeakers({
   required String spaceId,
   String? account,
   Signer? signer,
@@ -31,7 +31,7 @@ Future<SpaceDTO> addSpeakers({
         account: account,
         pgpPrivateKey: pgpPrivateKey);
     if (group != null) {
-      return groupInfoDtoToSpaceDto(group);
+      return groupInfoDtoToSpaceInfoDto(group);
     } else {
       throw Exception('Error while updating Space : $spaceId');
     }

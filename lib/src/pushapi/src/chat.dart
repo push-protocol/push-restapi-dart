@@ -282,7 +282,7 @@ class GroupAPI {
     return PUSH_CHAT.getGroupInfo(chatId: chatId);
   }
 
-  Future<GroupDTO> update({
+  Future<GroupInfoDTO> update({
     required String chatId,
     required GroupUpdateOptions options,
   }) async {
@@ -320,19 +320,13 @@ class GroupAPI {
     );
   }
 
-  ///role: 'ADMIN' | 'MEMBER';
   Future<GroupInfoDTO?> add({
     required String chatId,
-    required String role,
+    required GroupRoles role,
     required List<String> accounts,
   }) async {
     if (!_hasSigner) {
       throw Exception(PushAPI.ensureSignerMessage());
-    }
-
-    final validRoles = ['ADMIN', 'MEMBER'];
-    if (!validRoles.contains(role)) {
-      throw Exception('Invalid role provided.');
     }
 
     if (accounts.isEmpty) {
@@ -345,7 +339,7 @@ class GroupAPI {
       }
     }
 
-    if (role == 'ADMIN') {
+    if (role == GroupRoles.ADMIN) {
       return PUSH_CHAT.addAdmins(
         chatId: chatId,
         admins: accounts,
@@ -364,19 +358,13 @@ class GroupAPI {
     }
   }
 
-  ///role: 'ADMIN' | 'MEMBER';
   Future remove({
     required String chatId,
-    required String role,
+    required GroupRoles role,
     required List<String> accounts,
   }) async {
     if (!_hasSigner) {
       throw Exception(PushAPI.ensureSignerMessage());
-    }
-
-    final validRoles = ['ADMIN', 'MEMBER'];
-    if (!validRoles.contains(role)) {
-      throw Exception('Invalid role provided.');
     }
 
     if (accounts.isEmpty) {
@@ -425,19 +413,13 @@ class GroupAPI {
     return info(chatId: chatId);
   }
 
-  ///role: 'ADMIN' | 'MEMBER';
   Future<GroupInfoDTO?> modify({
     required String chatId,
-    required String role,
+    required GroupRoles role,
     required List<String> accounts,
   }) async {
     if (!_hasSigner) {
       throw Exception(PushAPI.ensureSignerMessage());
-    }
-
-    final validRoles = ['ADMIN', 'MEMBER'];
-    if (!validRoles.contains(role)) {
-      throw Exception('Invalid role provided.');
     }
 
     if (accounts.isEmpty) {
@@ -453,7 +435,7 @@ class GroupAPI {
     return PUSH_CHAT.modifyRoles(
       options: ModifyRolesType(
         chatId: chatId,
-        newRole: role,
+        newRole: role.value,
         account: _account,
         members: accounts,
         pgpPrivateKey: _decryptedPgpPvtKey,

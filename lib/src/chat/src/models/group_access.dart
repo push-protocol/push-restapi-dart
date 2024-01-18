@@ -25,3 +25,28 @@ class GroupAccess {
     return data;
   }
 }
+
+class SpaceAccess {
+  bool entry;
+  bool chat;
+
+  SpaceAccess({
+    required this.entry,
+    required this.chat,
+  });
+
+  factory SpaceAccess.fromJson(Map<String, dynamic> json) {
+    return SpaceAccess(
+      entry: json['entry'] ?? false,
+      chat: json['chat'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'entry': entry,
+      'chat': chat,
+    };
+    return data;
+  }
+}

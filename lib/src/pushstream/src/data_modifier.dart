@@ -146,10 +146,10 @@ class DataModifier {
       'event': eventType,
       'origin': data['messageOrigin'],
       'timestamp': data['timestamp'].toString(),
-      'chatId': data['chatId'], 
+      'chatId': data['chatId'],
       'from': data['fromCAIP10'],
       'to': [
-        if (data['toCAIP10'] != null) data['toCAIP10']
+        if (data['toCAIP10'] != null) data['toCAIP10'],
       ],
       'message': {
         'type': data['messageType'],
