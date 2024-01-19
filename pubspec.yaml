@@ -1,6 +1,6 @@
 name: push_restapi_dart
 description: 'Push SDK provides an abstraction layer to integrate Push protocol features with your Frontend as well as Backend.'
-version: 0.3.0-alpha
+version: 0.3.1-alpha
 homepage: https://docs.push.org/developers
 repository: https://github.com/ethereum-push-notification-service/push-restapi-dart
 
