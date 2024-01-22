@@ -36,25 +36,26 @@ class GroupMembersDialog extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /* Align(
-              alignment: Alignment.centerRight,
-              child: MaterialButton(
-                onPressed: () {
-                  pop();
-                  pushScreen(EditGroupInfoScreen());
-                },
-                color: pushColor,
-                textColor: Colors.white,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.settings),
-                    SizedBox(width: 4),
-                    KText('Edit Group Info'),
-                  ],
+            if (isUserAdmin)
+              Align(
+                alignment: Alignment.centerRight,
+                child: MaterialButton(
+                  onPressed: () {
+                    pop();
+                    pushScreen(EditGroupInfoScreen());
+                  },
+                  color: pushColor,
+                  textColor: Colors.white,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.settings),
+                      SizedBox(width: 4),
+                      KText('Edit Group Info'),
+                    ],
+                  ),
                 ),
               ),
-            ),*/
             TabBar(tabs: [
               Tab(text: 'Admin'),
               Tab(text: 'Members'),

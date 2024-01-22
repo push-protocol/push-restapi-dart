@@ -236,7 +236,6 @@ class PushStream extends EventEmitter {
           modifiedData['event'] =
               DataModifier.convertToProposedName(modifiedData['event']);
           DataModifier.handleToField(modifiedData);
-
           if (_shouldEmitChat(data['chatId'])) {
             if (shouldEmit(STREAM.CHAT)) {
               emit(STREAM.CHAT.value, modifiedData);
