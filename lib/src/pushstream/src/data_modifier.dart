@@ -1,6 +1,33 @@
 import '../../../push_restapi_dart.dart';
 
 class DataModifier {
+  static String convertToProposedNameForSpace(String currentEventName) {
+    switch (currentEventName) {
+      case 'create':
+        return ProposedEventNames.CreateSpace;
+      case 'update':
+        return ProposedEventNames.UpdateSpace;
+      case 'request':
+        return ProposedEventNames.SpaceRequest;
+      case 'accept':
+        return ProposedEventNames.SpaceAccept;
+      case 'reject':
+        return ProposedEventNames.SpaceReject;
+      case 'leaveSpace':
+        return ProposedEventNames.LeaveSpace;
+      case 'joinSpace':
+        return ProposedEventNames.JoinSpace;
+      case 'remove':
+        return ProposedEventNames.SpaceRemove;
+      case 'start':
+        return ProposedEventNames.StartSpace;
+      case 'stop':
+        return ProposedEventNames.StopSpace;
+      default:
+        throw Exception('Unknown current event name: $currentEventName');
+    }
+  }
+
   static Future<dynamic> handleChatGroupEvent({
     required dynamic data,
     bool includeRaw = false,
@@ -142,6 +169,10 @@ class DataModifier {
     bool includeRaw,
     String eventType,
   ) {
+
+    if (data['hasIntent']==false && eventType == 'message') {
+          eventType = MessageEventType.request;
+    }
     final messageEvent = {
       'event': eventType,
       'origin': data['messageOrigin'],
@@ -326,5 +357,229 @@ class DataModifier {
       eventData['raw'] = {'verificationProof': data['verificationProof']};
     }
     return eventData;
+  }
+
+  static dynamic handleSpaceEvent({
+    required dynamic data,
+    bool includeRaw = false,
+  }) {
+    // Check the eventType and map accordingly
+    switch (data.eventType) {
+      case 'create':
+        return mapToCreateSpaceEvent(data, includeRaw);
+      case 'update':
+        return mapToUpdateSpaceEvent(data, includeRaw);
+      case 'request':
+        return mapToRequestSpaceEvent(data, includeRaw);
+      case 'remove':
+        return mapToRemoveSpaceEvent(data, includeRaw);
+      case 'joinSpace':
+        return mapToJoinSpaceEvent(data, includeRaw);
+      case 'leaveSpace':
+        return mapToLeaveSpaceEvent(data, includeRaw);
+      case 'start':
+        return mapToStartSpaceEvent(data, includeRaw);
+      case 'stop':
+        return mapToStopSpaceEvent(data, includeRaw);
+      default:
+        // If the eventType is unknown, check for known messageCategories
+        switch (data['messageCategory']) {
+          case 'Approve':
+            return mapToSpaceApproveEvent(data, includeRaw);
+
+          case 'Reject':
+            return mapToSpaceRejectEvent(data, includeRaw);
+          // Add other cases as needed for different message categories
+          default:
+            log('Unknown eventType or messageCategory for space: ${data['eventType']} ${data['messageCategory']}');
+            return data;
+        }
+    }
+  }
+
+  static dynamic mapToSpaceRejectEvent(data, bool includeRaw) {
+    final baseEventData = {
+      'event': 'reject',
+      'origin': data.messageOrigin == 'other' ? 'other' : 'self',
+      'timestamp': data['timestamp'].toString(),
+      'spaceId': data['chatId'],
+      'from': data['fromCAIP10'],
+      'to': null,
+    };
+
+    if (includeRaw) {
+      baseEventData['raw'] = {
+        'verificationProof': data['verificationProof'] ?? '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  static dynamic mapToSpaceApproveEvent(data, bool includeRaw) {
+    final baseEventData = {
+      'event': 'request',
+      'origin': data['messageOrigin'] == 'other' ? 'self' : 'other',
+      'timestamp': data['timestamp'],
+      'spaceId': data['chatId'],
+      'from': data['fromCAIP10'],
+      'to': [data['toCAIP10']],
+    };
+
+    if (includeRaw) {
+      baseEventData['raw'] = {
+        'verificationProof': data['verificationProof'] ?? '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  static dynamic mapToStopSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': null,
+      'event': data['eventType'],
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToStartSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': null,
+      'event': data['eventType'],
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToLeaveSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': data['to'],
+      'event': data['eventType'],
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToJoinSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': data['to'],
+      'event': data['eventType'],
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToRemoveSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': data['to'],
+      'event': 'remove',
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToRequestSpaceEvent(data, bool includeRaw) {
+    final eventData = {
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['from'],
+      'to': data['to'],
+      'event': MessageEventType.request,
+    };
+
+    if (includeRaw) {
+      eventData['raw'] = {'verificationProof': data['verificationProof']};
+    }
+    return eventData;
+  }
+
+  static dynamic mapToUpdateSpaceEvent(data, bool includeRaw) {
+    final baseEventData = {
+      'event': data['eventType'],
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['spaceCreator'],
+      'meta': {
+        'name': data['spaceName'],
+        'description': data['spaceDescription'],
+        'image': data['spaceImage'],
+        'owner': data['spaceCreator'],
+        'private': !(data['isPublic'] ?? false),
+        'rules': data['rules'] ?? {},
+      },
+    };
+
+    if (includeRaw) {
+      baseEventData['raw'] = {
+        'verificationProof': data['verificationProof'] ?? '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  static dynamic mapToCreateSpaceEvent(data, bool includeRaw) {
+    final baseEventData = {
+      'event': data['eventType'],
+      'origin': data['messageOrigin'],
+      'timestamp': data['timestamp'],
+      'spaceId': data['spaceId'],
+      'from': data['spaceCreator'],
+      'meta': {
+        'name': data['spaceName'],
+        'description': data['spaceDescription'],
+        'image': data['spaceImage'],
+        'owner': data['spaceCreator'],
+        'private': !(data['isPublic'] ?? false),
+        'rules': data['rules'] ?? {},
+      },
+    };
+
+    if (includeRaw) {
+      baseEventData['raw'] = {
+        'verificationProof': data['verificationProof'] ?? '',
+      };
+    }
+
+    return baseEventData;
   }
 }

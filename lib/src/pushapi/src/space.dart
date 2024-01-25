@@ -355,4 +355,8 @@ class Space {
 
     return chatInstance.reject(target: spaceId);
   }
+
+
+
+
 }

@@ -29,8 +29,15 @@ class PushStreamInitializeOptions {
 class PushStreamFilter {
   final List<String>? channels;
   final List<String>? chats;
+  final List<String>? space;
+  final List<String>? video;
 
-  PushStreamFilter({this.channels, this.chats});
+  PushStreamFilter({
+    this.channels,
+    this.chats,
+    this.space,
+    this.video,
+  });
 }
 
 class PushStreamConnection {
@@ -50,6 +57,8 @@ enum STREAM {
   NOTIF_OPS,
   CHAT,
   CHAT_OPS,
+  SPACE,
+  SPACE_OPS,
   CONNECT,
   DISCONNECT,
 }
@@ -67,6 +76,10 @@ extension STREAMExtension on STREAM {
         return 'STREAM.NOTIF_OPS';
       case STREAM.CHAT:
         return 'STREAM.CHAT';
+      case STREAM.SPACE:
+        return 'STREAM.SPACE';
+      case STREAM.SPACE_OPS:
+        return 'STREAM.SPACE_OPS';
       case STREAM.CHAT_OPS:
         return 'STREAM.CHAT_OPS';
       case STREAM.CONNECT:
@@ -87,6 +100,17 @@ class ProposedEventNames {
   static const CreateGroup = 'chat.group.create';
   static const UpdateGroup = 'chat.group.update';
   static const Remove = 'chat.group.participant.remove';
+
+  static const CreateSpace = 'space.create';
+  static const UpdateSpace = 'space.update';
+  static const SpaceRequest = 'space.request';
+  static const SpaceAccept = 'space.accept';
+  static const SpaceReject = 'space.reject';
+  static const LeaveSpace = 'space.participant.leave';
+  static const JoinSpace = 'space.participant.join';
+  static const SpaceRemove = 'space.participant.remove';
+  static const StartSpace = 'space.start';
+  static const StopSpace = 'space.stop';
 }
 
 class GroupEventType {
@@ -95,6 +119,16 @@ class GroupEventType {
   static const joinGroup = 'joinGroup';
   static const leaveGroup = 'leaveGroup';
   static const remove = 'remove';
+}
+
+class SpaceEventType {
+  static const createSpace = 'createSpace';
+  static const updateSpace = 'updateSpace';
+  static const join = 'joinSpace';
+  static const leave = 'leaveSpace';
+  static const remove = 'remove';
+  static const stop = 'stop';
+  static const start = 'start';
 }
 
 class MessageEventType {

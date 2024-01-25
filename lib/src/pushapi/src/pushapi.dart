@@ -14,6 +14,7 @@ class PushAPI {
 
   late Chat chat;
   late PushStream stream;
+  late Space space;
   PushAPI({
     Signer? signer,
     required String account,
@@ -34,6 +35,13 @@ class PushAPI {
     );
 
     chat = Chat(
+      signer: _signer,
+      account: _account,
+      decryptedPgpPvtKey: _decryptedPgpPvtKey,
+      pgpPublicKey: pgpPublicKey,
+      progressHook: progressHook,
+    );
+    space = Space(
       signer: _signer,
       account: _account,
       decryptedPgpPvtKey: _decryptedPgpPvtKey,
