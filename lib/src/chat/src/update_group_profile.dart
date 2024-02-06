@@ -67,7 +67,10 @@ Future<GroupInfoDTO> updateGroupProfile({
     "isPublic": group.isPublic,
     "groupType": group.groupType,
   };
+
+  print("object");
   final hash = generateHash(bodyToBeHashed);
+
 
   final signature = await sign(
     message: hash,
