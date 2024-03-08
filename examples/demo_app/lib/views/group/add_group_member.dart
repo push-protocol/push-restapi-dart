@@ -70,7 +70,7 @@ class _AddGroupMemberState extends ConsumerState<AddGroupMember> {
       showLoadingDialog();
       result = await pushUser.chat.group.add(
         chatId: widget.chatId!,
-        role: widget.isAdmin ? 'ADMIN' : 'MEMBER',
+        role: widget.isAdmin ? GroupRoles.ADMIN : GroupRoles.MEMBER,
         accounts: [address],
       );
 

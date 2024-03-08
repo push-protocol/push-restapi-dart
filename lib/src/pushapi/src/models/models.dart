@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-import '../../../push_restapi_dart.dart';
+import '../../../../push_restapi_dart.dart';
 
 class PushAPIInitializeOptions {
   void Function(ProgressHookType)? progressHook;
@@ -110,4 +110,20 @@ class GroupUpdateOptions {
     this.meta,
     this.rules,
   });
+}
+
+enum GroupRoles { MEMBER, ADMIN }
+
+extension GroupRolesExtension on GroupRoles {
+  String get value {
+    switch (this) {
+      case GroupRoles.ADMIN:
+        return 'ADMIN';
+      case GroupRoles.MEMBER:
+        return 'MEMBER';
+
+      default:
+        return 'MEMBER';
+    }
+  }
 }

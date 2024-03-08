@@ -1,6 +1,6 @@
 import '../../../push_restapi_dart.dart';
 
-Future<SpaceDTO> removeListeners({
+Future<SpaceInfoDTO> removeListeners({
   required String spaceId,
   String? account,
   Signer? signer,
@@ -32,7 +32,7 @@ Future<SpaceDTO> removeListeners({
         account: account,
         pgpPrivateKey: pgpPrivateKey);
     if (group != null) {
-      return groupInfoDtoToSpaceDto(group);
+      return groupInfoDtoToSpaceInfoDto(group);
     } else {
       throw Exception('Error while updating Space : $spaceId');
     }

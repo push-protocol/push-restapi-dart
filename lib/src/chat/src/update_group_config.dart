@@ -22,7 +22,7 @@ class ChatUpdateConfigProfileType {
   });
 }
 
-Future<GroupDTO> updateGroupConfig({
+Future<GroupInfoDTO> updateGroupConfig({
   required ChatUpdateConfigProfileType options,
 }) async {
   options.account ??= getCachedWallet()?.address;
@@ -76,5 +76,5 @@ Future<GroupDTO> updateGroupConfig({
     throw Exception(result);
   }
 
-  return GroupDTO.fromJson(result);
+  return GroupInfoDTO.fromJson(result);
 }

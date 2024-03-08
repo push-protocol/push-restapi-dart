@@ -24,3 +24,4 @@ export 'src/helpers/get_latest_live_space_data.dart';
 export 'src/helpers/get_incoming_index_from_address.dart';
 export 'src/helpers/set_hand_raised_for_listener.dart';
 export 'src/helpers/is_host.dart';
+export 'src/create_v2.dart';
