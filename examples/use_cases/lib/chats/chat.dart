@@ -183,7 +183,7 @@ Future runChatClassUseCases() async {
   log('PushAPI.group.add');
   final addMember = await userAlice.chat.group.add(
     chatId: groupChatId,
-    role: 'MEMBER',
+    role: GroupRoles.MEMBER,
     accounts: [wallet3Signer.getAddress()],
   );
   log(addMember);
@@ -194,7 +194,7 @@ Future runChatClassUseCases() async {
   log('PushAPI.group.remove');
   final removeMember = await userAlice.chat.group.remove(
     chatId: groupChatId,
-    role: 'MEMBER',
+    role: GroupRoles.MEMBER,
     accounts: [wallet3Signer.getAddress()],
   );
   log(removeMember);

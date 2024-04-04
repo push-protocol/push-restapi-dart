@@ -410,6 +410,46 @@ class SpaceDTO {
             : null;
 }
 
+extension SpaceDTOExtension on SpaceDTO {
+  SpaceInfoDTO get toSpaceInfo {
+    return spaceDtoToSpaceInfoDto(this);
+  }
+}
+
+class SpaceInfoDTO {
+  final String spaceName;
+  final String? spaceImage;
+  final String spaceDescription;
+  final bool isPublic;
+  final String spaceCreator;
+  final String spaceId;
+  final DateTime? scheduleAt;
+  final DateTime? scheduleEnd;
+  final ChatStatus? status;
+  final dynamic rules;
+  final String? meta;
+  final String? sessionKey;
+  final String? encryptedSecret;
+  final Map<String, SPACE_INVITE_ROLES>? inviteeDetails;
+
+  SpaceInfoDTO({
+    required this.spaceName,
+    this.spaceImage,
+    required this.spaceDescription,
+    required this.isPublic,
+    required this.spaceCreator,
+    required this.spaceId,
+    this.scheduleAt,
+    this.scheduleEnd,
+    this.status,
+    this.rules,
+    this.meta,
+    this.sessionKey,
+    this.encryptedSecret,
+    this.inviteeDetails,
+  });
+}
+
 class SpaceMemberDTO {
   String wallet;
   String publicKey;

@@ -245,6 +245,55 @@ class PushStream extends EventEmitter {
           log('Error handling CHAT_RECEIVED_MESSAGE event:$error \t Data:$data');
         }
       });
+
+      pushChatSocket!.on(EVENTS.SPACES, (data) async {
+        try {
+          final modifiedData =
+              DataModifier.handleSpaceEvent(data: data, includeRaw: _raw);
+          modifiedData['event'] =
+              DataModifier.convertToProposedNameForSpace(modifiedData['event']);
+
+          DataModifier.handleToField(modifiedData);
+
+          if (_shouldEmitSpace(data.spaceId)) {
+            if (data.eventType == SpaceEventType.join ||
+                data.eventType == SpaceEventType.leave ||
+                data.eventType == MessageEventType.request ||
+                data.eventType == SpaceEventType.remove ||
+                data.eventType == SpaceEventType.start ||
+                data.eventType == SpaceEventType.stop) {
+              if (shouldEmit(STREAM.SPACE)) {
+                emit(STREAM.SPACE.value, modifiedData);
+              }
+            } else {
+              if (shouldEmit(STREAM.SPACE_OPS)) {
+                emit(STREAM.SPACE_OPS.value, modifiedData);
+              }
+            }
+          }
+        } catch (e) {
+          log('Error handling SPACES event: $e, Data: $data');
+        }
+      });
+
+      pushChatSocket!.on(EVENTS.SPACES_MESSAGES, (data) async {
+        try {
+          final modifiedData =
+              DataModifier.handleSpaceEvent(data: data, includeRaw: _raw);
+          modifiedData.event =
+              DataModifier.convertToProposedNameForSpace(modifiedData.event);
+
+          DataModifier.handleToField(modifiedData);
+
+          if (_shouldEmitSpace(data.spaceId)) {
+            if (shouldEmit(STREAM.SPACE)) {
+              emit(STREAM.SPACE.value, modifiedData);
+            }
+          }
+        } catch (e) {
+          log('Error handling SPACES event: $e, Data: $data');
+        }
+      });
     }
 
     if (pushNotificationSocket != null) {
@@ -298,6 +347,10 @@ class PushStream extends EventEmitter {
     }
   }
 
+  bool connected() =>
+      (pushNotificationSocket != null && pushNotificationSocket!.connected) ||
+      (pushChatSocket != null && pushChatSocket!.connected);
+
   Future disconnect() async {
     if (pushChatSocket != null) {
       pushChatSocket!.disconnect();
@@ -327,5 +380,15 @@ class PushStream extends EventEmitter {
     }
 
     return _options.filter!.channels!.contains(dataChannelId);
+  }
+
+  bool _shouldEmitSpace(String dataSpaceId) {
+    if (_options.filter?.space != null ||
+        _options.filter!.space!.isNotEmpty ||
+        _options.filter!.space!.contains('*')) {
+      return true;
+    }
+
+    return _options.filter!.space!.contains(dataSpaceId);
   }
 }
