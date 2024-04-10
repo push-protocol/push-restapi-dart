@@ -78,6 +78,7 @@ class AccountProvider extends ChangeNotifier {
         options: PushAPIInitializeOptions(
           account: user.address.toLowerCase(),
           env: env,
+          showHttpLog: true
         ),
       );
 

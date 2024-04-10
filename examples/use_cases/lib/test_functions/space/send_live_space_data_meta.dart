@@ -1,4 +1,4 @@
-import 'package:example/models/signer.dart';
+import 'package:use_cases/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;

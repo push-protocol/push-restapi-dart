@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
+import 'package:use_cases/models/signer.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
-import '../../__lib.dart';
 
 void testSendNotificationFromChannel() async {}
 
