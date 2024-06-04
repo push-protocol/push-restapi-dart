@@ -15,6 +15,8 @@ class PushAPI {
   late Chat chat;
   late PushStream stream;
   late Space space;
+
+  late Channel channel;
   PushAPI({
     Signer? signer,
     required String account,
@@ -35,6 +37,7 @@ class PushAPI {
     );
 
     chat = Chat(
+      env: env,
       signer: _signer,
       account: _account,
       decryptedPgpPvtKey: _decryptedPgpPvtKey,
@@ -42,12 +45,15 @@ class PushAPI {
       progressHook: progressHook,
     );
     space = Space(
+      env: env,
       signer: _signer,
       account: _account,
       decryptedPgpPvtKey: _decryptedPgpPvtKey,
       pgpPublicKey: pgpPublicKey,
       progressHook: progressHook,
     );
+
+    channel = Channel(account: account, env: env);
   }
 
   static Future<PushAPI> initialize({
@@ -130,6 +136,7 @@ class PushAPI {
       options: options,
       progressHook: progressHook,
       signer: _signer,
+      env: options?.env ?? ENV.prod,
     );
 
     return stream;

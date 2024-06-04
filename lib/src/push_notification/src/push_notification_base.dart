@@ -27,7 +27,7 @@ class PushNotificationBaseClass {
     required this.signer,
     required this.account,
     required this.guestMode,
-    required this.coreContract,
+    this.coreContract,
     this.env = ENV.prod,
   });
 

@@ -6,7 +6,7 @@ import '../../user/user.dart' as PUSH_USER;
 
 class Chat {
   late final Signer? _signer;
-
+  late final ENV env;
   late final String _account;
   late final String? _decryptedPgpPvtKey;
   void Function(ProgressHookType)? progressHook;
@@ -16,6 +16,7 @@ class Chat {
     required String account,
     String? decryptedPgpPvtKey,
     String? pgpPublicKey,
+    required this.env,
     required this.progressHook,
   }) {
     _signer = signer;

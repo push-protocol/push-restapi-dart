@@ -1,26 +1,42 @@
-// Define the class in Dart
-import 'package:push_restapi_dart/push_restapi_dart.dart';
+import '../../../push_restapi_dart.dart';
 
-class GetAliasInfoOptionsType {
+class Alias {
+  final ENV env;
+  final Signer? signer;
+
+  Alias({
+    required this.env,
+    this.signer,
+  });
+
+  Future<dynamic> info(AliasOptions options) async {
+    return getAliasInfo(
+      options: GetAliasInfoOptionsType(
+        alias: options.alias,
+        aliasChain: options.aliasChain,
+        env: env,
+      ),
+    );
+  }
+
+  /// @description verifies an alias address of a channel
+  /// @param {string} channelAddress - channelAddress to be verified
+  /// @param {AliasInfoOptions} options - options related to alias
+  /// @returns the transaction hash if the transaction is successfull
+  Future<dynamic> verify({required String channelAddress}) async {
+    ///TODO implement Alias.verify
+    throw UnimplementedError();
+  }
+}
+
+class AliasOptions {
   // Properties
   String alias;
   ALIAS_CHAIN aliasChain;
-  ENV env;
 
   // Constructor
-  GetAliasInfoOptionsType({
+  AliasOptions({
     required this.alias,
     required this.aliasChain,
-    this.env = ENV.prod,
   });
-}
-
-Future<dynamic> getAliasInfo({required GetAliasInfoOptionsType options}) async {
-  final alias = ALIAS_CHAIN_ID[options.alias.toString()]?[options.env];
-
-  final apiEndpoint = "/v1/alias/$alias/channel";
-  return await http.get(
-    path: apiEndpoint,
-    baseUrl: Api.getAPIBaseUrls(options.env),
-  );
 }

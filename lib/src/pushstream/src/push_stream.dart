@@ -21,6 +21,7 @@ class PushStream extends EventEmitter {
     Signer? signer,
     String? decryptedPgpPvtKey,
     void Function(ProgressHookType)? progressHook,
+    required ENV env,
   }) {
     _account = account;
     _options = options;
@@ -30,19 +31,22 @@ class PushStream extends EventEmitter {
 
     chatInstance = Chat(
       signer: signer,
+      env: env,
       account: _account,
       decryptedPgpPvtKey: decryptedPgpPvtKey,
       progressHook: progressHook,
     );
   }
 
-  static Future<PushStream> initialize(
-      {required String account,
-      required List<STREAM> listen,
-      Signer? signer,
-      String? decryptedPgpPvtKey,
-      PushStreamInitializeOptions? options,
-      void Function(ProgressHookType)? progressHook}) async {
+  static Future<PushStream> initialize({
+    required String account,
+    required ENV env,
+    required List<STREAM> listen,
+    Signer? signer,
+    String? decryptedPgpPvtKey,
+    PushStreamInitializeOptions? options,
+    void Function(ProgressHookType)? progressHook,
+  }) async {
     final defaultOptions = PushStreamInitializeOptions.default_();
 
     if (listen.isEmpty) {
@@ -54,6 +58,7 @@ class PushStream extends EventEmitter {
     final accountToUse = settings.overrideAccount ?? account;
 
     return PushStream(
+        env: env,
         account: accountToUse,
         listen: listen,
         options: settings,

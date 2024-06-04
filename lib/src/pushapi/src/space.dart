@@ -8,7 +8,7 @@ import '../../chat/chat.dart' as PUSH_CHAT;
 
 class Space {
   late final Signer? _signer;
-
+  late final ENV env;
   late final String _account;
   late final String? _decryptedPgpPvtKey;
   void Function(ProgressHookType)? progressHook;
@@ -22,12 +22,14 @@ class Space {
     String? decryptedPgpPvtKey,
     String? pgpPublicKey,
     required this.progressHook,
+    required this.env,
   }) {
     _signer = signer;
     _account = account;
     _decryptedPgpPvtKey = decryptedPgpPvtKey;
 
     chatInstance = Chat(
+        env: env,
         account: account,
         progressHook: progressHook,
         decryptedPgpPvtKey: _decryptedPgpPvtKey,

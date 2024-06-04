@@ -29,3 +29,21 @@ class ChannelListOrderType {
 class ChannelListSortType {
   static const String SUBSCRIBER = 'subscribers';
 }
+
+class ChannelInfoOptions {
+  String? channel;
+  int? page;
+  int? limit;
+  int? category;
+  bool? setting;
+  bool? raw;
+
+  ChannelInfoOptions({
+    this.channel,
+    this.page,
+    this.limit,
+    this.category,
+    this.setting,
+    this.raw,
+  });
+}
