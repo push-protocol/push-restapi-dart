@@ -184,4 +184,11 @@ class PushNotificationBaseClass {
     List<String> parts = caipAddress.split(':');
     return parts[parts.length - 1];
   }
+
+  bool isValidPCaip(String address) {
+    final addressComponents = address.split(':');
+    return addressComponents.length == 2 &&
+        addressComponents[0] == 'eip155' &&
+        isAddress(addressComponents[1]);
+  }
 }

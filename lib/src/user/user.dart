@@ -8,3 +8,4 @@ export 'src/get_user.dart';
 export 'src/get_users_batch.dart';
 export 'src/profile.update_user.dart';
 export 'src/upgrade_user.dart';
+export 'src/get_feeds_per_channel.dart';

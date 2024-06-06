@@ -17,6 +17,7 @@ class PushAPI {
   late Space space;
 
   late Channel channel;
+  late NotificationAPI notification;
   PushAPI({
     Signer? signer,
     required String account,
@@ -54,6 +55,12 @@ class PushAPI {
     );
 
     channel = Channel(account: account, env: env);
+    notification = NotificationAPI(
+      signer: signer,
+      account: account,
+      guestMode: false,
+      env: env,
+    );
   }
 
   static Future<PushAPI> initialize({

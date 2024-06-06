@@ -3,3 +3,4 @@ export 'src/delegate.dart';
 export 'src/push_notification_base.dart';
 export 'src/push_notification_types.dart';
 export 'src/channel.dart';
+export 'src/notification.dart';

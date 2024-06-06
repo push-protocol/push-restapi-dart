@@ -1,4 +1,4 @@
-import 'package:push_restapi_dart/push_restapi_dart.dart';
+import '../../../push_restapi_dart.dart';
 
 /// @description - fetches alias information
 /// @param {AliasOptions} options - options related to alias
