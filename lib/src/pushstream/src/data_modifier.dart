@@ -169,9 +169,8 @@ class DataModifier {
     bool includeRaw,
     String eventType,
   ) {
-
-    if (data['hasIntent']==false && eventType == 'message') {
-          eventType = MessageEventType.request;
+    if (data['hasIntent'] == false && eventType == 'message') {
+      eventType = MessageEventType.request;
     }
     final messageEvent = {
       'event': eventType,

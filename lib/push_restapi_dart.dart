@@ -16,5 +16,7 @@ export 'src/sockets/sockets.dart';
 
 export 'src/pushapi/pushapi.dart';
 export 'src/pushstream/push_stream.dart';
-
+export 'src/channels/channels.dart';
+export 'src/push_notification/push_notification.dart';
 export 'src/main.dart';
+export 'src/alias/alias.dart';

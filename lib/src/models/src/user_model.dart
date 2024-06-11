@@ -25,6 +25,42 @@ abstract class Signer {
 
   /// Returns the signed-message.
   Future<String> signMessage(String message);
+
+  Future<num> getChainId();
+  Future<String> signTypedData({
+    required DataDomain domain,
+    required Map<String, List<DataField>> types,
+    required Map<String, dynamic> values,
+    String? primaryType,
+  });
+}
+
+class DataField {
+  String name;
+  String type;
+
+  DataField(
+    this.name,
+    this.type,
+  );
+}
+
+class DataDomain {
+  int? chainId;
+  String? name;
+  dynamic
+      salt; // The type `ResolvedConfig['BytesType']['outputs']` is not clear, so using `dynamic` here
+
+  String? verifyingContract;
+  String? version;
+
+  DataDomain({
+    this.chainId,
+    this.name,
+    this.salt,
+    this.verifyingContract,
+    this.version,
+  });
 }
 
 class ConnectedUser extends User {

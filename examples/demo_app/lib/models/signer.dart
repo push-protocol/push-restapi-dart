@@ -49,6 +49,22 @@ class EthersSigner extends push.Signer {
       return message;
     }
   }
+
+  @override
+  Future<num> getChainId() {
+    // TODO: implement getChainId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> signTypedData(
+      {required push.DataDomain domain,
+      required Map<String, List<push.DataField>> types,
+      required Map<String, dynamic> values,
+      String? primaryType}) {
+    // TODO: implement signTypedData
+    throw UnimplementedError();
+  }
 }
 
 class Web3Signer extends push.Signer {
@@ -80,5 +96,21 @@ class Web3Signer extends push.Signer {
     final sig =
         credentials.signPersonalMessageToUint8List(Uint8List.fromList(m));
     return utf8.decode(sig);
+  }
+
+  @override
+  Future<num> getChainId() {
+    // TODO: implement getChainId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> signTypedData(
+      {required push.DataDomain domain,
+      required Map<String, List<push.DataField>> types,
+      required Map<String, dynamic> values,
+      String? primaryType}) {
+    // TODO: implement signTypedData
+    throw UnimplementedError();
   }
 }

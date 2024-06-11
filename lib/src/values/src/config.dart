@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, camel_case_extensions, camel_case_types
 
 // for methods not needing the entire config
 
@@ -147,3 +147,31 @@ final CONFIG = {
     ),
   },
 };
+
+enum ALIAS_CHAIN {
+  POLYGON,
+  BSC,
+  OPTIMISM,
+  POLYGONZKEVM,
+  ARBITRUMONE,
+  FUSE,
+}
+
+extension ALIAS_CHAINExtension on ALIAS_CHAIN {
+  String toStringValue() {
+    switch (this) {
+      case ALIAS_CHAIN.POLYGON:
+        return 'POLYGON';
+      case ALIAS_CHAIN.BSC:
+        return 'BSC';
+      case ALIAS_CHAIN.OPTIMISM:
+        return 'OPTIMISM';
+      case ALIAS_CHAIN.POLYGONZKEVM:
+        return 'POLYGONZKEVM';
+      case ALIAS_CHAIN.ARBITRUMONE:
+        return 'ARBITRUMONE';
+      case ALIAS_CHAIN.FUSE:
+        return 'FUSE';
+    }
+  }
+}
