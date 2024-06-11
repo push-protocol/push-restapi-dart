@@ -45,3 +45,6 @@ app.*.map.json
 
 .flutter-plugins-dependencies
 .flutter-plugins
+
+
+.env

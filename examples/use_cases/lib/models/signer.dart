@@ -57,11 +57,12 @@ class EthersSigner extends push.Signer {
   }
 
   @override
-  Future<String> signTypedData(
-      {required push.DataDomain domain,
-      required Map<String, List<push.DataField>> types,
-      required Map<String, dynamic> values,
-      String? primaryType}) {
+  Future<String> signTypedData({
+    required push.DataDomain domain,
+    required Map<String, List<push.DataField>> types,
+    required Map<String, dynamic> values,
+    String? primaryType,
+  }) {
     // TODO: implement signTypedData
     throw UnimplementedError();
   }
