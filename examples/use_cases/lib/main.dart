@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:use_cases/chats/chat.dart';
 
+import 'pushAPI/notificaton/notification.test.dart';
+
 void main() async {
+  await dotenv.load(fileName: ".env");
+
   runApp(const MainApp());
+  runNotificationTest();
 
   log(r'''
 
