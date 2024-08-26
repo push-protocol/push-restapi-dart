@@ -4,7 +4,7 @@ import 'package:ethers/signers/wallet.dart' as ethers;
 import 'package:push_restapi_dart/push_restapi_dart.dart' as push;
 import 'package:web3dart/web3dart.dart' as web3;
 
-import '../../__lib.dart';
+import '../../models/signer.dart';
 
 void testCreateUserFromMnemonics() async {
   const mnemonic =

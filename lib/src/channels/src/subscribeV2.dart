@@ -42,7 +42,6 @@ Future<Map<String, dynamic>> subscribeV2(SubscribeOptionsV2Type options) async {
         blockchain: channelCAIPDetails.blockchain,
         networkId: channelCAIPDetails.networkId);
 
-    log('subscribeV2:config $config');
     final requestUrl = '/v1/channels/$channelAddress/subscribe';
 
     // get domain information
@@ -78,8 +77,6 @@ Future<Map<String, dynamic>> subscribeV2(SubscribeOptionsV2Type options) async {
       'verificationProof': 'eip712v2:$verificationProof',
       'message': messageInformation['data'],
     };
-
-    print('subscribeV2 body: $body');
 
     await http.post(
       path: requestUrl,

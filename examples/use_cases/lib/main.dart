@@ -10,8 +10,6 @@ void main() async {
   runApp(const MainApp());
   runNotificationTest();
 
-  return;
-
   log(r'''
 
           ░█████╗░██╗░░██╗░█████╗░████████╗

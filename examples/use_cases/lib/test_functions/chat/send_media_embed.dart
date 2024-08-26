@@ -1,18 +1,17 @@
-import 'package:example/models/signer.dart';
+import 'package:use_cases/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ethers;
 
-// send a message in a wallet to wallet chat
-void testSend() async {
+Future<void> testSendMediaEmbed() async {
   final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
+
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
   );
 
-  print('walletMnemonic.address: ${ethersWallet.address}');
   final user = await getUser(address: ethersWallet.address!);
 
   if (user == null) {
@@ -28,13 +27,15 @@ void testSend() async {
     );
   }
 
-  print('pgpPrivateKey: $pgpPrivateKey');
-
   final options = ChatSendOptions(
     account: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    messageContent: 'Testing send() from Dart SDK for w2w chat',
-    recipient: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+    message: SendMessage(
+        type: MessageType.MEDIA_EMBED,
+        content:
+            "https://media2.giphy.com/media/p0L1rezLH2Tja/giphy.gif?cid=c918c0ff667b3vbiu4i4e5d1t9sqssx8uvy10reprq8yds23&ep=v1_gifs_trending&rid=giphy.gif&ct=g"),
+    recipient:
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);

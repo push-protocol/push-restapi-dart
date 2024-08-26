@@ -3,17 +3,17 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import '../../../__lib.dart';
 
-class SendSpaceInviteDialog extends StatefulWidget {
+class SendSpaceInviteDialog extends ConsumerStatefulWidget {
   const SendSpaceInviteDialog(
       {super.key, required this.spaceId, required this.isSpeaker});
   final String spaceId;
   final bool isSpeaker;
 
   @override
-  State<SendSpaceInviteDialog> createState() => _SendSpaceInviteDialogState();
+  ConsumerState<SendSpaceInviteDialog> createState() => _SendSpaceInviteDialogState();
 }
 
-class _SendSpaceInviteDialogState extends State<SendSpaceInviteDialog> {
+class _SendSpaceInviteDialogState extends ConsumerState<SendSpaceInviteDialog> {
   TextEditingController controller = TextEditingController();
   bool isSpeaker = false;
 

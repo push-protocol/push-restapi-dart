@@ -7,7 +7,6 @@ import '../../models/signer.dart';
 runNotificationTest() async {
   log("runNotificationTest() started...");
   final signer1PK = dotenv.get('WALLET_PRIVATE_KEY');
-  final signer2PK = dotenv.get('WALLET_PRIVATE_KEY_2');
 
   final ethersWallet1 = ether.Wallet.fromPrivateKey(signer1PK);
 
@@ -16,23 +15,9 @@ runNotificationTest() async {
     address: ethersWallet1.address!,
   );
 
-  final ethersWallet2 = ether.Wallet.fromPrivateKey(signer2PK);
-
-  final signer2 = EthersSigner(
-    ethersWallet: ethersWallet2,
-    address: ethersWallet2.address!,
-  );
-
   final userAlice = await PushAPI.initialize(
     signer: signer1,
     options: PushAPIInitializeOptions(env: ENV.staging),
-  );
-  final userKate = await PushAPI.initialize(
-    signer: signer2,
-    options: PushAPIInitializeOptions(
-      env: ENV.staging,
-      showHttpLog: true,
-    ),
   );
 
   log('PushAPI.notification.subscribe');

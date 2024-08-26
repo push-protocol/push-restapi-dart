@@ -6,7 +6,6 @@ ConfigType getConfig({
   required String networkId,
 }) {
   final blockchainSelector = '$blockchain:$networkId';
-  log("getConfig: blockchainSelector: $blockchainSelector");
   final configuration = CONFIG[env]?[blockchainSelector];
 
   if (configuration == null) {

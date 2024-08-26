@@ -1,11 +1,11 @@
-import 'package:example/models/signer.dart';
+import 'package:use_cases/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ether;
 
-void testApproveIntent() async {
-  final ethersWallet = ether.Wallet.fromPrivateKey(
-      "b9d00f786e1d024cfed08f696a775217ff75501f4aacef5ec0795fc4a2eb9df1");
+Future<void> testGetLatestLiveSpaceData() async {
+  final ethersWallet = ether.Wallet.fromMnemonic(
+      'label mobile gas salt service gravity nose bomb marine online say twice');
 
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
@@ -26,14 +26,12 @@ void testApproveIntent() async {
       wallet: getWallet(signer: signer),
     );
   }
-  final result = await requests(
-      toDecrypt: true,
-      accountAddress: signer.address,
-      pgpPrivateKey: pgpPrivateKey);
-  print(result);
-  approve(
-      senderAddress: "0xaba32d63052de97Bc3bc749b7241cB4E2479c401",
-      account: signer.address,
-      signer: signer,
-      pgpPrivateKey: pgpPrivateKey);
+
+  final result = await getLatestLiveSpaceData(
+      accountAddress: ethersWallet.address!,
+      pgpPrivateKey: pgpPrivateKey,
+      spaceId:
+          'spaces:cff80fae9b898b9f5d679bfa7ef4dfcb7d31b9d1c12e032f4ec6d84a575e62cb');
+
+  print('testGetLatestLiveSpaceData result = ${result.toJson()}');
 }

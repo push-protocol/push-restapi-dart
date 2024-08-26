@@ -117,7 +117,6 @@ class NotificationAPI extends PushNotificationBaseClass {
       // convert the setting to minimal version
       final minimalSetting = getMinimalUserSetting(options?.settings);
 
-  
       return push_channel.subscribeV2(SubscribeOptionsV2Type(
         signer: signer!,
         channelAddress: channel,

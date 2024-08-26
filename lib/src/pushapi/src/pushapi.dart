@@ -18,7 +18,6 @@ class PushAPI {
 
   late Channel channel;
   late NotificationAPI notification;
-  
   PushAPI({
     Signer? signer,
     required String account,

@@ -149,7 +149,7 @@ Future<GroupDTO?> updateGroupCore({
       'groupDescription': groupDescription,
       'members': convertedMembers,
       'admins': convertedAdmins,
-      'address': 'eip155:$userDID',
+      'address': walletToPCAIP10(userDID),
       'verificationProof': verificationProof,
       'encryptedSecret': encryptedSecret,
       'scheduleAt': scheduleAt?.toIso8601String(),

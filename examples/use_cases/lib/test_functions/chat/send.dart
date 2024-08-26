@@ -1,12 +1,12 @@
-import 'package:example/models/signer.dart';
+import 'package:use_cases/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ethers;
 
-Future<void> testSendToGroup() async {
+// send a message in a wallet to wallet chat
+void testSend() async {
   final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
-
   final signer = EthersSigner(
     ethersWallet: ethersWallet,
     address: ethersWallet.address!,
@@ -33,9 +33,8 @@ Future<void> testSendToGroup() async {
   final options = ChatSendOptions(
     account: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    messageContent: 'Testing send() from Dart SDK for group chat',
-    recipient:
-        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
+    messageContent: 'Testing send() from Dart SDK for w2w chat',
+    recipient: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
   );
 
   final result = await send(options);

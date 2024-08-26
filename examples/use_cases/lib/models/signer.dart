@@ -57,12 +57,11 @@ class EthersSigner extends push.Signer {
   }
 
   @override
-  Future<String> signTypedData({
-    required push.DataDomain domain,
-    required Map<String, List<push.DataField>> types,
-    required Map<String, dynamic> values,
-    String? primaryType,
-  }) {
+  Future<String> signTypedData(
+      {required push.DataDomain domain,
+      required Map<String, List<push.DataField>> types,
+      required Map<String, dynamic> values,
+      String? primaryType}) {
     // TODO: implement signTypedData
     throw UnimplementedError();
   }
@@ -72,6 +71,7 @@ class Web3Signer extends push.Signer {
   final web3.Credentials credentials;
 
   Web3Signer(this.credentials);
+  String get address=>  getAddress();
 
   @override
   String getAddress() {

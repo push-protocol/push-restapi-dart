@@ -1,9 +1,9 @@
-import 'package:example/models/signer.dart';
+import 'package:use_cases/models/signer.dart';
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
 import 'package:ethers/signers/wallet.dart' as ethers;
 
-Future<void> testSendReaction() async {
+Future<void> testSendToGroup() async {
   final ethersWallet = ethers.Wallet.fromMnemonic(
       'label mobile gas salt service gravity nose bomb marine online say twice');
 
@@ -12,6 +12,7 @@ Future<void> testSendReaction() async {
     address: ethersWallet.address!,
   );
 
+  print('walletMnemonic.address: ${ethersWallet.address}');
   final user = await getUser(address: ethersWallet.address!);
 
   if (user == null) {
@@ -27,30 +28,14 @@ Future<void> testSendReaction() async {
     );
   }
 
-  String groupId =
-      '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298';
-
-  String hash = await conversationHash(
-          conversationId: groupId, accountAddress: ethersWallet.address) ??
-      '';
-
-  String referenceLink = '';
-  if (hash != '') {
-    referenceLink = (await latest(
-          threadhash: hash,
-          accountAddress: ethersWallet.address,
-          pgpPrivateKey: pgpPrivateKey,
-        ))
-            ?.link ??
-        '';
-  }
+  print('pgpPrivateKey: $pgpPrivateKey');
 
   final options = ChatSendOptions(
     account: ethersWallet.address,
     pgpPrivateKey: pgpPrivateKey,
-    message: ReactionMessage(
-        content: CHAT.REACTION_THUMBSUP, reference: referenceLink),
-    recipient: groupId,
+    messageContent: 'Testing send() from Dart SDK for group chat',
+    recipient:
+        '83e6aaf9fb44c5929ea965d2b0c4e98fd8b6094b72f51989123f81e6cf69f298',
   );
 
   final result = await send(options);
