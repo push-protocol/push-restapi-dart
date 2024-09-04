@@ -8,3 +8,4 @@ export 'src/subscribe.dart';
 export 'src/subscribeV2.dart';
 export 'src/unsubscribe.dart';
 export 'src/unsubscribeV2.dart';
+export 'src/get_tags.dart';

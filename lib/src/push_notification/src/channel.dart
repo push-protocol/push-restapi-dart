@@ -1,3 +1,5 @@
+import 'package:push_restapi_dart/src/push_notification/src/tag.dart';
+
 import '../../../push_restapi_dart.dart';
 import '../../channels/channels.dart' as push_channel;
 import '../../channels/src/_get_subscribers.dart' as sub;
@@ -14,6 +16,8 @@ class Channel {
 
     delegate = Delegate(env: env, account: account);
     alias = Alias(env: env, signer: signer);
+    tags = TagApi(
+        env: env, signer: signer, account: account, guestMode: signer == null);
   }
 
   late final ENV _env;
@@ -22,6 +26,7 @@ class Channel {
 
   late final Delegate delegate;
   late final Alias alias;
+  late final TagApi tags;
 
   /// @description - returns information about a channel
   /// @param {string} [channel] - channel address in caip, defaults to eth caip address
