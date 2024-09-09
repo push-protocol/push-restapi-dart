@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../push_restapi_dart.dart';
 
 Future<User?> authUpdate({
@@ -6,13 +8,13 @@ Future<User?> authUpdate({
   Wallet? wallet,
   required String pgpPublicKey,
   required String account,
-  additionalMeta,
+  Map<String, dynamic>? additionalMeta,
 }) async {
   try {
-    wallet ??= getCachedWallet();
-    final address = wallet?.address;
+    final address = wallet?.address ?? account;
+    wallet ??= getWallet(address: address);
 
-    if (wallet == null || address == null || !isValidETHAddress(address)) {
+    if (!isValidETHAddress(address)) {
       throw Exception('Invalid address!');
     }
 
@@ -35,11 +37,12 @@ Future<User?> authUpdate({
         additionalMeta: additionalMeta);
 
     if (pgpEncryptionVersion == ENCRYPTION_TYPE.NFTPGP_V1) {
+      print("authUpdate...ENCRYPTION_TYPE.NFTPGP_V1...s");
       final encryptedPassword = await encryptPGPKey(
         encryptionType: ENCRYPTION_TYPE.PGP_V3,
         additionalMeta: additionalMeta,
         wallet: wallet,
-        generatedPrivateKey: additionalMeta,
+        generatedPrivateKey: jsonEncode(additionalMeta),
       );
 
       encryptedPgpPrivateKey.encryptedPassword = encryptedPassword;
@@ -49,7 +52,7 @@ Future<User?> authUpdate({
       address: user.did!,
       wallet: wallet,
       publicKey: signedPublicKey,
-      encryptedPrivateKey: encryptedPgpPrivateKey.toJson(),
+      encryptedPrivateKey: jsonEncode(encryptedPgpPrivateKey),
     );
 
     return updatedUser;

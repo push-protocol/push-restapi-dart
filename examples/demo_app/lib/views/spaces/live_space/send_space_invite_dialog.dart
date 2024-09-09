@@ -10,7 +10,8 @@ class SendSpaceInviteDialog extends ConsumerStatefulWidget {
   final bool isSpeaker;
 
   @override
-  ConsumerState<SendSpaceInviteDialog> createState() => _SendSpaceInviteDialogState();
+  ConsumerState<SendSpaceInviteDialog> createState() =>
+      _SendSpaceInviteDialogState();
 }
 
 class _SendSpaceInviteDialogState extends ConsumerState<SendSpaceInviteDialog> {

@@ -123,13 +123,14 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
 
       break;
     case Constants.ENC_TYPE_V4:
-      if (additionalMeta?.NFTPGP_V1?.password == null) {
+      if (additionalMeta?['NFTPGP_V1']?['password'] == null) {
         throw Exception('Password is required!');
       }
       List<int> encodedPrivateKey = utf8.encode(generatedPrivateKey);
       encryptedPrivateKey = await encryptV2(
         data: encodedPrivateKey,
-        secret: hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password)),
+        secret:
+            hexToBytes(stringToHex(additionalMeta['NFTPGP_V1']['password'])),
       );
       encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
       encryptedPrivateKey.preKey = '';

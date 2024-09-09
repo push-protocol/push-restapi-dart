@@ -76,10 +76,7 @@ class AccountProvider extends ChangeNotifier {
       pushUser = await PushAPI.initialize(
         signer: Web3Signer(wallet),
         options: PushAPIInitializeOptions(
-          account: user.address.toLowerCase(),
-          env: env,
-          showHttpLog: true
-        ),
+            account: user.address.toLowerCase(), env: env, showHttpLog: true),
       );
 
       creatSocketConnection();

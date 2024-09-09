@@ -1,3 +1,5 @@
+// ignore_for_file: slash_for_doc_comments
+
 import 'dart:convert';
 
 import '../../../push_restapi_dart.dart';
@@ -28,7 +30,7 @@ class Encryption {
     userInstance = UserAPI(account: account);
   }
 
-  Future info() async {
+  Future<dynamic> info() async {
     final userInfo = await userInstance.info();
     String? decryptedPassword;
     if (_signer == null) {
@@ -48,5 +50,37 @@ class Encryption {
       'pgpPublicKey': _pgpPublicKey,
       if (decryptedPassword != null) 'decryptedPassword': decryptedPassword,
     };
+  }
+
+/**
+     options?: {
+      versionMeta?: {
+        NFTPGP_V1?: { password: string };
+      };
+    }
+ */
+  Future<dynamic> update(
+      {required EncryptionType updatedEncryptionType,
+      Map<String, dynamic>? options}) async {
+    if (options != null) {
+      assert(options.keys.contains("versionMeta"));
+      assert(options["versionMeta"].keys.contains("NFTPGP_V1"));
+    }
+
+    if (_signer == null) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    if (_decryptedPgpPvtKey == null || _pgpPublicKey == null) {
+      throw Exception(PushAPI.ensureSignerMessage());
+    }
+
+    return authUpdate(
+        pgpEncryptionVersion: updatedEncryptionType.value,
+        additionalMeta: options?["versionMeta"],
+        pgpPrivateKey: _decryptedPgpPvtKey!,
+        pgpPublicKey: _pgpPublicKey!,
+        account: _account,
+        wallet: getWallet(address: _account, signer: _signer));
   }
 }

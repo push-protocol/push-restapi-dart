@@ -1,5 +1,22 @@
 // ignore_for_file: constant_identifier_names, camel_case_types
 
+enum EncryptionType { PGP_V1, PGP_V2, PGP_V3, NFTPGP_V1 }
+
+extension Enc on EncryptionType {
+  String get value {
+    switch (this) {
+      case EncryptionType.PGP_V1:
+        return ENCRYPTION_TYPE.PGP_V1;
+      case EncryptionType.PGP_V2:
+        return ENCRYPTION_TYPE.PGP_V2;
+      case EncryptionType.PGP_V3:
+        return ENCRYPTION_TYPE.PGP_V3;
+      case EncryptionType.NFTPGP_V1:
+        return ENCRYPTION_TYPE.NFTPGP_V1;
+    }
+  }
+}
+
 class ENCRYPTION_TYPE {
   static const PGP_V1 = 'x25519-xsalsa20-poly1305';
   static const PGP_V2 = 'aes256GcmHkdfSha256';

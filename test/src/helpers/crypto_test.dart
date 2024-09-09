@@ -12,7 +12,7 @@ void main() {
     // test('First Test', () {});
 
     test('encryption decryption testing', () async {
-      final testPgpKey = r''' 
+      final testPgpKey = r'''
       ''';
       String nonce = "dfc04cc8782887903338f7e3";
       String salt =
