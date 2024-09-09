@@ -52,7 +52,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_webrtc: 55df3aaa802114dad390191a46c2c8d535751268
   livekit_client: 381ed3cad6ba0b6ffbfffcf1b5db95ad1e61ffa2
   openpgp: 7d9e62ab7cd0cf9f70a425956ea6cccfc1b5241a

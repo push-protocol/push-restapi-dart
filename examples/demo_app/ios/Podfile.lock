@@ -87,7 +87,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   flutter_webrtc: 55df3aaa802114dad390191a46c2c8d535751268
   image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
@@ -104,4 +104,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f9420bd595da8fbce156b547dcd3368afc5226ff
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.15.2
