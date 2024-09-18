@@ -21,7 +21,6 @@ class Channel {
   }
 
   late final ENV _env;
-
   late final String? _account;
 
   late final Delegate delegate;
@@ -68,5 +67,13 @@ class Channel {
       /// @notice - This will be removed in V2 Publish
       return sub.getSubscribers(channel: channel!, env: _env);
     }
+  }
+
+  Future<dynamic> notifications(GetChannelNotificationOptions options) async {
+    return getChannelNotifications(options);
+  }
+
+  Future<dynamic> list(GetChannelOptions options) async {
+    return await getChannels(options);
   }
 }
