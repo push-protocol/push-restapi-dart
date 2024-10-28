@@ -71,7 +71,6 @@ Future<GroupInfoDTO> updateGroupProfile({
   print("object");
   final hash = generateHash(bodyToBeHashed);
 
-
   final signature = await sign(
     message: hash,
     privateKey: connectedUser.privateKey!,

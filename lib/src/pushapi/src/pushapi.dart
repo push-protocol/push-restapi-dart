@@ -18,6 +18,8 @@ class PushAPI {
 
   late Channel channel;
   late NotificationAPI notification;
+  late Encryption encryption;
+
   PushAPI({
     Signer? signer,
     required String account,
@@ -38,6 +40,14 @@ class PushAPI {
     );
 
     chat = Chat(
+      env: env,
+      signer: _signer,
+      account: _account,
+      decryptedPgpPvtKey: _decryptedPgpPvtKey,
+      pgpPublicKey: pgpPublicKey,
+      progressHook: progressHook,
+    );
+    encryption = Encryption(
       env: env,
       signer: _signer,
       account: _account,

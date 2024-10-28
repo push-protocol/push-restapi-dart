@@ -71,7 +71,7 @@ class Web3Signer extends push.Signer {
   final web3.Credentials credentials;
 
   Web3Signer(this.credentials);
-  String get address=>  getAddress();
+  String get address => getAddress();
 
   @override
   String getAddress() {

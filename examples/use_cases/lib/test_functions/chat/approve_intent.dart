@@ -15,7 +15,6 @@ void testApproveIntent() async {
   final user = await getUser(address: ethersWallet.address!);
 
   if (user == null) {
-    print('Cannot get user');
     return;
   }
 
@@ -26,11 +25,10 @@ void testApproveIntent() async {
       wallet: getWallet(signer: signer),
     );
   }
-  final result = await requests(
+  await requests(
       toDecrypt: true,
       accountAddress: signer.address,
       pgpPrivateKey: pgpPrivateKey);
-  print(result);
   approve(
       senderAddress: "0xaba32d63052de97Bc3bc749b7241cB4E2479c401",
       account: signer.address,

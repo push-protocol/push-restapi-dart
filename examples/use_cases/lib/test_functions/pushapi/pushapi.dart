@@ -4,7 +4,6 @@ import 'package:push_restapi_dart/push_restapi_dart.dart';
 import 'package:use_cases/models/signer.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
-
 testPushApi() async {
   final web3.Credentials randomCredentials =
       web3.EthPrivateKey.createRandom(Random.secure());

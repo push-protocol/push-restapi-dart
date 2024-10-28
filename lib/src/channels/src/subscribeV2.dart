@@ -32,7 +32,6 @@ Future<Map<String, dynamic>> subscribeV2(SubscribeOptionsV2Type options) async {
     if (channelCAIPDetails == null) throw Exception('Invalid Channel CAIP!');
 
     final chainId = int.parse(channelCAIPDetails.networkId);
-
     final userAddress = await getCAIPAddress(address: options.userAddress);
 
     final userCAIPDetails = getCAIPDetails(userAddress);

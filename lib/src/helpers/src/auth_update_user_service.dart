@@ -18,8 +18,9 @@ Future<User?> authUpdateUserService({
 
   signatureObj.remove('did');
 
-  final body = {...data, ...signatureObj};
+  final body = {...data, ...signatureObj, 'did': null};
 
+  body.removeWhere((key, value) => value == null);
   final result = await http.put(
     path: '/v2/users/${walletToPCAIP10(address)}/auth',
     data: body,
